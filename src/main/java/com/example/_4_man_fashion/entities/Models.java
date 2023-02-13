@@ -1,6 +1,6 @@
 package com.example._4_man_fashion.entities;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 
 @Builder

@@ -1,7 +1,7 @@
 package com.example._4_man_fashion.entities;
 
 import com.example._4_man_fashion.dto.ColorDTO;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
