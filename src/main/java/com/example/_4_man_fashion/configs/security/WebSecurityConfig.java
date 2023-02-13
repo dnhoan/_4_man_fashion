@@ -63,9 +63,9 @@ public class WebSecurityConfig {
                 .exceptionHandling().authenticationEntryPoint(this.unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeHttpRequests().requestMatchers("/api/auth/**").permitAll().and()
-                .authorizeHttpRequests().requestMatchers("/api/user/**").hasAuthority(Constant.Role.USER).and()
-                .authorizeHttpRequests().requestMatchers("/api/admin/**").hasAuthority(Constant.Role.ADMIN).and()
-                .authorizeHttpRequests().requestMatchers("/api/employee/**").hasAuthority(Constant.Role.EMPLOYEE).and()
+//                .authorizeHttpRequests().requestMatchers("/api/user/**").hasAuthority(Constant.Role.USER).and()
+//                .authorizeHttpRequests().requestMatchers("/api/admin/**").hasAuthority(Constant.Role.ADMIN).and()
+//                .authorizeHttpRequests().requestMatchers("/api/employee/**").hasAuthority(Constant.Role.EMPLOYEE).and()
                 .authorizeHttpRequests().requestMatchers("/api/common/**").permitAll()
                 .anyRequest().permitAll();
 
