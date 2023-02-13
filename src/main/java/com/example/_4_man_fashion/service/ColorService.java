@@ -1,4 +1,4 @@
-package com.example._4_man_fashion.service;
+package com.example._4_man_fashion.Service;
 
 import com.example._4_man_fashion.dto.ColorDTO;
 import com.example._4_man_fashion.dto.PageDTO;

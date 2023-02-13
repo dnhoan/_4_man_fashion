@@ -3,7 +3,7 @@ package com.example._4_man_fashion.controllers.admin;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.ColorDTO;
 import com.example._4_man_fashion.dto.PageDTO;
-import com.example._4_man_fashion.service.ColorServiceImpl;
+import com.example._4_man_fashion.Service.ColorServiceImpl;
 import com.example._4_man_fashion.utils.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
