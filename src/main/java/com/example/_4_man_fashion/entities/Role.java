@@ -2,7 +2,7 @@ package com.example._4_man_fashion.entities;
 
 import com.example._4_man_fashion.models.ERole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 
 import java.util.Set;

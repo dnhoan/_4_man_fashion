@@ -4,6 +4,8 @@ import com.example._4_man_fashion.configs.jwt.AuthEntryPointJwt;
 import com.example._4_man_fashion.configs.jwt.AuthTokenFilter;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.models.ERole;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,12 +23,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class WebSecurityConfig {
-
+    private Logger log = LoggerFactory.getLogger(WebSecurityConfig.class);
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
@@ -62,11 +69,11 @@ public class WebSecurityConfig {
         httpSecurity.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(this.unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeHttpRequests().requestMatchers("/api/auth/**").permitAll().and()
-                .authorizeHttpRequests().requestMatchers("/api/user/**").hasAuthority(Constant.Role.USER).and()
-                .authorizeHttpRequests().requestMatchers("/api/admin/**").hasAuthority(Constant.Role.ADMIN).and()
-                .authorizeHttpRequests().requestMatchers("/api/employee/**").hasAuthority(Constant.Role.EMPLOYEE).and()
-                .authorizeHttpRequests().requestMatchers("/api/common/**").permitAll()
+                .authorizeHttpRequests().antMatchers("/api/auth/**").permitAll().and()
+                .authorizeHttpRequests().antMatchers("/api/user/**").hasAuthority(Constant.Role.USER).and()
+                .authorizeHttpRequests().antMatchers("/api/admin/**").hasAuthority(Constant.Role.ADMIN).and()
+                .authorizeHttpRequests().antMatchers("/api/employee/**").hasAuthority(Constant.Role.EMPLOYEE).and()
+                .authorizeHttpRequests().antMatchers("/api/common/**").permitAll()
                 .anyRequest().permitAll();
 
         httpSecurity.authenticationProvider(authenticationProvider());
@@ -74,5 +81,20 @@ public class WebSecurityConfig {
         httpSecurity.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
+    }
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+        CorsConfiguration config = new CorsConfiguration();
+        if (!CollectionUtils.isEmpty(config.getAllowedOrigins())) {
+            log.debug("Registering CORS filter");
+            source.registerCorsConfiguration("/api/**", config);
+            source.registerCorsConfiguration("/v2/api-docs", config);
+            source.registerCorsConfiguration("/v3/api-docs", config);
+            source.registerCorsConfiguration("/swagger-resources", config);
+            source.registerCorsConfiguration("/swagger-ui.html/**", config);
+        }
+        return new CorsFilter(source);
     }
 }
