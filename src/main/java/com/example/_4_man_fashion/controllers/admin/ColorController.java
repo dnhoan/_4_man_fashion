@@ -5,7 +5,7 @@ import com.example._4_man_fashion.dto.ColorDTO;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.Service.ColorServiceImpl;
 import com.example._4_man_fashion.utils.ApiResponse;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
