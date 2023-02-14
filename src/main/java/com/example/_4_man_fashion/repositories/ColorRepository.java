@@ -12,8 +12,9 @@ import java.util.Optional;
 
 @Repository
 public interface ColorRepository extends JpaRepository<Color, Integer> {
-    @Query("select color from Color color where color.status = 1 order by color.id")
-    Page<Color> getAllById(Pageable pageable, Integer status);
+
+    @Query("select color from Color color where (:name is null or color.colorName like :name) and (:status = -1 or color.status = :status) order by color.ctime, color.colorName, color.colorCode")
+    Page<Color> getColorByName(Pageable pageable, Integer status, String name);
 
     @Query("select color from Color color where  color.colorCode = :code")
     Optional<Color> findByCode(String code);
@@ -21,7 +22,6 @@ public interface ColorRepository extends JpaRepository<Color, Integer> {
     @Query("select color from Color color where  color.colorName = :name")
     Color findColorByColorName(String name);
 
-    @Query("select color from Color color where  color.id = :id")
-    Color findColorById(Integer id);
+    boolean existsByColorNameLike(String name);
 
 }
