@@ -27,7 +27,7 @@ public class MaterialServiceImpl implements MaterialService {
     private ModelMapper modelMapper;
 
     @Override
-    public PageDTO<MaterialDTO> getAll(int offset, int limit, Integer status) {
+    public PageDTO<MaterialDTO> getAll(int offset, int limit, Integer status, String search) {
         Pageable pageable = PageRequest.of(offset, limit);
         Page<Material> page = this.materialRepository.getAllById(pageable);
         List<MaterialDTO> materialDTOList = page.stream().map(u -> this.modelMapper.map(u, MaterialDTO.class)).collect(Collectors.toList());
@@ -45,7 +45,7 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
-    public void create(MaterialDTO materialDTO) {
+    public Material create(MaterialDTO materialDTO) {
         Material material = this.materialRepository.findMaterialByMaterialName(materialDTO.getMaterialName());
         if (material != null && material.getStatus() == Constant.Status.ACTIVE) {
             throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Chất liệu"));
@@ -55,11 +55,11 @@ public class MaterialServiceImpl implements MaterialService {
         }
         materialDTO.setCtime(LocalDateTime.now());
         materialDTO.setStatus(Constant.Status.ACTIVE);
-        this.materialRepository.save(Material.fromDTO(materialDTO));
+        return this.materialRepository.save(Material.fromDTO(materialDTO));
     }
 
     @Override
-    public void update(MaterialDTO materialDTO) {
+    public Material update(MaterialDTO materialDTO) {
         Material material = this.materialRepository.findMaterialById(materialDTO.getId());
         if (material != null) {
             material.setMaterialName(materialDTO.getMaterialName());
@@ -67,7 +67,7 @@ public class MaterialServiceImpl implements MaterialService {
             material.setStatus(Constant.Status.ACTIVE);
         }
 
-        this.materialRepository.save(Material.fromDTO(materialDTO));
+        return this.materialRepository.save(Material.fromDTO(materialDTO));
     }
 
     @Override
