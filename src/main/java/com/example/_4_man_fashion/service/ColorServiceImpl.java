@@ -13,23 +13,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example._4_man_fashion.utils.ErrorMessage.DUPLICATE_PARAMS;
-
 @Service
-public class ColorServiceImpl implements ColorService {
+public class ColorServiceImpl {
     @Autowired
     private ColorRepository colorRepository;
 
     @Autowired
     private ModelMapper modelMapper;
 
-    @Override
-    public PageDTO<ColorDTO> getAll(int offset, int limit, Integer status) {
+    public PageDTO<ColorDTO> getAll(int offset, int limit, Integer status, String search) {
         Pageable pageable = PageRequest.of(offset, limit);
         Page<Color> page = this.colorRepository.getAllById(pageable, status);
         List<ColorDTO> colorDTOList = page.stream().map(u -> this.modelMapper.map(u, ColorDTO.class)).collect(Collectors.toList());
@@ -46,15 +44,14 @@ public class ColorServiceImpl implements ColorService {
         );
     }
 
-    @Override
-    public void create(ColorDTO colorDTO) {
+    @Transactional
+    public Color create(ColorDTO colorDTO) {
         Color old = colorRepository.findByCode(colorDTO.getColorCode()).orElse(null);
         Color color = this.colorRepository.findColorByColorName(colorDTO.getColorName());
         if (color != null && color.getStatus() == Constant.Status.ACTIVE) {
-            throw new DATNException(ErrorMessage.OBJECT_ALREADY_EXIST.format("Màu sắc"));
+            throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Màu sắc"));
         }
         if (old != null && old.getStatus() == Constant.Status.ACTIVE) {
-            throw new DATNException(ErrorMessage.OBJECT_ALREADY_EXIST.format("Mã màu sắc"));
         }
         if (old != null && old.getStatus() == Constant.Status.INACTIVE) {
             colorRepository.delete(old);
@@ -62,21 +59,20 @@ public class ColorServiceImpl implements ColorService {
         colorDTO.setCtime(LocalDateTime.now());
         colorDTO.setStatus(Constant.Status.ACTIVE);
 
-        this.colorRepository.save(Color.fromDTO(colorDTO));
+        return this.colorRepository.save(Color.fromDTO(colorDTO));
+
     }
 
-    @Override
-    public void update(ColorDTO colorDTO) {
+    public Color update(ColorDTO colorDTO) {
         Color color = this.colorRepository.findColorById(colorDTO.getId());
         if (color != null) {
             color.setColorName(colorDTO.getColorName());
             color.setMtime(LocalDateTime.now());
             color.setStatus(Constant.Status.ACTIVE);
         }
-        this.colorRepository.save(Color.fromDTO(colorDTO));
+        return this.colorRepository.saveAndFlush(Color.fromDTO(colorDTO));
     }
 
-    @Override
     public void delete(Integer id) {
         Color color = this.colorRepository.findColorById(id);
         if (color != null) {
