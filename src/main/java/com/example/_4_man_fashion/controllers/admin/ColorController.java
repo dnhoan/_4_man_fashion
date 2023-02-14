@@ -4,6 +4,7 @@ import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.ColorDTO;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.Service.ColorServiceImpl;
+import com.example._4_man_fashion.entities.Color;
 import com.example._4_man_fashion.utils.ApiResponse;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,21 +19,24 @@ public class ColorController {
     public ColorServiceImpl colorService;
 
     @GetMapping("color/getAll")
-    public ResponseEntity<ApiResponse<PageDTO<ColorDTO>>> getAll(@RequestParam int offset, @RequestParam int limit, @RequestParam Integer status) {
-        PageDTO<ColorDTO> result = colorService.getAll(offset, limit, status);
+    public ResponseEntity<ApiResponse<PageDTO<ColorDTO>>> getAll(@RequestParam(defaultValue = "0") int offset,
+                                                                 @RequestParam(defaultValue = "10") int limit,
+                                                                 @RequestParam(defaultValue = "1") Integer status,
+                                                                 @RequestParam(defaultValue = "") String search) {
+        PageDTO<ColorDTO> result = colorService.getAll(offset, limit, status, search);
         return ResponseEntity.ok(ApiResponse.success(result));
     }
 
     @PostMapping("/color/create")
-    public ResponseEntity<ApiResponse<Void>> create(@Valid @RequestBody ColorDTO dto) {
-        colorService.create(dto);
-        return ResponseEntity.ok(ApiResponse.success());
+    public ResponseEntity<ApiResponse<Color>> create(@Valid @RequestBody ColorDTO dto) {
+        Color color = colorService.create(dto);
+        return ResponseEntity.ok(ApiResponse.success(color));
     }
 
     @PutMapping("/color/update")
-    public ResponseEntity<ApiResponse<Void>> update(@Valid @RequestBody ColorDTO dto) {
-        colorService.update(dto);
-        return ResponseEntity.ok(ApiResponse.success());
+    public ResponseEntity<ApiResponse<Color>> update(@Valid @RequestBody ColorDTO dto) {
+        Color color = colorService.update(dto);
+        return ResponseEntity.ok(ApiResponse.success(color));
     }
 
     @DeleteMapping("/color/delete/{id}")
