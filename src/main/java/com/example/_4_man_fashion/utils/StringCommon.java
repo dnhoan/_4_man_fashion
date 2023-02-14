@@ -26,6 +26,6 @@ public class StringCommon {
                         .replace("_", "\\_")
                         .replace("%", "\\%");
         str = "%".concat(newStr.trim().concat("%"));
-        return newStr;
+        return str;
     }
 }

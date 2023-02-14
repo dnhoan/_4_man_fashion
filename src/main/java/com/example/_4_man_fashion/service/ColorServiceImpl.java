@@ -4,6 +4,7 @@ import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.utils.DATNException;
 import com.example._4_man_fashion.utils.ErrorMessage;
+import com.example._4_man_fashion.utils.StringCommon;
 import org.modelmapper.ModelMapper;
 import com.example._4_man_fashion.dto.ColorDTO;
 import com.example._4_man_fashion.entities.Color;
@@ -15,8 +16,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +32,7 @@ public class ColorServiceImpl {
 
     public PageDTO<ColorDTO> getAll(int offset, int limit, Integer status, String search) {
         Pageable pageable = PageRequest.of(offset, limit);
-        Page<Color> page = this.colorRepository.getAllById(pageable, status);
+        Page<Color> page = this.colorRepository.getColorByName(pageable, status, StringCommon.getLikeCondition(search));
         List<ColorDTO> colorDTOList = page.stream().map(u -> this.modelMapper.map(u, ColorDTO.class)).collect(Collectors.toList());
         return new PageDTO<ColorDTO>(
                 page.getTotalPages(),
@@ -46,16 +49,15 @@ public class ColorServiceImpl {
 
     @Transactional
     public Color create(ColorDTO colorDTO) {
-        Color old = colorRepository.findByCode(colorDTO.getColorCode()).orElse(null);
-        Color color = this.colorRepository.findColorByColorName(colorDTO.getColorName());
-        if (color != null && color.getStatus() == Constant.Status.ACTIVE) {
-            throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Màu sắc"));
+        if(StringCommon.isNullOrBlank(colorDTO.getColorName())) {
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
         }
-        if (old != null && old.getStatus() == Constant.Status.ACTIVE) {
+
+        boolean isExistColorName = colorRepository.existsByColorNameLike(colorDTO.getColorName().trim());
+        if(isExistColorName) {
+            throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Tên màu sắc"));
         }
-        if (old != null && old.getStatus() == Constant.Status.INACTIVE) {
-            colorRepository.delete(old);
-        }
+
         colorDTO.setCtime(LocalDateTime.now());
         colorDTO.setStatus(Constant.Status.ACTIVE);
 
@@ -64,22 +66,38 @@ public class ColorServiceImpl {
     }
 
     public Color update(ColorDTO colorDTO) {
-        Color color = this.colorRepository.findColorById(colorDTO.getId());
-        if (color != null) {
-            color.setColorName(colorDTO.getColorName());
-            color.setMtime(LocalDateTime.now());
-            color.setStatus(Constant.Status.ACTIVE);
+        Optional<Color> optionalColor = this.colorRepository.findById(colorDTO.getId());
+        if(optionalColor.isEmpty())
+            throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Color Id"));
+
+        if(StringCommon.isNullOrBlank(colorDTO.getColorName()))
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID.format("Tên màu sắc"));
+
+        Color color = optionalColor.get();
+        if(!color.getColorName().equals(colorDTO.getColorName())) {
+            boolean isExistColorName = colorRepository.existsByColorNameLike(colorDTO.getColorName().trim());
+            if(isExistColorName) {
+                throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Tên màu sắc"));
+            }
         }
-        return this.colorRepository.saveAndFlush(Color.fromDTO(colorDTO));
+
+        color.setColorName(colorDTO.getColorName());
+        color.setColorCode(colorDTO.getColorCode());
+        color.setMtime(LocalDateTime.now());
+        color.setStatus(colorDTO.getStatus());
+        return this.colorRepository.save(color);
     }
 
     public void delete(Integer id) {
-        Color color = this.colorRepository.findColorById(id);
-        if (color != null) {
-            color.setMtime(LocalDateTime.now());
-            color.setStatus(Constant.Status.INACTIVE);
-            this.colorRepository.save(color);
-        }
+        Optional<Color> optionalColor = this.colorRepository.findById(id);
+        if(optionalColor.isEmpty())
+            throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Color Id"));
+
+        Color color = optionalColor.get();
+        color.setMtime(LocalDateTime.now());
+        color.setStatus(Constant.Status.INACTIVE);
+
+        this.colorRepository.save(color);
     }
 
 
