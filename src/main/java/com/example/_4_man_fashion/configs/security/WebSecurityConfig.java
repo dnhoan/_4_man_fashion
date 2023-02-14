@@ -31,7 +31,9 @@ import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true
+//        , securedEnabled = true, jsr250Enabled = true
+)
 public class WebSecurityConfig {
     private Logger log = LoggerFactory.getLogger(WebSecurityConfig.class);
     @Autowired
@@ -69,11 +71,13 @@ public class WebSecurityConfig {
         httpSecurity.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(this.unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeHttpRequests().antMatchers("/api/auth/**").permitAll().and()
-                .authorizeHttpRequests().antMatchers("/api/user/**").hasAuthority(Constant.Role.USER).and()
-                .authorizeHttpRequests().antMatchers("/api/admin/**").hasAuthority(Constant.Role.ADMIN).and()
-                .authorizeHttpRequests().antMatchers("/api/employee/**").hasAuthority(Constant.Role.EMPLOYEE).and()
-                .authorizeHttpRequests().antMatchers("/api/common/**").permitAll()
+                .authorizeRequests()
+                .antMatchers("/v2/api-docs", "/swagger-resources/configuration/ui", "/swagger-resources", "/swagger-resources/configuration/security", "/swagger-ui/index.html#/", "/webjars/**").permitAll()
+                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/common/**").permitAll()
+                .antMatchers("/api/user/**").hasAuthority(Constant.Role.USER)
+                .antMatchers("/api/admin/**").hasAuthority(Constant.Role.ADMIN)
+                .antMatchers("/api/employee/**").hasAnyAuthority(Constant.Role.ADMIN, Constant.Role.EMPLOYEE)
                 .anyRequest().permitAll();
 
         httpSecurity.authenticationProvider(authenticationProvider());

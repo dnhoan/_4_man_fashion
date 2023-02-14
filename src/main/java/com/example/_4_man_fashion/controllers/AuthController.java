@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +34,8 @@ public class AuthController {
     @Autowired
     private AccountRepository accountRepository;
 
-    @Autowired private RoleRepository roleRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -41,12 +43,12 @@ public class AuthController {
     @Autowired
     private JwtUtils jwtUtils;
 
-    @PostMapping("/login")
+    @PostMapping("login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getAccount(), loginRequest.getPassword()));
-        System.out.println(loginRequest);
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
 
@@ -56,13 +58,15 @@ public class AuthController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
-                roles));
+                        userDetails.getId(),
+                        userDetails.getUsername(),
+                        userDetails.getEmail(),
+                        roles
+                )
+        );
     }
 
-    @PostMapping("/signup")
+    @PostMapping("signup")
     public ResponseEntity<?> registerUser(@RequestBody SignupRequest signUpRequest) {
         if (accountRepository.existsByEmail(signUpRequest.getUsername())) {
             return ResponseEntity
@@ -78,7 +82,7 @@ public class AuthController {
 
         // Create new user's account
         Account user = new Account(signUpRequest.getEmail(),
-                 this.passwordEncoder.encode(signUpRequest.getPassword()),signUpRequest.getUsername());
+                this.passwordEncoder.encode(signUpRequest.getPassword()), signUpRequest.getUsername());
 
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
@@ -116,11 +120,13 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 }
+
 @Data
 class LoginRequest {
     private String account;
     private String password;
 }
+
 @Data
 class SignupRequest {
     private String username;
@@ -131,15 +137,16 @@ class SignupRequest {
 
 @Data
 class MessageResponse {
-    private String message ;
+    private String message;
 
     public MessageResponse(String message) {
         this.message = message;
     }
 }
+
 @Data
 class JwtResponse {
-    private  String token;
+    private String token;
     private Integer id;
     private String username;
     private String email;
