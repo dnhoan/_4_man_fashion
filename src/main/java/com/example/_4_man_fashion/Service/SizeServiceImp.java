@@ -1,13 +1,25 @@
 package com.example._4_man_fashion.Service;
 
 import com.example._4_man_fashion.DTOs.SizeDto;
+import com.example._4_man_fashion.constants.Constant;
+import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.entities.Size;
 import com.example._4_man_fashion.repositories.SizeRepository;
+import com.example._4_man_fashion.utils.DATNException;
+import com.example._4_man_fashion.utils.ErrorMessage;
+import com.example._4_man_fashion.utils.StringCommon;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SizeServiceImp implements SizeService {
@@ -15,54 +27,77 @@ public class SizeServiceImp implements SizeService {
     @Autowired
     private SizeRepository sizeRepository;
 
-
-    private SizeDto sizeMapToSizeDto(Size size) {
-        return SizeDto.builder()
-                .id(size.getId())
-                .size(size.getSize())
-                .status(size.getStatus())
-                .build();
-    }
-
-    private Size sizeDtoMapToSize(SizeDto sizeDto) {
-        Size size = Size.builder()
-                .id(sizeDto.getId())
-                .size(sizeDto.getSize())
-                .status(1)
-                .build();
-
-        return size;
-    }
-
-    private Size updateSize(SizeDto sizeDto) {
-        Size size = Size.builder()
-                .size(sizeDto.getSize())
-                .build();
-
-        return size;
-    }
+    @Autowired
+    private ModelMapper modelMapper;
 
 
-    @Override
-    public List<Size> getAll() {
-        return this.sizeRepository.getAllActive();
-    }
-
-    @Override
-    public List<Size> getAllNoActive() {
-        return this.sizeRepository.getAllNoActive();
+    public PageDTO<SizeDto> getAll(int offset, int limit, Integer status, String search) {
+        Pageable pageable = PageRequest.of(offset, limit);
+        Page<Size> page = this.sizeRepository.getSizeByName(pageable, status, StringCommon.getLikeCondition(search));
+        List<SizeDto> sizeDtoList = page.stream().map(u -> this.modelMapper.map(u, SizeDto.class)).collect(Collectors.toList());
+        return new PageDTO<SizeDto>(
+                page.getTotalPages(),
+                page.getTotalElements(),
+                page.getNumber(),
+                page.getSize(),
+                sizeDtoList,
+                page.isFirst(),
+                page.isLast(),
+                page.hasNext(),
+                page.hasPrevious()
+        );
     }
 
     @Transactional
-    public SizeDto create(SizeDto sizeDto) {
-        Size size = this.sizeRepository.save(this.sizeDtoMapToSize(sizeDto));
-        return sizeMapToSizeDto(size);
+    public Size create(SizeDto sizeDto) {
+        if(StringCommon.isNullOrBlank(sizeDto.getSizeName())) {
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
+        }
+
+        boolean isExistSizeName = sizeRepository.existsBySizeNameLike(sizeDto.getSizeName().trim());
+        if(isExistSizeName) {
+            throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Tên size"));
+        }
+
+        sizeDto.setCtime(LocalDateTime.now());
+        sizeDto.setStatus(Constant.Status.ACTIVE);
+
+        return this.sizeRepository.save(Size.fromDTO(sizeDto));
+
     }
 
-    @Transactional
-    public SizeDto update(SizeDto sizeDto) {
-        Size size = this.sizeRepository.saveAndFlush(this.updateSize(sizeDto));
-        return sizeMapToSizeDto(size);
+    public Size update(SizeDto sizeDto) {
+        Optional<Size> optionalSize = this.sizeRepository.findById(sizeDto.getId());
+        if(optionalSize.isEmpty())
+            throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Size Id"));
+
+        if(StringCommon.isNullOrBlank(sizeDto.getSizeName()))
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID.format("Tên size"));
+
+        Size color = optionalSize.get();
+        if(!color.getSizeName().equals(sizeDto.getSizeName())) {
+            boolean isExistColorName = sizeRepository.existsBySizeNameLike(sizeDto.getSizeName().trim());
+            if(isExistColorName) {
+                throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Tên size"));
+            }
+        }
+
+        color.setSizeName(sizeDto.getSizeName());
+        color.setMtime(LocalDateTime.now());
+        color.setStatus(sizeDto.getStatus());
+        return this.sizeRepository.save(color);
+    }
+
+    public void delete(Integer id) {
+        Optional<Size> optionalSize = this.sizeRepository.findById(id);
+        if(optionalSize.isEmpty())
+            throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Size Id"));
+
+        Size size = optionalSize.get();
+        size.setMtime(LocalDateTime.now());
+        size.setStatus(Constant.Status.INACTIVE);
+
+        this.sizeRepository.save(size);
     }
 
     @Override
@@ -77,18 +112,9 @@ public class SizeServiceImp implements SizeService {
         return this.sizeRepository.findByNameNoActive(name);
     }
 
-    @Override
-    @Transactional
-    public boolean delete(Integer sizeId) {
-        try {
-            this.sizeRepository.deleteSize(sizeId);
-            return true;
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        @Override
+    public List<Size> getAllNoActive() {
+        return this.sizeRepository.getAllNoActive();
     }
 
     @Override
@@ -104,4 +130,50 @@ public class SizeServiceImp implements SizeService {
             return false;
         }
     }
+
+//    @Override
+//    @Transactional
+//    public boolean delete(Integer sizeId) {
+//        try {
+//            this.sizeRepository.deleteSize(sizeId);
+//            return true;
+//
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
+
+
+//
+//
+//    private SizeDto sizeMapToSizeDto(Size size) {
+//        return SizeDto.builder()
+//                .id(size.getId())
+//                .size(size.getSize())
+//                .status(size.getStatus())
+//                .build();
+//    }
+//
+//    private Size sizeDtoMapToSize(SizeDto sizeDto) {
+//        Size size = Size.builder()
+//                .id(sizeDto.getId())
+//                .size(sizeDto.getSize())
+//                .status(1)
+//                .build();
+//
+//        return size;
+//    }
+//
+//    private Size updateSize(SizeDto sizeDto) {
+//        Size size = Size.builder()
+//                .size(sizeDto.getSize())
+//                .build();
+//
+//        return size;
+//    }
+//
+
+
 }

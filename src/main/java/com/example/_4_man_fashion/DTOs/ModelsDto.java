@@ -2,6 +2,8 @@ package com.example._4_man_fashion.DTOs;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -9,6 +11,8 @@ import lombok.*;
 @NoArgsConstructor
 public class ModelsDto {
     private int id;
-    private String models_name;
+    private String modelsName;
     private int status;
+    private LocalDateTime ctime;
+    private LocalDateTime mtime;
 }

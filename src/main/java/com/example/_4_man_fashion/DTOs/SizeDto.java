@@ -2,6 +2,8 @@ package com.example._4_man_fashion.DTOs;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -9,6 +11,8 @@ import lombok.*;
 @NoArgsConstructor
 public class SizeDto {
     private int id;
-    private String size;
+    private String sizeName;
     private int status;
+    private LocalDateTime ctime;
+    private LocalDateTime mtime;
 }

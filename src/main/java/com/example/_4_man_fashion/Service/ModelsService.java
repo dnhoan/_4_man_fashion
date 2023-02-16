@@ -1,6 +1,7 @@
 package com.example._4_man_fashion.Service;
 
 import com.example._4_man_fashion.DTOs.ModelsDto;
+import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.entities.Models;
 import org.springframework.stereotype.Service;
 
@@ -9,14 +10,14 @@ import java.util.List;
 
 public interface ModelsService {
 
-    List<Models> getAll();
+    PageDTO<ModelsDto> getAll(int offset, int limit, Integer status, String search);
 
     List<Models> getAllNoActive();
-    ModelsDto create(ModelsDto modelsDto);
-    ModelsDto update(ModelsDto modelsDto);
+    Models create(ModelsDto modelsDto);
+    Models update(ModelsDto modelsDto);
     List<Models> findByName(String name);
     List<Models> findByNameNoActive(String name);
-    boolean delete(Integer modelsId);
+    void delete(Integer modelsId);
 
     boolean restore(Integer modelsId);
 }
