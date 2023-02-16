@@ -1,13 +1,19 @@
 package com.example._4_man_fashion.controllers.admin;
 
+import com.example._4_man_fashion.DTOs.ModelsDto;
 import com.example._4_man_fashion.DTOs.ResponseDTO;
 import com.example._4_man_fashion.DTOs.SizeDto;
 import com.example._4_man_fashion.Service.SizeService;
+import com.example._4_man_fashion.constants.Constant;
+import com.example._4_man_fashion.dto.PageDTO;
+import com.example._4_man_fashion.entities.Models;
 import com.example._4_man_fashion.entities.Size;
+import com.example._4_man_fashion.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -15,22 +21,39 @@ import java.util.Map;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
-@RequestMapping("/hiha")
+@RequestMapping(Constant.Api.Path.ADMIN)
 @CrossOrigin("*")
 public class SizeController {
     @Autowired
     private SizeService sizeService;
 
-    @GetMapping("size/getAllActive")
-    public ResponseEntity<ResponseDTO> getAllSizeActive() {
-        return ResponseEntity.ok(
-                ResponseDTO.builder()
-                        .status(OK)
-                        .data(Map.of("size", this.sizeService.getAll()))
-                        .statusCode(OK.value())
-                        .timeStamp(LocalDateTime.now())
-                        .build()
-        );
+    @GetMapping("size/getAll")
+    public ResponseEntity<ApiResponse<PageDTO<SizeDto>>> getAll(@RequestParam(defaultValue = "0") int offset,
+                                                                  @RequestParam(defaultValue = "10") int limit,
+                                                                  @RequestParam(defaultValue = "1") Integer status,
+                                                                  @RequestParam(defaultValue = "") String search) {
+        PageDTO<SizeDto> result = sizeService.getAll(offset, limit, status, search);
+        return ResponseEntity.ok(ApiResponse.success(result));
+    }
+
+
+    @PostMapping("/size/create")
+    public ResponseEntity<ApiResponse<Size>> create(@Valid @RequestBody SizeDto dto) {
+        Size size = sizeService.create(dto);
+        return ResponseEntity.ok(ApiResponse.success(size));
+    }
+
+
+    @PutMapping("/size/update")
+    public ResponseEntity<ApiResponse<Size>> update(@Valid @RequestBody SizeDto dto) {
+        Size size = sizeService.update(dto);
+        return ResponseEntity.ok(ApiResponse.success(size));
+    }
+
+    @DeleteMapping("/size/delete/{id}")
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Integer id) {
+        sizeService.delete(id);
+        return ResponseEntity.ok(ApiResponse.success());
     }
 
     @GetMapping("size/getAllNoActive")
@@ -71,41 +94,6 @@ public class SizeController {
         );
     }
 
-    @PostMapping("size/create")
-    public ResponseEntity<ResponseDTO> createSize(@RequestBody SizeDto sizeDto){
-        try {
-            SizeDto sizeDto1 = this.sizeService.create(sizeDto);
-            return  ResponseEntity.ok(
-                    ResponseDTO.builder()
-                            .status(CREATED)
-                            .data(Map.of("size", sizeDto1))
-                            .statusCode(CREATED.value())
-                            .timeStamp(LocalDateTime.now())
-                            .build()
-            );
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @PutMapping("size/update")
-    public ResponseEntity<ResponseDTO> updateSize(
-            @RequestBody SizeDto sizeDto
-    ){
-        try {
-            SizeDto sizeDto1 = this.sizeService.update(sizeDto);
-            return  ResponseEntity.ok(
-                    ResponseDTO.builder()
-                            .status(OK)
-                            .data(Map.of("size", sizeDto1))
-                            .statusCode(OK.value())
-                            .timeStamp(LocalDateTime.now())
-                            .build()
-            );
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
 
     @PutMapping("size/restore/{id}")
     public ResponseEntity<ResponseDTO> restore(
@@ -122,18 +110,4 @@ public class SizeController {
         );
     }
 
-    @DeleteMapping("size/delete/{id}")
-    public ResponseEntity<ResponseDTO> delete(
-            @PathVariable("id") Integer sizeId
-    ){
-        boolean res = this.sizeService.delete(sizeId);
-        return ResponseEntity.ok(
-                ResponseDTO.builder()
-                        .message("Delete " + (res ? "success" : "false"))
-                        .status(res ? OK : INTERNAL_SERVER_ERROR)
-                        .data(Map.of("res",res ))
-                        .statusCode(res ? OK.value() : INTERNAL_SERVER_ERROR.value())
-                        .build()
-        );
-    }
 }
