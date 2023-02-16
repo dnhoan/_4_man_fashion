@@ -101,23 +101,6 @@ public class SizeServiceImp implements SizeService {
     }
 
     @Override
-    public List<Size> findByName(String name) {
-        return this.sizeRepository.findByName(name);
-
-    }
-
-    @Override
-    public List<Size> findByNameNoActive(String name) {
-
-        return this.sizeRepository.findByNameNoActive(name);
-    }
-
-        @Override
-    public List<Size> getAllNoActive() {
-        return this.sizeRepository.getAllNoActive();
-    }
-
-    @Override
     @Transactional
     public boolean restore(Integer sizeId) {
         try {
@@ -130,50 +113,6 @@ public class SizeServiceImp implements SizeService {
             return false;
         }
     }
-
-//    @Override
-//    @Transactional
-//    public boolean delete(Integer sizeId) {
-//        try {
-//            this.sizeRepository.deleteSize(sizeId);
-//            return true;
-//
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
-
-
-//
-//
-//    private SizeDto sizeMapToSizeDto(Size size) {
-//        return SizeDto.builder()
-//                .id(size.getId())
-//                .size(size.getSize())
-//                .status(size.getStatus())
-//                .build();
-//    }
-//
-//    private Size sizeDtoMapToSize(SizeDto sizeDto) {
-//        Size size = Size.builder()
-//                .id(sizeDto.getId())
-//                .size(sizeDto.getSize())
-//                .status(1)
-//                .build();
-//
-//        return size;
-//    }
-//
-//    private Size updateSize(SizeDto sizeDto) {
-//        Size size = Size.builder()
-//                .size(sizeDto.getSize())
-//                .build();
-//
-//        return size;
-//    }
-//
 
 
 }
