@@ -1,12 +1,10 @@
 package com.example._4_man_fashion.controllers.admin;
 
-import com.example._4_man_fashion.DTOs.ModelsDto;
 import com.example._4_man_fashion.DTOs.ResponseDTO;
 import com.example._4_man_fashion.DTOs.SizeDto;
 import com.example._4_man_fashion.Service.SizeService;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.PageDTO;
-import com.example._4_man_fashion.entities.Models;
 import com.example._4_man_fashion.entities.Size;
 import com.example._4_man_fashion.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.*;
@@ -55,45 +51,6 @@ public class SizeController {
         sizeService.delete(id);
         return ResponseEntity.ok(ApiResponse.success());
     }
-
-    @GetMapping("size/getAllNoActive")
-    public ResponseEntity<ResponseDTO> getAllSizeNoActive() {
-        return ResponseEntity.ok(
-                ResponseDTO.builder()
-                        .status(OK)
-                        .data(Map.of("size", this.sizeService.getAllNoActive()))
-                        .statusCode(OK.value())
-                        .timeStamp(LocalDateTime.now())
-                        .build()
-        );
-    }
-
-    @GetMapping("size/searchByName")
-    public ResponseEntity<ResponseDTO> getByName(@RequestParam("name") String name) {
-        List<Size> sizes = this.sizeService.findByName(name);
-        return ResponseEntity.ok(
-                ResponseDTO.builder()
-                        .data(Map.of("size", sizes))
-                        .status(OK)
-                        .statusCode(OK.value())
-                        .timeStamp(LocalDateTime.now())
-                        .build()
-        );
-    }
-
-    @GetMapping("size/searchByNameNoActive")
-    public ResponseEntity<ResponseDTO> getByNameNoActive(@RequestParam("name") String name) {
-        List<Size> sizes = this.sizeService.findByNameNoActive(name);
-        return ResponseEntity.ok(
-                ResponseDTO.builder()
-                        .data(Map.of("size", sizes))
-                        .status(OK)
-                        .statusCode(OK.value())
-                        .timeStamp(LocalDateTime.now())
-                        .build()
-        );
-    }
-
 
     @PutMapping("size/restore/{id}")
     public ResponseEntity<ResponseDTO> restore(
