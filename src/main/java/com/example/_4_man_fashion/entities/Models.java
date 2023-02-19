@@ -2,8 +2,7 @@ package com.example._4_man_fashion.entities;
 
 import javax.persistence.*;
 
-import com.example._4_man_fashion.DTOs.ModelsDto;
-import com.example._4_man_fashion.dto.ColorDTO;
+import com.example._4_man_fashion.dto.ModelsDto;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 

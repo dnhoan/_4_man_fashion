@@ -1,4 +1,4 @@
-package com.example._4_man_fashion.DTOs;
+package com.example._4_man_fashion.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
