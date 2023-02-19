@@ -1,7 +1,7 @@
 package com.example._4_man_fashion.controllers.admin;
 
-import com.example._4_man_fashion.DTOs.ModelsDto;
-import com.example._4_man_fashion.DTOs.ResponseDTO;
+import com.example._4_man_fashion.dto.ModelsDto;
+import com.example._4_man_fashion.dto.ResponseDTO;
 import com.example._4_man_fashion.Service.ModelsService;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.PageDTO;
