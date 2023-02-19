@@ -26,6 +26,7 @@ public class JwtUtils {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         return Jwts.builder()
+                .claim("info", userDetails)
                 .setSubject(userDetails.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date().getTime()) + this.jwtExpiration))
