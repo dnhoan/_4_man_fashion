@@ -56,4 +56,9 @@ public final class Constant {
         public static final Long EXPIRED_TIME = 5 * 60 * 1000L;
     }
 
+    public static final class Regex {
+        public static final String EMAIL = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+        public static final String PHONE_NUMBER = "(0[3|5|7|8|9])+([0-9]{8})\\b";
+    }
+
 }

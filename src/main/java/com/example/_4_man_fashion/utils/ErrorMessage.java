@@ -10,7 +10,7 @@ public enum ErrorMessage implements BaseMessage {
     //AuthError
     AUTH_USER_PASS_INVALID("AUTH_001", "User or Password invalid", "Tài khoản hoặc mật khẩu không chính xác"),
     UPDATE_FAIL_OBJECT_ALREADY_EXIST("008", "Update Fail, Object already exist", "Cập nhật lỗi, %s đã tồn tại thông tin tương ứng"),
-    CALL_INTERNAL_API_ERORR("009", "Internal Server Error", "Internal Server Error"),
+    CALL_INTERNAL_API_ERROR("009", "Internal Server Error", "Internal Server Error"),
 
     OBJECT_CAN_NOT_UPDATE("010", "Object can not update", "%s không được phép cập nhật"),
     CUSTOM_ARGUMENT_NOT_VALID("007", "Method argument not valid", "Tham số không chính xác %s"),
