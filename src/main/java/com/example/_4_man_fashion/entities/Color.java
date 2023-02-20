@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class Color {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", unique = true, nullable = false)
     private Integer id;
 
     @Column(name = "color_code", nullable = false, length = 20)

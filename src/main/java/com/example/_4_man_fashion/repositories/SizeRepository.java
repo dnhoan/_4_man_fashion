@@ -1,6 +1,5 @@
 package com.example._4_man_fashion.repositories;
 
-import com.example._4_man_fashion.entities.Models;
 import com.example._4_man_fashion.entities.Size;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

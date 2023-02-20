@@ -1,6 +1,5 @@
 package com.example._4_man_fashion.repositories;
 
-import com.example._4_man_fashion.entities.Color;
 import com.example._4_man_fashion.entities.Models;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +32,7 @@ public interface ModelsRepository extends JpaRepository<Models, Integer> {
     @Query("select model from Models model where model.status = 0 order by model.id")
     List<Models> getAllNoActive();
 
-    @Query("select model from Models model where (:name is null or model.modelsName like :name) and (:status = -1 or model.status = :status) order by model.ctime, model.modelsName")
+    @Query("select model from Models model where (:name is null or model.modelsName like :name) and (:status = -1 or model.status = :status) order by model.ctime, model.modelsName desc")
     Page<Models> getModelsByName(Pageable pageable, Integer status, String name);
 
     boolean existsByModelsNameLike(String name);

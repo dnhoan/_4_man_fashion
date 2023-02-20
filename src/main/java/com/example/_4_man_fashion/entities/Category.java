@@ -1,5 +1,6 @@
 package com.example._4_man_fashion.entities;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.*;
@@ -17,10 +18,10 @@ import lombok.*;
 @Setter
 @Entity
 @Table(name = "categories")
-public class Category {
+public class Category implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", unique = true, nullable = false)
     private Integer id;
 
     @Column(name = "category_name", nullable = false, length = 255)
@@ -34,6 +35,7 @@ public class Category {
 
     @Column(name = "mtime")
     private LocalDateTime mtime;
+
 
     public static Category fromDTO(CategoryDTO dto) {
         Category entity = new Category();

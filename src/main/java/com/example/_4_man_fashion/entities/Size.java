@@ -2,7 +2,6 @@ package com.example._4_man_fashion.entities;
 
 import javax.persistence.*;
 
-import com.example._4_man_fashion.DTOs.ModelsDto;
 import com.example._4_man_fashion.DTOs.SizeDto;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
@@ -19,7 +18,7 @@ import java.time.LocalDateTime;
 public class Size {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", unique = true, nullable = false)
     private Integer id;
 
     @Column(name = "size", nullable = false, length = 10)
@@ -33,7 +32,6 @@ public class Size {
 
     @Column(name = "mtime")
     private LocalDateTime mtime;
-
 
     public static Size fromDTO(SizeDto dto) {
         Size entity = new Size();

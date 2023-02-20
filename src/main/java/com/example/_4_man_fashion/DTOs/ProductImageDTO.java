@@ -1,9 +1,8 @@
 package com.example._4_man_fashion.DTOs;
 
+import com.example._4_man_fashion.entities.Product;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -11,10 +10,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SizeDto {
-    private int id;
-    private String sizeName;
-    private int status;
-    private LocalDateTime ctime;
-    private LocalDateTime mtime;
+public class ProductImageDTO {
+
+    private Integer id;
+
+    private Product product;
+
+    private String image;
 }

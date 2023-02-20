@@ -16,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -49,12 +48,12 @@ public class ColorServiceImpl {
 
     @Transactional
     public Color create(ColorDTO colorDTO) {
-        if(StringCommon.isNullOrBlank(colorDTO.getColorName())) {
+        if (StringCommon.isNullOrBlank(colorDTO.getColorName())) {
             throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
         }
 
         boolean isExistColorName = colorRepository.existsByColorNameLike(colorDTO.getColorName().trim());
-        if(isExistColorName) {
+        if (isExistColorName) {
             throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Tên màu sắc"));
         }
 
@@ -67,16 +66,16 @@ public class ColorServiceImpl {
 
     public Color update(ColorDTO colorDTO) {
         Optional<Color> optionalColor = this.colorRepository.findById(colorDTO.getId());
-        if(optionalColor.isEmpty())
+        if (optionalColor.isEmpty())
             throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Color Id"));
 
-        if(StringCommon.isNullOrBlank(colorDTO.getColorName()))
+        if (StringCommon.isNullOrBlank(colorDTO.getColorName()))
             throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID.format("Tên màu sắc"));
 
         Color color = optionalColor.get();
-        if(!color.getColorName().equals(colorDTO.getColorName())) {
+        if (!color.getColorName().equals(colorDTO.getColorName())) {
             boolean isExistColorName = colorRepository.existsByColorNameLike(colorDTO.getColorName().trim());
-            if(isExistColorName) {
+            if (isExistColorName) {
                 throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Tên màu sắc"));
             }
         }
@@ -90,7 +89,7 @@ public class ColorServiceImpl {
 
     public void delete(Integer id) {
         Optional<Color> optionalColor = this.colorRepository.findById(id);
-        if(optionalColor.isEmpty())
+        if (optionalColor.isEmpty())
             throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Color Id"));
 
         Color color = optionalColor.get();
