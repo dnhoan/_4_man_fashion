@@ -1,7 +1,6 @@
 package com.example._4_man_fashion.repositories;
 
 import com.example._4_man_fashion.entities.Color;
-import com.example._4_man_fashion.entities.Material;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,4 +1,4 @@
-CREATE TABLE ACCOUNT_ROLES(
+CREATE TABLE ORDER_VOUCHER(
                               id SERIAL PRIMARY KEY,
                               order_id bigint,
                               voucher_id bigint,

@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class Size {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", unique = true, nullable = false)
     private Integer id;
 
     @Column(name = "size", nullable = false, length = 10)
@@ -32,7 +32,6 @@ public class Size {
 
     @Column(name = "mtime")
     private LocalDateTime mtime;
-
 
     public static Size fromDTO(SizeDto dto) {
         Size entity = new Size();

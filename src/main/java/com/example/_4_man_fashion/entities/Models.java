@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class Models {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", unique = true, nullable = false)
     private Integer id;
 
     @Column(name = "model_name", nullable = false, length = 100)
@@ -32,6 +32,7 @@ public class Models {
 
     @Column(name = "mtime")
     private LocalDateTime mtime;
+
 
     public static Models fromDTO(ModelsDto dto) {
         Models entity = new Models();

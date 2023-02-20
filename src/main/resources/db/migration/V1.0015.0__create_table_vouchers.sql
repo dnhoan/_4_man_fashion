@@ -9,5 +9,5 @@ CREATE TABLE VOUCHERS
     quantity float,
     ctime timestamp DEFAULT current_timestamp,
     mtime timestamp,
-    status int,
+    status int
 );

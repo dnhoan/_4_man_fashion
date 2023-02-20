@@ -4,6 +4,3 @@ application:
       secretKey: de6aaeabadeccc598160172044da9c566242ae3b
       tokenValidityMilliseconds: 60 * 60 * 60 * 1000
       rememberMeTokenValiditySeconds: 59 * 60 * 60 * 1000
-
-server:
-  port: 8080

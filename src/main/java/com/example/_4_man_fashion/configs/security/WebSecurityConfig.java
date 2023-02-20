@@ -77,9 +77,9 @@ public class WebSecurityConfig {
                 .antMatchers("/v2/api-docs", "/swagger-resources/configuration/ui", "/swagger-resources", "/swagger-resources/configuration/security", "/swagger-ui/index.html#/", "/webjars/**").permitAll()
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/common/**").permitAll()
-                .antMatchers("/api/user/**").hasAuthority(Constant.Role.USER)
-                .antMatchers("/api/admin/**").hasAuthority(Constant.Role.ADMIN)
-                .antMatchers("/api/employee/**").hasAnyAuthority(Constant.Role.ADMIN, Constant.Role.EMPLOYEE)
+//                .antMatchers("/api/user/**").hasAuthority(Constant.Role.USER)
+//                .antMatchers("/api/admin/**").hasAuthority(Constant.Role.ADMIN)
+//                .antMatchers("/api/employee/**").hasAnyAuthority(Constant.Role.ADMIN, Constant.Role.EMPLOYEE)
                 .anyRequest().permitAll();
 
         httpSecurity.authenticationProvider(authenticationProvider());
