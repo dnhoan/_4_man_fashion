@@ -1,7 +1,7 @@
 package com.example._4_man_fashion.Service;
 
 import com.example._4_man_fashion.constants.Constant;
-import com.example._4_man_fashion.DTOs.ModelsDto;
+import com.example._4_man_fashion.dto.ModelsDto;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.entities.Models;
 import com.example._4_man_fashion.repositories.ModelsRepository;

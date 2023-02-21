@@ -2,6 +2,7 @@ package com.example._4_man_fashion.entities;
 
 import com.example._4_man_fashion.dto.MaterialDTO;
 import javax.persistence.*;
+
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 public class Material {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", unique = true, nullable = false)
     private Integer id;
 
     @Column(name = "material_name", nullable = false, length = 225)
