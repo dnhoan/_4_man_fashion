@@ -45,7 +45,7 @@ public class AuthController {
 
         JwtResponse jwtResponse = this.authService.login(loginRequest);
 
-        return ResponseEntity.ok(jwtResponse);
+        return ResponseEntity.ok(ApiResponse.success(jwtResponse));
     }
 
     @PostMapping("signup")

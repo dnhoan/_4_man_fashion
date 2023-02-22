@@ -21,12 +21,6 @@ public class ProductDetail {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
-
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "size_id")
     private Size size;
@@ -47,9 +41,14 @@ public class ProductDetail {
     @Column(name = "size", nullable = false, length = 225)
     private String sizeName;
 
+    @Column(name = "color_name", nullable = false, length = 225)
+    private String colorName;
+
+    @Column(name = "product_id", nullable = false)
+    private Integer productId;
+
     @Column(name = "status")
     private int status;
-
 
     public static ProductDetail fromDTO(ProductDetailDTO dto) {
         ProductDetail entity = new ProductDetail();

@@ -7,6 +7,7 @@ import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -68,6 +69,8 @@ public class Product {
     @Column(name = "mtime")
     private LocalDateTime mtime;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProductImage> productImages;
 
     public static Product fromDTO(ProductDTO dto) {
         Product entity = new Product();

@@ -3,16 +3,20 @@ package com.example._4_man_fashion.entities;
 import com.example._4_man_fashion.dto.MaterialDTO;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "materials")
 public class Material {
@@ -32,6 +36,10 @@ public class Material {
 
     @Column(name = "mtime")
     private LocalDateTime mtime;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "material", cascade = CascadeType.ALL)
+    private List<Product> product;
 
     public static Material fromDTO(MaterialDTO dto) {
         Material entity = new Material();

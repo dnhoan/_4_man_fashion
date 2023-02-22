@@ -13,12 +13,13 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductDetailDTO {
     private Integer id;
-//    private Product product;
+    private Integer productId;
     private Size size;
     private Color color;
     private int stock;
     private String productDetailCode;
     private Float price;
     private String sizeName;
+    private String colorName;
     private int status;
 }
