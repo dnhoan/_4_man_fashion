@@ -2,10 +2,13 @@ package com.example._4_man_fashion.entities;
 
 import com.example._4_man_fashion.dto.ColorDTO;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -28,6 +31,10 @@ public class Color {
 
     @Column(name = "status")
     private int status;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "color", cascade = CascadeType.ALL)
+    private List<ProductDetail> productDetails;
 
     @Column(name = "ctime")
     private LocalDateTime ctime;

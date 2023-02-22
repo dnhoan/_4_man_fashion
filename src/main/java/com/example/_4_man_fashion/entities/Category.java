@@ -2,9 +2,12 @@ package com.example._4_man_fashion.entities;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.beans.BeanUtils;
 
 import com.example._4_man_fashion.dto.CategoryDTO;
@@ -16,6 +19,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "categories")
 public class Category implements Serializable {
@@ -36,6 +40,9 @@ public class Category implements Serializable {
     @Column(name = "mtime")
     private LocalDateTime mtime;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<Product> product;
 
     public static Category fromDTO(CategoryDTO dto) {
         Category entity = new Category();
