@@ -14,16 +14,23 @@ import java.util.stream.Collectors;
 @Service
 public class ProductDetailServiceImpl implements ProductDetailService{
 
-    @Autowired
-    private ProductDetailRepository productDetailRepository;
+//    @Autowired
+//    private ProductDetailRepository productDetailRepository;
+//
+//    @Autowired
+//    private ModelMapper modelMapper;
 
-    @Autowired
-    private ModelMapper modelMapper;
+//    @Override
+//    @Transactional
+//    public List<ProductDetailDTO> getProductDetailsByProductId(Integer product_id, Integer status) {
+//        List<ProductDetail> productDetails = this.productDetailRepository.getProductDetailsByProductId(product_id, status);
+//        return productDetails.stream().map(p -> this.modelMapper.map(p, ProductDetailDTO.class)).collect(Collectors.toList());
+//    }
 
-    @Override
-    @Transactional
-    public List<ProductDetailDTO> getProductDetailsByProductId(Integer product_id, Integer status) {
-        List<ProductDetail> productDetails = this.productDetailRepository.getProductDetailsByProductId(product_id, status);
-        return productDetails.stream().map(p -> this.modelMapper.map(p, ProductDetailDTO.class)).collect(Collectors.toList());
-    }
+//    @Override
+//    @Transactional
+//    public List<ProductDetailDTO> createProductDetailsByProductId(Integer product_id, List<ProductDetailDTO> productDetailDTOS) {
+//        List<ProductDetail> productDetails = this.productDetailRepository.saveAll(productDetailDTOS);
+//        return null;
+//    }
 }

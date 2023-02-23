@@ -30,9 +30,9 @@ public class ProductController {
     }
 
     @PostMapping("/product/create")
-    public ResponseEntity<ApiResponse<Product>> create(@Valid @RequestBody ProductDTO dto) {
-        Product product = productService.create(dto);
-        return ResponseEntity.ok(ApiResponse.success(product));
+    public ResponseEntity<ApiResponse<ProductDTO>> create(@Valid @RequestBody ProductDTO dto) {
+        ProductDTO productDTO = this.productService.create(dto);
+        return ResponseEntity.ok(ApiResponse.success(productDTO));
     }
 
     @PutMapping("/product/update")

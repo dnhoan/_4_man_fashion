@@ -1,11 +1,13 @@
 package com.example._4_man_fashion.entities;
 
+import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.ProductDetailDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Builder
 @AllArgsConstructor
@@ -44,11 +46,29 @@ public class ProductDetail {
     @Column(name = "color_name", nullable = false, length = 225)
     private String colorName;
 
-    @Column(name = "product_id", nullable = false)
-    private Integer productId;
+//    @Column(name = "product_id", nullable = false)
+//    private Integer productId;
 
     @Column(name = "status")
     private int status;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    @PrePersist
+    public void prePersist() {
+        status = Constant.Status.ACTIVE;
+        colorName = color.getColorName();
+        sizeName = size.getSizeName();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+//        materialName = material.getMaterialName();
+//        categoryName = category.getCategoryName();
+    }
 
     public static ProductDetail fromDTO(ProductDetailDTO dto) {
         ProductDetail entity = new ProductDetail();
