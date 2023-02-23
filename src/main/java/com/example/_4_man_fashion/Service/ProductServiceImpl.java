@@ -5,6 +5,8 @@ import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.dto.ProductDetailDTO;
 import com.example._4_man_fashion.entities.Product;
+import com.example._4_man_fashion.entities.ProductDetail;
+import com.example._4_man_fashion.entities.ProductImage;
 import com.example._4_man_fashion.repositories.ProductRepository;
 import com.example._4_man_fashion.utils.DATNException;
 import com.example._4_man_fashion.utils.ErrorMessage;
@@ -38,12 +40,7 @@ public class ProductServiceImpl implements ProductService {
     public PageDTO<ProductDTO> getAll(int offset, int limit, Integer status, String search) {
         Pageable pageable = PageRequest.of(offset, limit);
         Page<Product> page = this.productRepository.getProductByName(pageable, status, StringCommon.getLikeCondition(search));
-        List<ProductDTO> productDTOList = page.stream().map(pro -> {
-            ProductDTO productDTO = this.modelMapper.map(pro, ProductDTO.class);
-            List<ProductDetailDTO> productDetailDTOS = this.productDetailService.getProductDetailsByProductId(productDTO.getId(), status);
-            productDTO.setProductDetails(productDetailDTOS);
-            return  productDTO;
-        }).collect(Collectors.toList());
+        List<ProductDTO> productDTOList = page.stream().map(product -> this.modelMapper.map(product, ProductDTO.class)).collect(Collectors.toList());
         return new PageDTO<ProductDTO>(
                 page.getTotalPages(),
                 page.getTotalElements(),
@@ -58,7 +55,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Transactional
-    public Product create(ProductDTO productDTO) {
+    public ProductDTO create(ProductDTO productDTO) {
         if (StringCommon.isNullOrBlank(productDTO.getProductName())) {
             throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
         }
@@ -68,11 +65,21 @@ public class ProductServiceImpl implements ProductService {
             throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Tên sản phẩm"));
         }
 
-        productDTO.setCtime(LocalDateTime.now());
-        productDTO.setStatus(Constant.Status.ACTIVE);
+        Product product = this.modelMapper.map(productDTO, Product.class);
+        Product finalProduct = product;
 
-        return this.productRepository.save(Product.fromDTO(productDTO));
+        product.setProductImages(product.getProductImages().stream().peek(productImage -> productImage.setProduct(finalProduct)).collect(Collectors.toList()));
 
+        List<ProductDetail> productDetails = productDTO.getProductDetails().stream().map(productDetailDTO -> {
+            ProductDetail productDetail = this.modelMapper.map(productDetailDTO, ProductDetail.class);
+            productDetail.setProduct(finalProduct);
+            return productDetail;
+        }).toList();
+        product.setProductDetails(productDetails);
+
+        product = this.productRepository.save(product);
+
+        return this.modelMapper.map(product, ProductDTO.class);
     }
 
     public Product update(ProductDTO productDTO) {

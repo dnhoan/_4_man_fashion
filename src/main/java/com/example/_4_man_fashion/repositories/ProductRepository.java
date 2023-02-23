@@ -12,5 +12,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("select product from Product product where (:name is null or product.productName like :name) and (:status = -1 or product.status = :status) order by product.ctime, product.productName")
     Page<Product> getProductByName(Pageable pageable, Integer status, String name);
 
-    boolean existsByProductNameLike(String name);
+    boolean existsByProductNameLike(String productName);
 }

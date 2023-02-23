@@ -1,5 +1,6 @@
 package com.example._4_man_fashion.entities;
 
+import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.ProductDTO;
 import lombok.*;
 import org.hibernate.annotations.Type;
@@ -69,8 +70,28 @@ public class Product {
     @Column(name = "mtime")
     private LocalDateTime mtime;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ProductImage> productImages;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProductDetail> productDetails;
+
+    @PrePersist
+    public void prePersist() {
+        ctime = LocalDateTime.now();
+        status = Constant.Status.ACTIVE;
+        materialName = material.getMaterialName();
+        categoryName = category.getCategoryName();
+        modelName = model.getModelsName();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        mtime = LocalDateTime.now();
+        materialName = material.getMaterialName();
+        categoryName = category.getCategoryName();
+        modelName = model.getModelsName();
+    }
 
     public static Product fromDTO(ProductDTO dto) {
         Product entity = new Product();

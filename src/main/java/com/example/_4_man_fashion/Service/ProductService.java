@@ -8,7 +8,7 @@ public interface ProductService {
 
     PageDTO<ProductDTO> getAll(int offset, int limit, Integer status, String search);
 
-    Product create(ProductDTO productDTO);
+    ProductDTO create(ProductDTO productDTO);
 
     Product update(ProductDTO productDTO);
 

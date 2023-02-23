@@ -11,10 +11,10 @@ import java.util.List;
 @Repository
 public interface ProductDetailRepository extends JpaRepository<ProductDetail, Integer> {
 
-    @Query("select p from ProductDetail p where p.productId = :product_id and p.status =:status")
-    List<ProductDetail> getProductDetailsByProductId(
-            @Param("product_id") Integer product_id ,
-            @Param("status") Integer status
-    );
+//    @Query("select p from ProductDetail p where p.productId = :product_id and p.status =:status")
+//    List<ProductDetail> getProductDetailsByProductId(
+//            @Param("product_id") Integer product_id ,
+//            @Param("status") Integer status
+//    );
 
 }
