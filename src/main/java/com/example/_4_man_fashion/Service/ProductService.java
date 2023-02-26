@@ -2,7 +2,6 @@ package com.example._4_man_fashion.Service;
 
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.dto.ProductDTO;
-import com.example._4_man_fashion.entities.Product;
 
 public interface ProductService {
 
@@ -10,7 +9,7 @@ public interface ProductService {
 
     ProductDTO create(ProductDTO productDTO);
 
-    Product update(ProductDTO productDTO);
+    ProductDTO update(ProductDTO productDTO);
 
-    void delete(Integer id);
+    void updateStatus(Integer id, Integer status);
 }

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(Constant.Api.Path.ADMIN)
@@ -36,14 +37,14 @@ public class ProductController {
     }
 
     @PutMapping("/product/update")
-    public ResponseEntity<ApiResponse<Product>> update(@Valid @RequestBody ProductDTO dto) {
-        Product product = productService.update(dto);
+    public ResponseEntity<ApiResponse<ProductDTO>> update(@Valid @RequestBody ProductDTO dto) {
+        ProductDTO product = productService.update(dto);
         return ResponseEntity.ok(ApiResponse.success(product));
     }
 
-    @DeleteMapping("/product/delete/{id}")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Integer id) {
-        productService.delete(id);
-        return ResponseEntity.ok(ApiResponse.success());
+    @PutMapping("/product/updateStatus/{id}")
+    public ResponseEntity<ApiResponse<String>> updateStatus(@PathVariable Integer id, @RequestParam(value = "status", defaultValue = "0") Integer status) {
+        productService.updateStatus(id, status);
+        return ResponseEntity.ok(ApiResponse.success(Objects.equals(status, Constant.Status.ACTIVE) ? "Xóa sản phẩm thành công" : "Khôi phục sản phẩm thành công"));
     }
 }

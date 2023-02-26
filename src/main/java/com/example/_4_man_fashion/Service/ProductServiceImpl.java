@@ -7,6 +7,7 @@ import com.example._4_man_fashion.dto.ProductDetailDTO;
 import com.example._4_man_fashion.entities.Product;
 import com.example._4_man_fashion.entities.ProductDetail;
 import com.example._4_man_fashion.entities.ProductImage;
+import com.example._4_man_fashion.repositories.ProductDetailRepository;
 import com.example._4_man_fashion.repositories.ProductRepository;
 import com.example._4_man_fashion.utils.DATNException;
 import com.example._4_man_fashion.utils.ErrorMessage;
@@ -34,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
     private ModelMapper modelMapper;
 
     @Autowired
-    private ProductDetailService productDetailService;
+    private ProductDetailRepository productDetailRepository;
 
     @Transactional
     public PageDTO<ProductDTO> getAll(int offset, int limit, Integer status, String search) {
@@ -82,7 +83,8 @@ public class ProductServiceImpl implements ProductService {
         return this.modelMapper.map(product, ProductDTO.class);
     }
 
-    public Product update(ProductDTO productDTO) {
+    @Transactional
+    public ProductDTO update(ProductDTO productDTO) {
         Optional<Product> products = this.productRepository.findById(productDTO.getId());
         if (products.isEmpty())
             throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Mã sản phẩm"));
@@ -98,22 +100,23 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
-        product.setCategoryName(productDTO.getProductName());
-        product.setProductId(productDTO.getProductId());
-        product.setMtime(LocalDateTime.now());
-        product.setStatus(productDTO.getStatus());
-        return this.productRepository.save(product);
+        product = this.modelMapper.map(productDTO, Product.class);
+        Product finalProduct = product;
+
+        product.setProductImages(product.getProductImages().stream().peek(productImage -> productImage.setProduct(finalProduct)).collect(Collectors.toList()));
+
+        product = this.productRepository.save(product);
+
+        return this.modelMapper.map(product, ProductDTO.class);
     }
 
-    public void delete(Integer id) {
-        Optional<Product> optionalProduct = this.productRepository.findById(id);
-        if (optionalProduct.isEmpty())
+    @Transactional
+    public void updateStatus(Integer id, Integer status) {
+        if (this.productRepository.existsById(id))
             throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Mã sản phẩm"));
 
-        Product product = optionalProduct.get();
-        product.setMtime(LocalDateTime.now());
-        product.setStatus(Constant.Status.INACTIVE);
+        this.productDetailRepository.updateProductDetailStatus(id, status);
 
-        this.productRepository.save(product);
+        this.productRepository.updateProductStatus(id, status);
     }
 }
