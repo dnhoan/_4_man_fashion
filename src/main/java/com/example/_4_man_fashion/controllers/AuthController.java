@@ -3,6 +3,8 @@ package com.example._4_man_fashion.controllers;
 import com.example._4_man_fashion.Service.AuthService;
 import com.example._4_man_fashion.configs.jwt.JwtUtils;
 import com.example._4_man_fashion.configs.security.UserDetailsImpl;
+import com.example._4_man_fashion.dto.PageDTO;
+import com.example._4_man_fashion.dto.ProductDTO;
 import com.example._4_man_fashion.entities.Account;
 import com.example._4_man_fashion.entities.Role;
 import com.example._4_man_fashion.models.ERole;
@@ -41,7 +43,7 @@ public class AuthController {
 
 
     @PostMapping("login")
-    public ResponseEntity<?> authenticateUser(@RequestBody @Valid LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse<JwtResponse>> authenticateUser(@RequestBody @Valid LoginRequest loginRequest) {
 
         JwtResponse jwtResponse = this.authService.login(loginRequest);
 
@@ -49,7 +51,7 @@ public class AuthController {
     }
 
     @PostMapping("signup")
-    public ResponseEntity<?> registerUser(@RequestBody @Valid SignupRequest signUpRequest) {
+    public ResponseEntity<ApiResponse<String>> registerUser(@RequestBody @Valid SignupRequest signUpRequest) {
 
         this.authService.signup(signUpRequest);
 
