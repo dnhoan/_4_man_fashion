@@ -2,6 +2,7 @@ package com.example._4_man_fashion.Service;
 
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.PageDTO;
+import com.example._4_man_fashion.entities.Category;
 import com.example._4_man_fashion.utils.DATNException;
 import com.example._4_man_fashion.utils.ErrorMessage;
 import com.example._4_man_fashion.utils.StringCommon;
@@ -44,6 +45,12 @@ public class ColorServiceImpl {
                 page.hasNext(),
                 page.hasPrevious()
         );
+    }
+
+    @Transactional
+    public List<Color> getListColor() {
+        List<Color> lstColor = this.colorRepository.findAll();
+        return lstColor;
     }
 
     @Transactional

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.*;
@@ -32,6 +33,12 @@ public class SizeController {
         return ResponseEntity.ok(ApiResponse.success(result));
     }
 
+
+    @GetMapping("size/getList")
+    public ResponseEntity<ApiResponse<List<Size>>> getList() {
+        List<Size> lstSize = this.sizeService.getListSize();
+        return ResponseEntity.ok(ApiResponse.success(lstSize));
+    }
 
     @PostMapping("/size/create")
     public ResponseEntity<ApiResponse<Size>> create(@Valid @RequestBody SizeDto dto) {

@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping(Constant.Api.Path.ADMIN)
@@ -27,6 +29,12 @@ public class MaterialController {
                                                                     @RequestParam(defaultValue = "") String search) {
         PageDTO<MaterialDTO> result = materialService.getAll(offset, limit, status, search);
         return ResponseEntity.ok(ApiResponse.success(result));
+    }
+
+    @GetMapping("material/getList")
+    public ResponseEntity<ApiResponse<List<Material>>> getList() {
+        List<Material> lstMate = this.materialService.getListMate();
+        return ResponseEntity.ok(ApiResponse.success(lstMate));
     }
 
     @PostMapping("/material/create")

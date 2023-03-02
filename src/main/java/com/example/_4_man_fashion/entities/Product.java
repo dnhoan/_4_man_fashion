@@ -27,7 +27,7 @@ public class Product {
     private String productName;
 
     @Column(name = "product_id", nullable = false, length = 20)
-    private String productId;
+    private Integer productId;
 
     @Column(name = "description")
     @Type(type = "org.hibernate.type.TextType")

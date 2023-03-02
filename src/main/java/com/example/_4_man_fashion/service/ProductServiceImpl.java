@@ -1,12 +1,10 @@
 package com.example._4_man_fashion.Service;
 
 import com.example._4_man_fashion.dto.ProductDTO;
-import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.PageDTO;
-import com.example._4_man_fashion.dto.ProductDetailDTO;
+import com.example._4_man_fashion.entities.Category;
 import com.example._4_man_fashion.entities.Product;
 import com.example._4_man_fashion.entities.ProductDetail;
-import com.example._4_man_fashion.entities.ProductImage;
 import com.example._4_man_fashion.repositories.ProductDetailRepository;
 import com.example._4_man_fashion.repositories.ProductRepository;
 import com.example._4_man_fashion.utils.DATNException;
@@ -20,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,6 +51,22 @@ public class ProductServiceImpl implements ProductService {
                 page.hasPrevious()
         );
     }
+
+    @Transactional
+    public List<Product> getListProduct() {
+        List<Product> lstProduct = this.productRepository.findAll();
+        return lstProduct;
+    }
+
+    @Override
+    public ProductDTO getById(Integer id) {
+        Optional<Product> product = this.productRepository.findById(id);
+        if (product.isPresent()) {
+            return this.modelMapper.map(product.get(), ProductDTO.class);
+        }
+        return null;
+    }
+
 
     @Transactional
     public ProductDTO create(ProductDTO productDTO) {

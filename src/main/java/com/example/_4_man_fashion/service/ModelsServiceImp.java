@@ -48,6 +48,12 @@ public class ModelsServiceImp implements ModelsService {
         );
     }
 
+    @Override
+    public List<Models> getListModel() {
+        List<Models> lstModel = this.modelsRepository.findAll();
+        return lstModel;
+    }
+
 
     @Transactional
     public Models create(ModelsDto modelsDto) {

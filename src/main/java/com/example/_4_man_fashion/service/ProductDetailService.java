@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ProductDetailService {
 
-//    List<ProductDetailDTO> getProductDetailsByProductId(Integer product_id , Integer status);
+    List<ProductDetailDTO> getProductDetailsByProductId(Integer product_id , Integer status);
 //
 //    List<ProductDetailDTO> createProductDetailsByProductId(Integer product_id, List<ProductDetailDTO> productDetailDTOS);
 }

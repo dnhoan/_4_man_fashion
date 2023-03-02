@@ -2,7 +2,6 @@ package com.example._4_man_fashion.controllers.admin;
 
 import com.example._4_man_fashion.Service.ProductService;
 import com.example._4_man_fashion.dto.ProductDTO;
-import com.example._4_man_fashion.Service.ProductServiceImpl;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.entities.Product;
@@ -12,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -27,6 +27,18 @@ public class ProductController {
                                                                  @RequestParam(defaultValue = "1") Integer status,
                                                                  @RequestParam(defaultValue = "") String search) {
         PageDTO<ProductDTO> result = productService.getAll(offset, limit, status, search);
+        return ResponseEntity.ok(ApiResponse.success(result));
+    }
+
+    @GetMapping("product/getList")
+    public ResponseEntity<ApiResponse<List<Product>>> getList() {
+        List<Product> lstProduct = this.productService.getListProduct();
+        return ResponseEntity.ok(ApiResponse.success(lstProduct));
+    }
+
+    @GetMapping("product/getById/{id}")
+    public ResponseEntity<ApiResponse<ProductDTO>> getById(@PathVariable Integer id) {
+        ProductDTO result = productService.getById(id);
         return ResponseEntity.ok(ApiResponse.success(result));
     }
 
