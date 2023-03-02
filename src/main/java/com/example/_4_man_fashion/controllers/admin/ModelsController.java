@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.*;
@@ -32,6 +33,12 @@ public class ModelsController {
                                                                  @RequestParam(defaultValue = "") String search) {
         PageDTO<ModelsDto> result = modelsService.getAll(offset, limit, status, search);
         return ResponseEntity.ok(ApiResponse.success(result));
+    }
+
+    @GetMapping("model/getList")
+    public ResponseEntity<ApiResponse<List<Models>>> getList() {
+        List<Models> lstModel = this.modelsService.getListModel();
+        return ResponseEntity.ok(ApiResponse.success(lstModel));
     }
 
 

@@ -3,6 +3,7 @@ package com.example._4_man_fashion.Service;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.MaterialDTO;
 import com.example._4_man_fashion.dto.PageDTO;
+import com.example._4_man_fashion.entities.Category;
 import com.example._4_man_fashion.entities.Material;
 import com.example._4_man_fashion.repositories.MaterialRepository;
 import com.example._4_man_fashion.utils.DATNException;
@@ -46,6 +47,12 @@ public class MaterialServiceImpl {
         );
     }
 
+
+    @Transactional
+    public List<Material> getListMate() {
+        List<Material> lstMate = this.materialRepository.findAll();
+        return lstMate;
+    }
     @Transactional
     public Material create(MaterialDTO materialDTO) {
         if (StringCommon.isNullOrBlank(materialDTO.getMaterialName())) {

@@ -48,6 +48,13 @@ public class SizeServiceImp implements SizeService {
         );
     }
 
+    @Override
+    public List<Size> getListSize() {
+        List<Size> lstSize = this.sizeRepository.findAll();
+        return lstSize;
+    }
+
+
     @Transactional
     public Size create(SizeDto sizeDto) {
         if(StringCommon.isNullOrBlank(sizeDto.getSizeName())) {

@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(Constant.Api.Path.ADMIN)
 public class CategoryController {
@@ -27,6 +29,12 @@ public class CategoryController {
             @RequestParam(defaultValue = "") String search) {
         PageDTO<CategoryDTO> result = cateService.getAll(offset, limit, status, search);
         return ResponseEntity.ok(ApiResponse.success(result));
+    }
+
+    @GetMapping("category/getList")
+    public ResponseEntity<ApiResponse<List<Category>>> getList() {
+        List<Category> lstCate = this.cateService.getListCate();
+        return ResponseEntity.ok(ApiResponse.success(lstCate));
     }
 
     @PostMapping("/category/create")
