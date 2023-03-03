@@ -3,6 +3,7 @@ package com.example._4_man_fashion.Service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.example._4_man_fashion.dto.CartItemDTO;
 import com.example._4_man_fashion.dto.ProductDetailDTO;
@@ -12,6 +13,7 @@ import com.example._4_man_fashion.entities.Customer;
 import com.example._4_man_fashion.repositories.CartItemRepository;
 import com.example._4_man_fashion.repositories.CartRepository;
 
+@Service
 public class CartItemServiceImpl implements CartItemService {
     @Autowired
     CartRepository cartRepository;
