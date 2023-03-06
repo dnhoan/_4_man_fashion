@@ -8,6 +8,7 @@ import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Random;
 
 @Builder
 @AllArgsConstructor
@@ -46,6 +47,9 @@ public class ProductDetail {
     @Column(name = "color_name", nullable = false, length = 225)
     private String colorName;
 
+    @Column(name = "product_detail_name", nullable = false, length = 1000)
+    private String productDetailName;
+
 //    @Column(name = "product_id", nullable = false)
 //    private Integer productId;
 
@@ -60,8 +64,7 @@ public class ProductDetail {
     @PrePersist
     public void prePersist() {
         status = Constant.Status.ACTIVE;
-        colorName = color.getColorName();
-        sizeName = size.getSizeName();
+        productDetailCode = "productDetailCode";
     }
 
     @PreUpdate

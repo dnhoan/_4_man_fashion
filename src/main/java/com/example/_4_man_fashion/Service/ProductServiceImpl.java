@@ -67,20 +67,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         Product product = this.modelMapper.map(productDTO, Product.class);
-        Product finalProduct = product;
-
-        product.setProductImages(product.getProductImages().stream().peek(productImage -> productImage.setProduct(finalProduct)).collect(Collectors.toList()));
-
-        List<ProductDetail> productDetails = productDTO.getProductDetails().stream().map(productDetailDTO -> {
-            ProductDetail productDetail = this.modelMapper.map(productDetailDTO, ProductDetail.class);
-            productDetail.setProduct(finalProduct);
-            return productDetail;
-        }).toList();
-        product.setProductDetails(productDetails);
-
-        product = this.productRepository.save(product);
-
-        return this.modelMapper.map(product, ProductDTO.class);
+        return getProductDTO(productDTO, product);
     }
 
     @Transactional
@@ -101,10 +88,25 @@ public class ProductServiceImpl implements ProductService {
         }
 
         product = this.modelMapper.map(productDTO, Product.class);
+        product.setMtime(LocalDateTime.now());
+
+        return getProductDTO(productDTO, product);
+    }
+
+    private ProductDTO getProductDTO(ProductDTO productDTO, Product product) {
         Product finalProduct = product;
 
         product.setProductImages(product.getProductImages().stream().peek(productImage -> productImage.setProduct(finalProduct)).collect(Collectors.toList()));
 
+        List<ProductDetail> productDetails = productDTO.getProductDetails().stream().map(productDetailDTO -> {
+            ProductDetail productDetail = this.modelMapper.map(productDetailDTO, ProductDetail.class);
+            productDetail.setProduct(finalProduct);
+            return productDetail;
+        }).toList();
+        product.setProductDetails(productDetails);
+        product.setCategoryName(product.getCategory().getCategoryName());
+        product.setModelName(product.getModel().getModelsName());
+        product.setMaterialName(product.getMaterial().getMaterialName());
         product = this.productRepository.save(product);
 
         return this.modelMapper.map(product, ProductDTO.class);

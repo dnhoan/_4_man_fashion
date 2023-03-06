@@ -1,0 +1,1 @@
+ALTER TABLE colors ALTER COLUMN color_code type varchar(20)

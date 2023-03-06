@@ -21,5 +21,6 @@ public class ProductDetailDTO {
     private Float price;
     private String sizeName;
     private String colorName;
+    private String productDetailName;
     private int status;
 }

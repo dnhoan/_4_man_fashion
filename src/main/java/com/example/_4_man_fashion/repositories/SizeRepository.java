@@ -15,7 +15,7 @@ public interface SizeRepository extends JpaRepository<Size, Integer> {
     @Query("update Size sz set sz.status = 1 where sz.id = :id")
     void restoreSize(@Param("id") Integer id);
 
-    @Query("select sz from Size sz where (:name is null or sz.sizeName like :name) and (:status = -1 or sz.status = :status) order by sz.ctime, sz.sizeName")
+    @Query("select sz from Size sz where (:name is null or sz.sizeName like :name) and (:status = -1 or sz.status = :status) order by sz.ctime desc, sz.sizeName")
     Page<Size> getSizeByName(Pageable pageable, Integer status, String name);
 
     boolean existsBySizeNameLike(String name);
