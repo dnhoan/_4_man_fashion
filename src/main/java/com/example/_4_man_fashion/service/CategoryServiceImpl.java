@@ -50,6 +50,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Transactional
+    public List<Category> getListCate() {
+        List<Category> lstCate = this.categoryRepository.findAll();
+        return lstCate;
+    }
+
+    @Transactional
     @Override
     public Category create(CategoryDTO categoryDTO) {
         if (StringCommon.isNullOrBlank(categoryDTO.getCategoryName())) {

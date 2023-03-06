@@ -30,7 +30,7 @@ public class Product {
 //    @GeneratedValue(generator = "prod-id-generator")
 //    @GenericGenerator(name = "prod-id-generator", strategy = "com.example._4_man_fashion.utils.generators.GeneratorProductId")
     @Column(name = "product_id", nullable = false, length = 20)
-    private String productId;
+    private Integer productId;
 
     @Column(name = "description")
     @Type(type = "org.hibernate.type.TextType")

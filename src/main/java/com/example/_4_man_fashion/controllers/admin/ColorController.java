@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping(Constant.Api.Path.ADMIN)
@@ -26,6 +28,13 @@ public class ColorController {
         PageDTO<ColorDTO> result = colorService.getAll(offset, limit, status, search);
         return ResponseEntity.ok(ApiResponse.success(result));
     }
+
+    @GetMapping("color/getList")
+    public ResponseEntity<ApiResponse<List<Color>>> getList() {
+        List<Color> lstColor = this.colorService.getListColor();
+        return ResponseEntity.ok(ApiResponse.success(lstColor));
+    }
+
 
     @PostMapping("/color/create")
     public ResponseEntity<ApiResponse<Color>> create(@Valid @RequestBody ColorDTO dto) {

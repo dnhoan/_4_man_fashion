@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.example._4_man_fashion.dto.CartDTO;
 import com.example._4_man_fashion.dto.CartItemDTO;
@@ -13,6 +14,7 @@ import com.example._4_man_fashion.entities.Cart;
 import com.example._4_man_fashion.entities.CartItem;
 import com.example._4_man_fashion.repositories.CartRepository;
 
+@Service
 public class CartServiceImpl implements CartService {
     @Autowired
     CartRepository cartRepository;

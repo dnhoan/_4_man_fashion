@@ -24,7 +24,7 @@ public class ProductDTO {
     @NotNull
     @NotBlank
     private String productName;
-    private String productId;
+    private Integer productId;
     private String description;
     private String detail;
     @NotNull
