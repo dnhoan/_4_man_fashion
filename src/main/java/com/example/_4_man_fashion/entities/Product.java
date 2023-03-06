@@ -3,6 +3,7 @@ package com.example._4_man_fashion.entities;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.ProductDTO;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.springframework.beans.BeanUtils;
 
@@ -26,6 +27,8 @@ public class Product {
     @Column(name = "product_name", nullable = false, length = 225)
     private String productName;
 
+//    @GeneratedValue(generator = "prod-id-generator")
+//    @GenericGenerator(name = "prod-id-generator", strategy = "com.example._4_man_fashion.utils.generators.GeneratorProductId")
     @Column(name = "product_id", nullable = false, length = 20)
     private Integer productId;
 
@@ -73,21 +76,13 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ProductImage> productImages;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private List<ProductDetail> productDetails;
 
     @PrePersist
     public void prePersist() {
         ctime = LocalDateTime.now();
         status = Constant.Status.ACTIVE;
-        materialName = material.getMaterialName();
-        categoryName = category.getCategoryName();
-        modelName = model.getModelsName();
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        mtime = LocalDateTime.now();
         materialName = material.getMaterialName();
         categoryName = category.getCategoryName();
         modelName = model.getModelsName();

@@ -1,0 +1,1 @@
+alter table PRODUCT_DETAILS ALTER COLUMN size_id type bigint;

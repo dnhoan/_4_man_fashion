@@ -43,6 +43,7 @@ public class ProductDTO {
     private List<ProductDetailDTO> productDetails;
     private LocalDateTime ctime;
     private LocalDateTime mtime;
+    private boolean isExpand = false;
 
 //    public void setProductImages(List<ProductImage> productImages) {
 //        this.productImages = productImages.stream().map(ProductImage::getImage).collect(Collectors.toList());
