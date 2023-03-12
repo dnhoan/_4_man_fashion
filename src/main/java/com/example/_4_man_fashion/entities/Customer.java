@@ -24,7 +24,7 @@ public class Customer {
     @Column(name = "gender")
     private int gender;
 
-    @Column(name = "birthDay")
+    @Column(name = "birthday")
     private String birthday;
 
     @Column(name = "phone_number", nullable = false)
