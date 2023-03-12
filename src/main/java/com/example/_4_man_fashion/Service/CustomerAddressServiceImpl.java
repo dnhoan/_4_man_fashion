@@ -61,7 +61,7 @@ public class CustomerAddressServiceImpl {
 
         customerAddressDTO.setStatus(Constant.Status.ACTIVE);
 
-        return (CustomerAddress) this.customerAddressReprository.save(CustomerAddress.fromDTO(customerAddressDTO));
+        return this.customerAddressReprository.save(CustomerAddress.fromDTO(customerAddressDTO));
 
     }
 
@@ -82,7 +82,7 @@ public class CustomerAddressServiceImpl {
         customerAddress.setProvince(customerAddressDTO.getProvince());
         customerAddress.setDetail(customerAddressDTO.getDetail());
         customerAddress.setStatus(customerAddressDTO.getStatus());
-        return (CustomerAddress) this.customerAddressReprository.save(customerAddress);
+        return this.customerAddressReprository.save(customerAddress);
     }
 
     public void delete(Integer id) {
@@ -95,4 +95,5 @@ public class CustomerAddressServiceImpl {
 
         this.customerAddressReprository.save(customerAddress);
     }
+
 }

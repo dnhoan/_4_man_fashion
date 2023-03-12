@@ -1,5 +1,6 @@
 package com.example._4_man_fashion.dto;
 
+import com.example._4_man_fashion.entities.Customer;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CustomerAddressDTO {
     private int id;
-    private CustomerDTO customer;
+    private Customer customer;
     private int wardCode;
     private String ward;
     private int districtCode;

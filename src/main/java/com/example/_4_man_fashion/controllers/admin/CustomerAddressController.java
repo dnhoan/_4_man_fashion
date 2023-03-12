@@ -14,7 +14,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping(Constant.Api.Path.ADMIN)
+@RequestMapping("hhh")
 public class CustomerAddressController {
     @Autowired
     public CustomerAddressServiceImpl customerAddressService;
