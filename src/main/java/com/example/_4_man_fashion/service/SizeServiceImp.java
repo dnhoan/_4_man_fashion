@@ -81,18 +81,18 @@ public class SizeServiceImp implements SizeService {
         if(StringCommon.isNullOrBlank(sizeDto.getSizeName()))
             throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID.format("Tên size"));
 
-        Size color = optionalSize.get();
-        if(!color.getSizeName().equals(sizeDto.getSizeName())) {
+        Size size = optionalSize.get();
+        if(!size.getSizeName().equals(sizeDto.getSizeName())) {
             boolean isExistColorName = sizeRepository.existsBySizeNameLike(sizeDto.getSizeName().trim());
             if(isExistColorName) {
                 throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Tên size"));
             }
         }
 
-        color.setSizeName(sizeDto.getSizeName());
-        color.setMtime(LocalDateTime.now());
-        color.setStatus(sizeDto.getStatus());
-        return this.sizeRepository.save(color);
+        size.setSizeName(sizeDto.getSizeName());
+        size.setMtime(LocalDateTime.now());
+        size.setStatus(sizeDto.getStatus());
+        return this.sizeRepository.save(size);
     }
 
     public void delete(Integer id) {
