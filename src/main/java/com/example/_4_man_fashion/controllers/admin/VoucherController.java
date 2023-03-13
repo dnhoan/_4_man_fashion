@@ -1,6 +1,7 @@
 package com.example._4_man_fashion.controllers.admin;
 
 import com.example._4_man_fashion.Service.VoucherService;
+import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.dto.VoucherDTO;
 import com.example._4_man_fashion.entities.Voucher;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("hhh")
+@RequestMapping(Constant.Api.Path.ADMIN)
 @CrossOrigin("*")
 public class VoucherController {
 
