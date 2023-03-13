@@ -14,6 +14,7 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
+@Table(name = "carts_items")
 public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +34,7 @@ public class CartItem {
     public static CartItem fromDTO(CartItemDTO dto) {
         CartItem entity = new CartItem();
         BeanUtils.copyProperties(dto, entity);
-        entity.setProductDetailId(dto.getProductDetailDto().getId());
+        entity.setProductDetailId(dto.getProductDetailCartDto().getId());
         return entity;
     }
 }
