@@ -1,9 +1,13 @@
 package com.example._4_man_fashion.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -50,4 +54,9 @@ public class Customer {
 
     @Column(name = "status")
     private Integer status;
+
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private Account account;
 }

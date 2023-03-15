@@ -1,6 +1,8 @@
 package com.example._4_man_fashion.configs.jwt;
 
 import com.example._4_man_fashion.configs.security.UserDetailsImpl;
+import com.example._4_man_fashion.utils.DATNException;
+import com.example._4_man_fashion.utils.ErrorMessage;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +26,9 @@ public class JwtUtils {
     public String generateJwtToken(Authentication authentication) {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
+        if (userDetails == null) {
+            throw new DATNException(ErrorMessage.AUTH_USER_PASS_INVALID);
+        }
         return Jwts.builder()
                 .claim("info", userDetails)
                 .setSubject(userDetails.getEmail())
@@ -55,7 +59,7 @@ public class JwtUtils {
             logger.error("JWT token is expired: {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
             logger.error("JWT token is unsupported: {}", e.getMessage());
-        } catch (IllegalArgumentException e ) {
+        } catch (IllegalArgumentException e) {
             logger.error("JWT claims string is empty: {}", e.getMessage());
         }
         return false;

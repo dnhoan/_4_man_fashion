@@ -1,6 +1,8 @@
 package com.example._4_man_fashion.entities;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.util.HashSet;
@@ -45,6 +47,9 @@ public class Account {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    @OneToOne(mappedBy = "account", fetch = FetchType.EAGER)
+    private Customer customer;
 
     @Column(name = "status")
     private Integer status;
