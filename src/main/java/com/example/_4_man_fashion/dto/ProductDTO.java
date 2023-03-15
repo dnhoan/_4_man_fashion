@@ -1,9 +1,6 @@
 package com.example._4_man_fashion.dto;
 
-import com.example._4_man_fashion.entities.Category;
-import com.example._4_man_fashion.entities.Material;
-import com.example._4_man_fashion.entities.Models;
-import com.example._4_man_fashion.entities.ProductImage;
+import com.example._4_man_fashion.entities.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -24,7 +21,7 @@ public class ProductDTO {
     @NotNull
     @NotBlank
     private String productName;
-    private Integer productId;
+    private String productId;
     private String description;
     private String detail;
     @NotNull
@@ -41,6 +38,8 @@ public class ProductDTO {
     @NotEmpty
     private List<ProductImage> productImages;
     private List<ProductDetailDTO> productDetails;
+    private List<Size> sizes;
+    private List<Color> colors;
     private LocalDateTime ctime;
     private LocalDateTime mtime;
     private boolean isExpand = false;

@@ -1,0 +1,1 @@
+alter table Customers ALTER COLUMN birthday type varchar(225);

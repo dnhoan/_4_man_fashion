@@ -2,11 +2,11 @@ package com.example._4_man_fashion.Service;
 
 import com.example._4_man_fashion.dto.ProductDTO;
 import com.example._4_man_fashion.dto.PageDTO;
-import com.example._4_man_fashion.entities.Category;
-import com.example._4_man_fashion.entities.Product;
-import com.example._4_man_fashion.entities.ProductDetail;
+import com.example._4_man_fashion.entities.*;
+import com.example._4_man_fashion.repositories.ColorRepository;
 import com.example._4_man_fashion.repositories.ProductDetailRepository;
 import com.example._4_man_fashion.repositories.ProductRepository;
+import com.example._4_man_fashion.repositories.SizeRepository;
 import com.example._4_man_fashion.utils.DATNException;
 import com.example._4_man_fashion.utils.ErrorMessage;
 import com.example._4_man_fashion.utils.StringCommon;
@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,6 +34,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductDetailRepository productDetailRepository;
+
+    @Autowired
+    private ColorRepository colorRepository;
+
+    @Autowired
+    private SizeRepository sizeRepository;
 
     @Transactional
     public PageDTO<ProductDTO> getAll(int offset, int limit, Integer status, String search) {
@@ -59,12 +66,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductDTO getById(Integer id) {
         Optional<Product> product = this.productRepository.findById(id);
-        if (product.isPresent()) {
-            return this.modelMapper.map(product.get(), ProductDTO.class);
-        }
-        return null;
+
+        ProductDTO productDTO =  product.map(value -> this.modelMapper.map(value, ProductDTO.class)).orElseThrow(() -> {
+            throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND_OR_INACTIVE.format("Sản phẩm "));
+        });
+
+        List<Color> colors = this.colorRepository.getColorsByProductId(id);
+        List<Size> sizes = this.sizeRepository.getSizesByProductId(id);
+        productDTO.setColors(colors);
+        productDTO.setSizes(sizes);
+
+        return  productDTO;
     }
 
 
