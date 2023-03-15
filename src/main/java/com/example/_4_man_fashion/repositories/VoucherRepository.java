@@ -18,4 +18,8 @@ public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
     boolean existsByVoucherNameAndIdIsNot(Integer id,String voucherName);
 
     boolean existsByVoucherCodeAndIdIsNot(Integer id,String voucherCode);
+
+    boolean existsByVoucherName(String voucherName);
+
+    boolean existsByVoucherCode(String voucherCode);
 }
