@@ -15,7 +15,11 @@ public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
             "order by voucher.ctime,voucher.startDate, voucher.voucherName, voucher.voucherCode")
     Page<Voucher> getVoucherByName(Pageable pageable, Integer status, String name);
 
-    boolean existsByVoucherNameLike(String name);
+    boolean existsByVoucherNameAndIdIsNot(Integer id,String voucherName);
 
-    boolean existsByVoucherCodeLike(String name);
+    boolean existsByVoucherCodeAndIdIsNot(Integer id,String voucherCode);
+
+    boolean existsByVoucherName(String voucherName);
+
+    boolean existsByVoucherCode(String voucherCode);
 }

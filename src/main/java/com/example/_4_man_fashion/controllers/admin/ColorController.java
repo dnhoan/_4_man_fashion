@@ -53,4 +53,5 @@ public class ColorController {
         colorService.delete(id);
         return ResponseEntity.ok(ApiResponse.success());
     }
+
 }

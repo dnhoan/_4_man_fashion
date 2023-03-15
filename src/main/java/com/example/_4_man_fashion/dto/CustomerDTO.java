@@ -9,28 +9,28 @@ import lombok.*;
 @Setter
 public class CustomerDTO {
 
-        private Integer id;
+    private Integer id;
 
-        private String customerName;
+    private String customerName;
 
-        private int gender;
+    private int gender;
 
-        private String birthday;
+    private String birthday;
 
-        private String phoneNumber;
+    private String phoneNumber;
 
-        private String address;
+    private String address;
 
-        private String email;
+    private String email;
 
-        private String avatar;
+    private String avatar;
 
-        private String note;
+    private String note;
 
-        private String ctime;
+    private String ctime;
 
-        private String mtime;
+    private String mtime;
 
-        private Integer status;
+    private Integer status;
 
 }

@@ -35,8 +35,14 @@ public class Voucher {
     @Column(name = "voucher_type")
     private int voucherType;
 
+    @Column(name = "discount")
+    private float discount;
+
     @Column(name = "quantity")
-    private float quantity;
+    private int quantity;
+
+    @Column(name = "minimum_invoice_value")
+    private float minimumInvoiceValue;
 
     @Column(name = "ctime")
     private LocalDateTime ctime;

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example._4_man_fashion.dto.CartItemDTO;
+import com.example._4_man_fashion.dto.ProductDetailCartDTO;
 import com.example._4_man_fashion.dto.ProductDetailDTO;
 import com.example._4_man_fashion.entities.Cart;
 import com.example._4_man_fashion.entities.CartItem;
@@ -22,12 +23,12 @@ public class CartItemServiceImpl implements CartItemService {
     CartItemRepository cartItemRepository;
 
     private CartItemDTO cartItemMapToCartItemDto(CartItem cartItem) {
-        ProductDetailDTO productDetailCartDto = this.cartRepository.getProductDetailByCartItemId(cartItem.getId());
+        ProductDetailCartDTO productDetailCartDto = this.cartRepository.getProductDetailByCartItemId(cartItem.getId());
         return CartItemDTO
                 .builder()
                 .id(cartItem.getId())
                 .amount(cartItem.getAmount())
-                .productDetailDto(productDetailCartDto)
+                .productDetailCartDto(productDetailCartDto)
                 .build();
     }
 
@@ -36,7 +37,7 @@ public class CartItemServiceImpl implements CartItemService {
                 .builder()
                 .id(cartItemDTO.getId())
                 .amount(cartItemDTO.getAmount())
-                .productDetailId(cartItemDTO.getProductDetailDto().getId())
+                .productDetailId(cartItemDTO.getProductDetailCartDto().getId())
                 .build();
     }
 
