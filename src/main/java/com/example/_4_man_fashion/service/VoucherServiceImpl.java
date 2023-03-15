@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -51,9 +52,6 @@ public class VoucherServiceImpl implements VoucherService {
 
     @Transactional
     public Voucher create(VoucherDTO voucherDTO) {
-        if (StringCommon.isNullOrBlank(voucherDTO.getVoucherCode())) {
-            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
-        }
         if (StringCommon.isNullOrBlank(voucherDTO.getVoucherName())) {
             throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
         }
@@ -61,12 +59,12 @@ public class VoucherServiceImpl implements VoucherService {
         String voucherCode = getAlphaNumericString(10);
 
 
-//        boolean isExistVoucherCode = voucherRepository.existsByVoucherCodeAndIdIsNot(voucherDTO.getId(), voucherDTO.getVoucherCode().trim());
+//        boolean isExistVoucherCode = voucherRepository.existsByVoucherCode(voucherDTO.getVoucherCode().trim());
 //        if(isExistVoucherCode) {
 //            throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Mã voucher"));
 //        }
 //
-//        boolean isExistVoucherName = voucherRepository.existsByVoucherNameAndIdIsNot(voucherDTO.getId(), voucherDTO.getVoucherName().trim());
+//        boolean isExistVoucherName = voucherRepository.existsByVoucherName(voucherDTO.getVoucherName().trim());
 //        if(isExistVoucherName) {
 //            throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Voucher"));
 //        }
@@ -79,8 +77,8 @@ public class VoucherServiceImpl implements VoucherService {
 
     public Voucher update(VoucherDTO voucherDTO) {
         Optional<Voucher> optionalVoucher = this.voucherRepository.findById(voucherDTO.getId());
-        if(optionalVoucher.isEmpty())
-            throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Mã voucher"));
+//        if(optionalVoucher.isEmpty())
+//            throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Mã voucher"));
 
         if(StringCommon.isNullOrBlank(voucherDTO.getVoucherName()))
             throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID.format("Voucher"));
@@ -100,7 +98,7 @@ public class VoucherServiceImpl implements VoucherService {
         voucher.setVoucherType(voucherDTO.getVoucherType());
         voucher.setDiscount(voucherDTO.getDiscount());
         voucher.setQuantity(voucherDTO.getQuantity());
-        voucher.setMaxDiscountValue(voucherDTO.getMaxDiscountValue());
+        voucher.setMinimumInvoiceValue(voucherDTO.getMinimumInvoiceValue());
         voucher.setMtime(LocalDateTime.now());
         voucher.setStatus(voucherDTO.getStatus());
         return this.voucherRepository.save(voucher);

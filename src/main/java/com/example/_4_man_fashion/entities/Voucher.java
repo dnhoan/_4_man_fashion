@@ -41,8 +41,8 @@ public class Voucher {
     @Column(name = "quantity")
     private int quantity;
 
-    @Column(name = "max_discount_value")
-    private int maxDiscountValue;
+    @Column(name = "minimum_invoice_value")
+    private float minimumInvoiceValue;
 
     @Column(name = "ctime")
     private LocalDateTime ctime;

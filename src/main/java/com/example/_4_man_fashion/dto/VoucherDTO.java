@@ -18,7 +18,7 @@ public class VoucherDTO {
     private int voucherType;
     private float discount;
     private int quantity;
-    private int maxDiscountValue;
+    private float minimumInvoiceValue;
     private LocalDateTime ctime;
     private LocalDateTime mtime;
     private int status;

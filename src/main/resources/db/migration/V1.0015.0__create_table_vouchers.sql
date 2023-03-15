@@ -8,7 +8,7 @@ CREATE TABLE VOUCHERS
     voucher_type int,
     discount float,
     quantity int,
-    max_discount_value float,
+    minimum_invoice_value float,
     ctime timestamp DEFAULT current_timestamp,
     mtime timestamp,
     status int
