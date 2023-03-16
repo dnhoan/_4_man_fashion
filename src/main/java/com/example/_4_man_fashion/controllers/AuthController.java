@@ -11,16 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/api/auth")
 public class AuthController {
 
-
-
     @Autowired
     private AuthService authService;
-
 
     @PostMapping("login")
     public ResponseEntity<ApiResponse<JwtResponse>> authenticateUser(@RequestBody @Valid LoginRequest loginRequest) {
@@ -39,7 +37,6 @@ public class AuthController {
     }
 }
 
-
 @Data
 class MessageResponse {
     private String message;
@@ -48,4 +45,3 @@ class MessageResponse {
         this.message = message;
     }
 }
-

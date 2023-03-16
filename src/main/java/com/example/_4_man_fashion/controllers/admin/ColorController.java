@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping(Constant.Api.Path.ADMIN)
 public class ColorController {
@@ -22,9 +21,9 @@ public class ColorController {
 
     @GetMapping("color/getAll")
     public ResponseEntity<ApiResponse<PageDTO<ColorDTO>>> getAll(@RequestParam(defaultValue = "0") int offset,
-                                                                 @RequestParam(defaultValue = "10") int limit,
-                                                                 @RequestParam(defaultValue = "1") Integer status,
-                                                                 @RequestParam(defaultValue = "") String search) {
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(defaultValue = "1") Integer status,
+            @RequestParam(defaultValue = "") String search) {
         PageDTO<ColorDTO> result = colorService.getAll(offset, limit, status, search);
         return ResponseEntity.ok(ApiResponse.success(result));
     }
@@ -34,7 +33,6 @@ public class ColorController {
         List<Color> lstColor = this.colorService.getListColor();
         return ResponseEntity.ok(ApiResponse.success(lstColor));
     }
-
 
     @PostMapping("/color/create")
     public ResponseEntity<ApiResponse<Color>> create(@Valid @RequestBody ColorDTO dto) {

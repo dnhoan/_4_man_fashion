@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class AuthServiceImpl implements AuthService{
+public class AuthServiceImpl implements AuthService {
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -50,21 +50,22 @@ public class AuthServiceImpl implements AuthService{
 
         Account account = new Account();
 
-        if (phoneOrEmail.matches(Constant.Regex.EMAIL) ) {
-            if(accountRepository.existsByEmail(signupRequest.getPhoneOrEmail()))
+        if (phoneOrEmail.matches(Constant.Regex.EMAIL)) {
+            if (accountRepository.existsByEmail(signupRequest.getPhoneOrEmail()))
                 throw new DATNException(ErrorMessage.OBJECT_ALREADY_EXIST.format("Email"));
             account.setEmail(phoneOrEmail);
         } else if (phoneOrEmail.matches(Constant.Regex.PHONE_NUMBER)) {
-            if(accountRepository.existsByPhoneNumber(signupRequest.getPhoneOrEmail()))
+            if (accountRepository.existsByPhoneNumber(signupRequest.getPhoneOrEmail()))
                 throw new DATNException(ErrorMessage.OBJECT_ALREADY_EXIST.format("Số điện thoại"));
             account.setPhoneNumber(phoneOrEmail);
-        } else throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
+        } else
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
 
         Set<Role> roles = new HashSet<>();
         String passwordEncrypt = this.passwordEncoder.encode(signupRequest.getPassword());
 
         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                .orElseThrow(() -> new DATNException(ErrorMessage.UNHANDLED_ERROR.format( "Error: Role is not found.")));
+                .orElseThrow(() -> new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Error: Role is not found.")));
         roles.add(userRole);
 
         account.setRoles(roles);
@@ -74,7 +75,7 @@ public class AuthServiceImpl implements AuthService{
         try {
             accountRepository.save(account);
         } catch (Exception e) {
-            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format( "Lỗi lưu vào db"));
+            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Lỗi lưu vào db"));
         }
 
     }
@@ -83,12 +84,12 @@ public class AuthServiceImpl implements AuthService{
     @Transactional
     public JwtResponse login(LoginRequest loginRequest) {
         String phoneOrEmail = loginRequest.getPhoneOrEmail();
-
+        String password = loginRequest.getPassword();
         if (phoneOrEmail.matches(Constant.Regex.EMAIL) || phoneOrEmail.matches(Constant.Regex.PHONE_NUMBER)) {
             Authentication authentication;
             try {
                 authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(phoneOrEmail, loginRequest.getPassword()));
+                        new UsernamePasswordAuthenticationToken(phoneOrEmail, password));
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new DATNException(ErrorMessage.AUTH_USER_PASS_INVALID);
@@ -105,7 +106,7 @@ public class AuthServiceImpl implements AuthService{
                     .phoneNumber(userDetails.getUsername())
                     .token(jwt)
                     .build();
-        }  else
+        } else
             throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
     }
 }
