@@ -1,6 +1,9 @@
 package com.example._4_man_fashion.dto;
 
+import com.example._4_man_fashion.entities.Account;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Builder
 @AllArgsConstructor
@@ -23,13 +26,15 @@ public class CustomerDTO {
 
     private String email;
 
+    private Account account;
+
     private String avatar;
 
     private String note;
 
-    private String ctime;
+    private LocalDateTime ctime;
 
-    private String mtime;
+    private LocalDateTime mtime;
 
     private Integer status;
 

@@ -4,7 +4,7 @@ import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.CustomerAddressDTO;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.entities.CustomerAddress;
-import com.example._4_man_fashion.repositories.CustomerAddressReprository;
+import com.example._4_man_fashion.repositories.CustomerAddressRepository;
 import com.example._4_man_fashion.utils.DATNException;
 import com.example._4_man_fashion.utils.ErrorMessage;
 import com.example._4_man_fashion.utils.StringCommon;
@@ -24,13 +24,13 @@ import java.util.stream.Collectors;
 public class CustomerAddressServiceImpl {
 
     @Autowired
-    private CustomerAddressReprository customerAddressReprository;
+    private CustomerAddressRepository customerAddressRepository;
     @Autowired
     private ModelMapper modelMapper;
 
     public PageDTO<CustomerAddressDTO> getAll(int offset, int limit, Integer status, String search) {
         Pageable pageable = PageRequest.of(offset, limit);
-        Page<CustomerAddress> page = this.customerAddressReprository.getCustomerAddressByName(pageable, status, StringCommon.getLikeCondition(search));
+        Page<CustomerAddress> page = this.customerAddressRepository.getCustomerAddressByName(pageable, status, StringCommon.getLikeCondition(search));
         List<CustomerAddressDTO> customerAddressDTOS = page.stream().map(u -> this.modelMapper.map(u, CustomerAddressDTO.class)).collect(Collectors.toList());
         return new PageDTO<CustomerAddressDTO>(
                 page.getTotalPages(),
@@ -48,7 +48,7 @@ public class CustomerAddressServiceImpl {
 
     @Transactional
     public List<CustomerAddress> getListCustomerAddress() {
-        List<CustomerAddress> customerAddressList = this.customerAddressReprository.findAll();
+        List<CustomerAddress> customerAddressList = this.customerAddressRepository.findAll();
         return customerAddressList;
     }
 
@@ -61,12 +61,12 @@ public class CustomerAddressServiceImpl {
 
         customerAddressDTO.setStatus(Constant.Status.ACTIVE);
 
-        return this.customerAddressReprository.save(CustomerAddress.fromDTO(customerAddressDTO));
+        return this.customerAddressRepository.save(CustomerAddress.fromDTO(customerAddressDTO));
 
     }
 
     public CustomerAddress update(CustomerAddressDTO customerAddressDTO) {
-        Optional<CustomerAddress> optionalCustomerAddress = this.customerAddressReprository.findById(customerAddressDTO.getId());
+        Optional<CustomerAddress> optionalCustomerAddress = this.customerAddressRepository.findById(customerAddressDTO.getId());
         if (optionalCustomerAddress.isEmpty())
             throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Địa chỉ"));
 
@@ -82,18 +82,18 @@ public class CustomerAddressServiceImpl {
         customerAddress.setProvince(customerAddressDTO.getProvince());
         customerAddress.setDetail(customerAddressDTO.getDetail());
         customerAddress.setStatus(customerAddressDTO.getStatus());
-        return this.customerAddressReprository.save(customerAddress);
+        return this.customerAddressRepository.save(customerAddress);
     }
 
     public void delete(Integer id) {
-        Optional<CustomerAddress> optionalCustomerAddress = this.customerAddressReprository.findById(id);
+        Optional<CustomerAddress> optionalCustomerAddress = this.customerAddressRepository.findById(id);
         if (optionalCustomerAddress.isEmpty())
             throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Địa chỉ"));
 
         CustomerAddress customerAddress = optionalCustomerAddress.get();
         customerAddress.setStatus(Constant.Status.INACTIVE);
 
-        this.customerAddressReprository.save(customerAddress);
+        this.customerAddressRepository.save(customerAddress);
     }
 
 }
