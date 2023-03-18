@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
@@ -114,8 +115,8 @@ public class UserDetailsImpl implements UserDetails {
                 .id(customer.getId())
                 .gender(customer.getGender())
                 .birthday(customer.getBirthday())
-                .ctime(customer.getCtime().format(DateTimeFormatter.ISO_DATE_TIME))
-                .mtime((customer.getMtime() == null) ? "" : customer.getMtime().format(DateTimeFormatter.ISO_DATE_TIME))
+                .ctime(LocalDateTime.parse(customer.getCtime().format(DateTimeFormatter.ISO_DATE_TIME)))
+                .mtime(LocalDateTime.parse((customer.getMtime() == null) ? "" : customer.getMtime().format(DateTimeFormatter.ISO_DATE_TIME)))
                 .note(customer.getNote())
                 .email(customer.getEmail())
                 .phoneNumber(customer.getPhoneNumber())

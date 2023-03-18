@@ -1,4 +1,4 @@
-CREATE TABLE fa
+CREATE TABLE favorite_product
 (
     id serial primary key,
     customer_id bigint,
