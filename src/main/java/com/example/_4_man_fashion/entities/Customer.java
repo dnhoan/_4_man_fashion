@@ -1,7 +1,10 @@
 package com.example._4_man_fashion.entities;
 
+import com.example._4_man_fashion.dto.CustomerDTO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -59,4 +62,14 @@ public class Customer {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     private Account account;
+
+    public static Customer fromDTO(CustomerDTO dto) {
+        Customer entity = new Customer();
+        BeanUtils.copyProperties(dto, entity);
+        entity.setCtime(dto.getCtime());
+        entity.setMtime(dto.getMtime());
+        entity.setStatus(1);
+
+        return entity;
+    }
 }

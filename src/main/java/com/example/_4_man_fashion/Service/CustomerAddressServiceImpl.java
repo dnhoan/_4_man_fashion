@@ -5,7 +5,7 @@ import com.example._4_man_fashion.dto.CustomerAddressDTO;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.entities.Customer;
 import com.example._4_man_fashion.entities.CustomerAddress;
-import com.example._4_man_fashion.repositories.CustomerAddressReprository;
+import com.example._4_man_fashion.repositories.CustomerAddressRepository;
 import com.example._4_man_fashion.repositories.CustomerRepository;
 import com.example._4_man_fashion.utils.DATNException;
 import com.example._4_man_fashion.utils.ErrorMessage;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class CustomerAddressServiceImpl {
 
     @Autowired
-    private CustomerAddressReprository customerAddressReprository;
+    private CustomerAddressRepository customerAddressRepository;
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
@@ -34,7 +34,7 @@ public class CustomerAddressServiceImpl {
 
     public PageDTO<CustomerAddressDTO> getAll(int offset, int limit, Integer status, String search) {
         Pageable pageable = PageRequest.of(offset, limit);
-        Page<CustomerAddress> page = this.customerAddressReprository.getCustomerAddressByName(pageable, status,
+        Page<CustomerAddress> page = this.customerAddressRepository.getCustomerAddressByName(pageable, status,
                 StringCommon.getLikeCondition(search));
         List<CustomerAddressDTO> customerAddressDTOS = page.stream()
                 .map(u -> this.modelMapper.map(u, CustomerAddressDTO.class)).collect(Collectors.toList());
@@ -52,7 +52,7 @@ public class CustomerAddressServiceImpl {
 
     @Transactional
     public List<CustomerAddress> getListCustomerAddress(Integer customerId) {
-        List<CustomerAddress> customerAddressList = this.customerAddressReprository
+        List<CustomerAddress> customerAddressList = this.customerAddressRepository
                 .getCustomerAddressByCustomerId(customerId);
         return customerAddressList;
     }
@@ -70,13 +70,13 @@ public class CustomerAddressServiceImpl {
         customerAddress.setCustomer(Customer.builder().id(customerId).build());
         customerAddress.setStatus(Constant.Status.ACTIVE);
 
-        return this.customerAddressReprository.save(customerAddress);
+        return this.customerAddressRepository.save(customerAddress);
 
     }
 
     @Transactional
     public CustomerAddress update(CustomerAddressDTO customerAddressDTO) {
-        Optional<CustomerAddress> optionalCustomerAddress = this.customerAddressReprository
+        Optional<CustomerAddress> optionalCustomerAddress = this.customerAddressRepository
                 .findById(customerAddressDTO.getId());
         if (optionalCustomerAddress.isEmpty())
             throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Địa chỉ"));
@@ -93,19 +93,19 @@ public class CustomerAddressServiceImpl {
         customerAddress.setProvince(customerAddressDTO.getProvince());
         customerAddress.setDetail(customerAddressDTO.getDetail());
         customerAddress.setStatus(customerAddressDTO.getStatus());
-        return this.customerAddressReprository.save(customerAddress);
+        return this.customerAddressRepository.save(customerAddress);
     }
 
     @Transactional
     public void delete(Integer id) {
-        Optional<CustomerAddress> optionalCustomerAddress = this.customerAddressReprository.findById(id);
+        Optional<CustomerAddress> optionalCustomerAddress = this.customerAddressRepository.findById(id);
         if (optionalCustomerAddress.isEmpty())
             throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Địa chỉ"));
 
-        if (!this.customerAddressReprository.existsById(id)) {
+        if (!this.customerAddressRepository.existsById(id)) {
             throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Address ID"));
         }
-        this.customerAddressReprository.deleteById(id);
+        this.customerAddressRepository.deleteById(id);
     }
 
 }
