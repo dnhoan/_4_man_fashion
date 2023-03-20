@@ -4,9 +4,9 @@ import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.*;
 import com.example._4_man_fashion.entities.*;
 import com.example._4_man_fashion.models.ERole;
-import com.example._4_man_fashion.models.SignupRequest;
 import com.example._4_man_fashion.repositories.AccountRepository;
 import com.example._4_man_fashion.repositories.CustomerRepository;
+import com.example._4_man_fashion.repositories.CartRepository;
 import com.example._4_man_fashion.repositories.RoleRepository;
 import com.example._4_man_fashion.utils.DATNException;
 import com.example._4_man_fashion.utils.ErrorMessage;
@@ -41,6 +41,9 @@ public class CustomerServiceImpl {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private CartRepository cartRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -112,6 +115,79 @@ public class CustomerServiceImpl {
                 .orElseThrow(() -> new DATNException(ErrorMessage.UNHANDLED_ERROR.format( "Error: Role is not found.")));
         roles.add(userRole);
         Account account = new Account();
+        Cart cart = new Cart();
+        account.setRoles(roles);
+        account.setPhoneNumber(customerDTO.getPhoneNumber());
+        account.setEmail(customerDTO.getEmail());
+        account.setStatus(Constant.Status.ACTIVE);
+        account.setPassword(passwordEncrypt);
+        account.setCustomer(customer);
+        cart.setCustomer(customer);
+        System.out.println("id. " +customer.getId());
+        try {
+            accountRepository.save(account);
+        } catch (Exception e) {
+            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format( "Lỗi lưu vào db"));
+        }
+//        try {
+//            cartRepository.save(cart);
+//        } catch (Exception e) {
+//            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format( "Lỗi lưu vào db"));
+//        }
+
+        customerDTO.setAccount(account);
+        customerDTO.setCtime(LocalDateTime.now());
+        customerDTO.setStatus(Constant.Status.ACTIVE);
+
+
+
+        return this.customerRepository.save(Customer.fromDTO(customerDTO));
+
+    }
+
+    public Cart createCustomer(CustomerDTO customerDTO){
+        if (StringCommon.isNullOrBlank(customerDTO.getCustomerName())) {
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
+        }
+
+        if (StringCommon.isNullOrBlank(customerDTO.getEmail())) {
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
+        }
+
+        if (StringCommon.isNullOrBlank(customerDTO.getPhoneNumber())) {
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
+        }
+
+        boolean existsByPhoneNumber = customerRepository.existsByPhoneNumberLike(customerDTO.getPhoneNumber().trim());
+        if (existsByPhoneNumber) {
+            throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Số điện thoại"));
+        }
+        boolean existsByEmail = customerRepository.existsByEmailLike(customerDTO.getEmail().trim());
+        if (existsByEmail) {
+            throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Email"));
+        }
+
+        boolean existsByPhoneNumberAccount = accountRepository.existsByPhoneNumber(customerDTO.getPhoneNumber().trim());
+        if (existsByPhoneNumberAccount) {
+            throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Số điện thoại"));
+        }
+        boolean existsByEmailAccount = accountRepository.existsByEmail(customerDTO.getEmail().trim());
+        if (existsByEmailAccount) {
+            throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Email"));
+        }
+
+
+
+
+        Customer customer = this.modelMapper.map(customerDTO, Customer.class);
+        Set<Role> roles = new HashSet<>();
+        String passwordEncrypt = this.passwordEncoder.encode("4ManFashion");
+
+        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                .orElseThrow(() -> new DATNException(ErrorMessage.UNHANDLED_ERROR.format( "Error: Role is not found.")));
+        roles.add(userRole);
+        Account account = new Account();
+        Cart cart = new Cart();
         account.setRoles(roles);
         account.setPhoneNumber(customerDTO.getPhoneNumber());
         account.setEmail(customerDTO.getEmail());
@@ -119,17 +195,24 @@ public class CustomerServiceImpl {
         account.setPassword(passwordEncrypt);
         account.setCustomer(customer);
 
+        System.out.println("id. " +customer.getId());
         try {
             accountRepository.save(account);
         } catch (Exception e) {
             throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format( "Lỗi lưu vào db"));
         }
-
         customerDTO.setAccount(account);
         customerDTO.setCtime(LocalDateTime.now());
         customerDTO.setStatus(Constant.Status.ACTIVE);
 
-        return this.customerRepository.save(Customer.fromDTO(customerDTO));
+        try {
+            Customer customer1 = customerRepository.save(Customer.fromDTO(customerDTO));
+            System.out.println("id. " +customer1.getId());
+            cart.setCustomer(customer1);
+            return this.cartRepository.save(cart);
+        } catch (Exception e) {
+            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format( "Lỗi lưu vào db 2"));
+        }
 
     }
 

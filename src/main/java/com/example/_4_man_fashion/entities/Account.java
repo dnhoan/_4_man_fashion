@@ -41,7 +41,7 @@ public class Account {
         this.password = password;
         this.phoneNumber = phoneNumber;
     }
-
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "account_roles",
