@@ -41,14 +41,13 @@ public class Account {
         this.password = password;
         this.phoneNumber = phoneNumber;
     }
-
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "account_roles",
             joinColumns = @JoinColumn(name = "account_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    @JsonIgnore
     @JsonManagedReference
     private Set<Role> roles = new HashSet<>();
 

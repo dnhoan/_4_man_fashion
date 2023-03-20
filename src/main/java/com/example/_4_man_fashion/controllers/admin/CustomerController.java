@@ -3,6 +3,7 @@ package com.example._4_man_fashion.controllers.admin;
 import com.example._4_man_fashion.Service.CustomerServiceImpl;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.*;
+import com.example._4_man_fashion.entities.Cart;
 import com.example._4_man_fashion.entities.Customer;
 import com.example._4_man_fashion.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-
-import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping(Constant.Api.Path.ADMIN)
@@ -39,9 +36,15 @@ public class CustomerController {
     }
 
 
+//    @PostMapping("/customer/create")
+//    public ResponseEntity<ApiResponse<Customer>> create(@Valid @RequestBody CustomerDTO dto) {
+//        Customer customer = customerService.create(dto);
+//        return ResponseEntity.ok(ApiResponse.success(customer));
+//    }
+
     @PostMapping("/customer/create")
-    public ResponseEntity<ApiResponse<Customer>> create(@Valid @RequestBody CustomerDTO dto) {
-        Customer customer = customerService.create(dto);
+    public ResponseEntity<ApiResponse<Cart>> create(@Valid @RequestBody CustomerDTO dto) {
+        Cart customer = customerService.createCustomer(dto);
         return ResponseEntity.ok(ApiResponse.success(customer));
     }
 
