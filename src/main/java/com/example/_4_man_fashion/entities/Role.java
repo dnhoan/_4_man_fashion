@@ -4,6 +4,7 @@ import com.example._4_man_fashion.models.ERole;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.util.Set;
@@ -27,5 +28,6 @@ public class Role {
 
     @ManyToMany(mappedBy = "roles")
     @JsonBackReference
+    @JsonIgnore
     Set<Account> likes;
 }

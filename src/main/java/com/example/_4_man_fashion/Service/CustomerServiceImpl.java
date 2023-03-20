@@ -4,9 +4,9 @@ import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.*;
 import com.example._4_man_fashion.entities.*;
 import com.example._4_man_fashion.models.ERole;
-import com.example._4_man_fashion.models.SignupRequest;
 import com.example._4_man_fashion.repositories.AccountRepository;
 import com.example._4_man_fashion.repositories.CustomerRepository;
+import com.example._4_man_fashion.repositories.CartRepository;
 import com.example._4_man_fashion.repositories.RoleRepository;
 import com.example._4_man_fashion.utils.DATNException;
 import com.example._4_man_fashion.utils.ErrorMessage;
@@ -41,6 +41,9 @@ public class CustomerServiceImpl {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private CartRepository cartRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -112,22 +115,31 @@ public class CustomerServiceImpl {
                 .orElseThrow(() -> new DATNException(ErrorMessage.UNHANDLED_ERROR.format( "Error: Role is not found.")));
         roles.add(userRole);
         Account account = new Account();
+        Cart cart = new Cart();
         account.setRoles(roles);
         account.setPhoneNumber(customerDTO.getPhoneNumber());
         account.setEmail(customerDTO.getEmail());
         account.setStatus(Constant.Status.ACTIVE);
         account.setPassword(passwordEncrypt);
         account.setCustomer(customer);
-
+        cart.setCustomer(customer);
+        System.out.println("id. " +customer.getId());
         try {
             accountRepository.save(account);
         } catch (Exception e) {
             throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format( "Lỗi lưu vào db"));
         }
+//        try {
+//            cartRepository.save(cart);
+//        } catch (Exception e) {
+//            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format( "Lỗi lưu vào db"));
+//        }
 
         customerDTO.setAccount(account);
         customerDTO.setCtime(LocalDateTime.now());
         customerDTO.setStatus(Constant.Status.ACTIVE);
+
+
 
         return this.customerRepository.save(Customer.fromDTO(customerDTO));
 
