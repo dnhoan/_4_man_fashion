@@ -16,5 +16,7 @@ CREATE TABLE ORDERS
     delivery int,
     purchase_type int,
     note text,
-    cancel_not text
+    cancel_not text,
+    ctime timestamp DEFAULT current_timestamp,
+    mtime timestamp
 );
