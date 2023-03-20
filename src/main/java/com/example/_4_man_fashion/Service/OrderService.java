@@ -1,0 +1,21 @@
+package com.example._4_man_fashion.Service;
+
+import com.example._4_man_fashion.dto.OrderDTO;
+import com.example._4_man_fashion.dto.PageDTO;
+import com.example._4_man_fashion.entities.Order;
+
+import java.util.List;
+
+public interface OrderService {
+
+    PageDTO<OrderDTO> getAll(int offset, int limit, Integer status, String search);
+
+    List<Order> getListOrder();
+
+    Order create(OrderDTO orderDTO);
+    Order update(OrderDTO orderDTO);
+
+    void delete(Integer id);
+
+    boolean restore(Integer modelsId);
+}
