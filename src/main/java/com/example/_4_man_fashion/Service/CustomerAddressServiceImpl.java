@@ -3,8 +3,10 @@ package com.example._4_man_fashion.Service;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.CustomerAddressDTO;
 import com.example._4_man_fashion.dto.PageDTO;
+import com.example._4_man_fashion.entities.Customer;
 import com.example._4_man_fashion.entities.CustomerAddress;
 import com.example._4_man_fashion.repositories.CustomerAddressRepository;
+import com.example._4_man_fashion.repositories.CustomerRepository;
 import com.example._4_man_fashion.utils.DATNException;
 import com.example._4_man_fashion.utils.ErrorMessage;
 import com.example._4_man_fashion.utils.StringCommon;
@@ -26,12 +28,16 @@ public class CustomerAddressServiceImpl {
     @Autowired
     private CustomerAddressRepository customerAddressRepository;
     @Autowired
+    private CustomerRepository customerRepository;
+    @Autowired
     private ModelMapper modelMapper;
 
     public PageDTO<CustomerAddressDTO> getAll(int offset, int limit, Integer status, String search) {
         Pageable pageable = PageRequest.of(offset, limit);
-        Page<CustomerAddress> page = this.customerAddressRepository.getCustomerAddressByName(pageable, status, StringCommon.getLikeCondition(search));
-        List<CustomerAddressDTO> customerAddressDTOS = page.stream().map(u -> this.modelMapper.map(u, CustomerAddressDTO.class)).collect(Collectors.toList());
+        Page<CustomerAddress> page = this.customerAddressRepository.getCustomerAddressByName(pageable, status,
+                StringCommon.getLikeCondition(search));
+        List<CustomerAddressDTO> customerAddressDTOS = page.stream()
+                .map(u -> this.modelMapper.map(u, CustomerAddressDTO.class)).collect(Collectors.toList());
         return new PageDTO<CustomerAddressDTO>(
                 page.getTotalPages(),
                 page.getTotalElements(),
@@ -41,32 +47,37 @@ public class CustomerAddressServiceImpl {
                 page.isFirst(),
                 page.isLast(),
                 page.hasNext(),
-                page.hasPrevious()
-        );
+                page.hasPrevious());
     }
 
-
     @Transactional
-    public List<CustomerAddress> getListCustomerAddress() {
-        List<CustomerAddress> customerAddressList = this.customerAddressRepository.findAll();
+    public List<CustomerAddress> getListCustomerAddress(Integer customerId) {
+        List<CustomerAddress> customerAddressList = this.customerAddressRepository
+                .getCustomerAddressByCustomerId(customerId);
         return customerAddressList;
     }
 
-
     @Transactional
-    public CustomerAddress create(CustomerAddressDTO customerAddressDTO) {
+    public CustomerAddress create(Integer customerId, CustomerAddressDTO customerAddressDTO) {
         if (StringCommon.isNullOrBlank(customerAddressDTO.getDetail())) {
             throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
         }
 
-        customerAddressDTO.setStatus(Constant.Status.ACTIVE);
+        if (!this.customerRepository.existsById(customerId)) {
+            throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Customer ID"));
+        }
+        CustomerAddress customerAddress = CustomerAddress.fromDTO(customerAddressDTO);
+        customerAddress.setCustomer(Customer.builder().id(customerId).build());
+        customerAddress.setStatus(Constant.Status.ACTIVE);
 
-        return this.customerAddressRepository.save(CustomerAddress.fromDTO(customerAddressDTO));
+        return this.customerAddressRepository.save(customerAddress);
 
     }
 
+    @Transactional
     public CustomerAddress update(CustomerAddressDTO customerAddressDTO) {
-        Optional<CustomerAddress> optionalCustomerAddress = this.customerAddressRepository.findById(customerAddressDTO.getId());
+        Optional<CustomerAddress> optionalCustomerAddress = this.customerAddressRepository
+                .findById(customerAddressDTO.getId());
         if (optionalCustomerAddress.isEmpty())
             throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Địa chỉ"));
 
@@ -85,15 +96,16 @@ public class CustomerAddressServiceImpl {
         return this.customerAddressRepository.save(customerAddress);
     }
 
+    @Transactional
     public void delete(Integer id) {
         Optional<CustomerAddress> optionalCustomerAddress = this.customerAddressRepository.findById(id);
         if (optionalCustomerAddress.isEmpty())
             throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Địa chỉ"));
 
-        CustomerAddress customerAddress = optionalCustomerAddress.get();
-        customerAddress.setStatus(Constant.Status.INACTIVE);
-
-        this.customerAddressRepository.save(customerAddress);
+        if (!this.customerAddressRepository.existsById(id)) {
+            throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Address ID"));
+        }
+        this.customerAddressRepository.deleteById(id);
     }
 
 }

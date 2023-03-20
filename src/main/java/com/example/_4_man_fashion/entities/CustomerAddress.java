@@ -1,10 +1,13 @@
 package com.example._4_man_fashion.entities;
 
 import com.example._4_man_fashion.dto.CustomerAddressDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,6 +21,7 @@ public class CustomerAddress {
     @Column(name = "id", nullable = false)
     private Integer id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id")
     private Customer customer;

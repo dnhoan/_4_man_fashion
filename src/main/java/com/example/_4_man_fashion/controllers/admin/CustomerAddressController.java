@@ -14,30 +14,30 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("hhh")
+@RequestMapping(Constant.Api.Path.USER)
 public class CustomerAddressController {
     @Autowired
     public CustomerAddressServiceImpl customerAddressService;
 
     @GetMapping("customerAddress/getAll")
     public ResponseEntity<ApiResponse<PageDTO<CustomerAddressDTO>>> getAll(@RequestParam(defaultValue = "0") int offset,
-                                                                        @RequestParam(defaultValue = "10") int limit,
-                                                                        @RequestParam(defaultValue = "1") Integer status,
-                                                                        @RequestParam(defaultValue = "") String search) {
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(defaultValue = "1") Integer status,
+            @RequestParam(defaultValue = "") String search) {
         PageDTO<CustomerAddressDTO> result = customerAddressService.getAll(offset, limit, status, search);
         return ResponseEntity.ok(ApiResponse.success(result));
     }
 
-    @GetMapping("customerAddress/getList")
-    public ResponseEntity<ApiResponse<List<CustomerAddress>>> getList() {
-        List<CustomerAddress> lstColor = this.customerAddressService.getListCustomerAddress();
-        return ResponseEntity.ok(ApiResponse.success(lstColor));
+    @GetMapping("customerAddress/getList/{customerId}")
+    public ResponseEntity<ApiResponse<List<CustomerAddress>>> getList(@PathVariable Integer customerId) {
+        List<CustomerAddress> listAddress = this.customerAddressService.getListCustomerAddress(customerId);
+        return ResponseEntity.ok(ApiResponse.success(listAddress));
     }
 
-
-    @PostMapping("/customerAddress/create")
-    public ResponseEntity<ApiResponse<CustomerAddress>> create(@Valid @RequestBody CustomerAddressDTO dto) {
-        CustomerAddress customerAddress = customerAddressService.create(dto);
+    @PostMapping("/customerAddress/create/{customerId}")
+    public ResponseEntity<ApiResponse<CustomerAddress>> create(@PathVariable Integer customerId,
+            @Valid @RequestBody CustomerAddressDTO dto) {
+        CustomerAddress customerAddress = customerAddressService.create(customerId, dto);
         return ResponseEntity.ok(ApiResponse.success(customerAddress));
     }
 

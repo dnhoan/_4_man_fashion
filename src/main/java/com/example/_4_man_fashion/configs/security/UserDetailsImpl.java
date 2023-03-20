@@ -35,8 +35,8 @@ public class UserDetailsImpl implements UserDetails {
 
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Integer id, String phoneNumber, String email, String password,CustomerDTO customer,
-                           Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImpl(Integer id, String phoneNumber, String email, String password, CustomerDTO customer,
+            Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.phoneNumber = phoneNumber;
         this.email = email;
@@ -107,7 +107,6 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     private static CustomerDTO customerMapToCustomerDTO(Customer customer) {
-
         return CustomerDTO.builder()
                 .address(customer.getAddress())
                 .customerName(customer.getCustomerName())
