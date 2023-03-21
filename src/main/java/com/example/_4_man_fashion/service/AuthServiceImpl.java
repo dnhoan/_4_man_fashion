@@ -106,7 +106,7 @@ public class AuthServiceImpl implements AuthService {
                     .phoneNumber(userDetails.getUsername())
                     .token(jwt)
                     .build();
-        } else
-            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
+        }
+        throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
     }
 }
