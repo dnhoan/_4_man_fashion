@@ -3,8 +3,6 @@ package com.example._4_man_fashion.dto;
 import com.example._4_man_fashion.entities.Account;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,9 +30,9 @@ public class CustomerDTO {
 
     private String note;
 
-    private LocalDateTime ctime;
+    private String ctime;
 
-    private LocalDateTime mtime;
+    private String mtime;
 
     private Integer status;
 

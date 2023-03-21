@@ -4,14 +4,11 @@ import com.example._4_man_fashion.dto.CustomerDTO;
 import com.example._4_man_fashion.entities.Account;
 import com.example._4_man_fashion.entities.Customer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
@@ -114,8 +111,9 @@ public class UserDetailsImpl implements UserDetails {
                 .id(customer.getId())
                 .gender(customer.getGender())
                 .birthday(customer.getBirthday())
-                .ctime(LocalDateTime.parse(customer.getCtime().format(DateTimeFormatter.ISO_DATE_TIME)))
-                .mtime(LocalDateTime.parse((customer.getMtime() == null) ? "" : customer.getMtime().format(DateTimeFormatter.ISO_DATE_TIME)))
+                .ctime(customer.getCtime().format(DateTimeFormatter.ISO_DATE_TIME))
+                .mtime((customer.getMtime() == null) ? ""
+                        : customer.getMtime().format(DateTimeFormatter.ISO_DATE_TIME))
                 .note(customer.getNote())
                 .email(customer.getEmail())
                 .phoneNumber(customer.getPhoneNumber())
