@@ -5,6 +5,7 @@ import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.OrderDTO;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.entities.Order;
+import com.example._4_man_fashion.models.UpdateOrderStatus;
 import com.example._4_man_fashion.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -56,18 +57,9 @@ public class OrderController {
         return ResponseEntity.ok(ApiResponse.success());
     }
 
-//    @PutMapping("order/restore/{id}")
-//    public ResponseEntity<ResponseDTO> restore(
-//            @PathVariable("id") Integer modelId
-//    ){
-//        boolean res = this.modelsService.restore(modelId);
-//        return ResponseEntity.ok(
-//                ResponseDTO.builder()
-//                        .message("Restore " + (res ? "success" : "false"))
-//                        .status(res ? OK : INTERNAL_SERVER_ERROR)
-//                        .data(Map.of("res",res ))
-//                        .statusCode(res ? OK.value() : INTERNAL_SERVER_ERROR.value())
-//                        .build()
-//        );
-//    }
+    @PutMapping("order/updateOrderStatus")
+    public ResponseEntity<ApiResponse<Void>> updateOrderStatus(@RequestBody UpdateOrderStatus statusUpdate) {
+        orderService.updateOrderStatus(statusUpdate);
+        return ResponseEntity.ok(ApiResponse.success());
+    }
 }
