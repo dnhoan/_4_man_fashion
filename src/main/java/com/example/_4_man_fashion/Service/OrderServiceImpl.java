@@ -3,10 +3,12 @@ package com.example._4_man_fashion.Service;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.OrderDTO;
 import com.example._4_man_fashion.dto.PageDTO;
+import com.example._4_man_fashion.entities.LogOrderStatus;
 import com.example._4_man_fashion.entities.Order;
 import com.example._4_man_fashion.entities.OrderDetails;
 import com.example._4_man_fashion.entities.ProductDetail;
 import com.example._4_man_fashion.models.UpdateOrderStatus;
+import com.example._4_man_fashion.repositories.LogOrderStatusRepository;
 import com.example._4_man_fashion.repositories.OrderDetailsRepository;
 import com.example._4_man_fashion.repositories.OrderRepository;
 import com.example._4_man_fashion.utils.StringCommon;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +34,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderDetailsRepository orderDetailsRepository;
+
+    @Autowired
+    private LogOrderStatusRepository logOrderStatusRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -59,7 +65,21 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     public void updateOrderStatus(UpdateOrderStatus updateOrderStatus) {
-        this.orderRepository.updateOrderStatus(updateOrderStatus);
+        Optional<Order> order = this.orderRepository.findById(updateOrderStatus.getId());
+        if (order.isPresent()) {
+            this.orderRepository.updateOrderStatus(updateOrderStatus);
+        }
+        LogOrderStatus logOrderStatus = new LogOrderStatus();
+        logOrderStatus.setOrder(order.get());
+        logOrderStatus.setTimes(LocalDateTime.now());
+        logOrderStatus.setUser_change("Admin");
+        logOrderStatus.setNote(updateOrderStatus.getNote());
+        logOrderStatus.setCurrentStatus(order.get().getOrderStatus());
+        logOrderStatus.setNewStatus(updateOrderStatus.getNewStatus());
+        logOrderStatus.setAccounts(null);
+        logOrderStatus.setProductDetails(null);
+        this.logOrderStatusRepository.save(logOrderStatus);
+
     }
 
     @Transactional
