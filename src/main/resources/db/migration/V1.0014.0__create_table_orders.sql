@@ -2,7 +2,7 @@ CREATE TABLE ORDERS
 (
     id serial primary key,
     order_id varchar(20) unique not null,
-    customer_id bigint not null,
+    customer_id bigint null,
     order_status int,
     recipient_name varchar(225),
     recipient_phone varchar(15),
