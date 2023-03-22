@@ -16,45 +16,41 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "accounts",
-        uniqueConstraints = {
+@Table(name = "accounts", uniqueConstraints = {
                 @UniqueConstraint(columnNames = "email"),
                 @UniqueConstraint(columnNames = "phone_number")
-        })
+})
 public class Account {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Integer id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Column(name = "id", nullable = false)
+        private Integer id;
 
-    @Column(name = "email", nullable = false, length = 100)
-    private String email;
+        @Column(name = "email", nullable = false, length = 100)
+        private String email;
 
-    @Column(name = "password", nullable = false, length = 100)
-    private String password;
+        @Column(name = "password", nullable = false, length = 100)
+        private String password;
 
-    @Column(name = "phone_number", nullable = false, length = 15)
-    private String phoneNumber;
+        @Column(name = "phone_number", nullable = false, length = 15)
+        private String phoneNumber;
 
-    public Account(String email, String password, String phoneNumber) {
-        this.email = email;
-        this.password = password;
-        this.phoneNumber = phoneNumber;
-    }
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "account_roles",
-            joinColumns = @JoinColumn(name = "account_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    @JsonManagedReference
-    private Set<Role> roles = new HashSet<>();
+        public Account(String email, String password, String phoneNumber) {
+                this.email = email;
+                this.password = password;
+                this.phoneNumber = phoneNumber;
+        }
 
-    @OneToOne(mappedBy = "account", fetch = FetchType.EAGER)
-    private Customer customer;
+        @JsonIgnore
+        @ManyToMany(fetch = FetchType.EAGER)
+        @JoinTable(name = "account_roles", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+        @JsonManagedReference
+        private Set<Role> roles = new HashSet<>();
 
-    @Column(name = "status")
-    private Integer status;
+        @OneToOne(mappedBy = "account", fetch = FetchType.EAGER)
+        private Customer customer;
+
+        @Column(name = "status")
+        private Integer status;
 
 }

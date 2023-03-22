@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -48,11 +49,12 @@ public class CustomerServiceImpl {
     @Autowired
     private ModelMapper modelMapper;
 
-
     public PageDTO<CustomerDTO> getAll(int offset, int limit, Integer status, String search) {
         Pageable pageable = PageRequest.of(offset, limit);
-        Page<Customer> page = this.customerRepository.getCustomerByName(pageable, status, StringCommon.getLikeCondition(search));
-        List<CustomerDTO> customerDTOS = page.stream().map(u -> this.modelMapper.map(u, CustomerDTO.class)).collect(Collectors.toList());
+        Page<Customer> page = this.customerRepository.getCustomerByName(pageable, status,
+                StringCommon.getLikeCondition(search));
+        List<CustomerDTO> customerDTOS = page.stream().map(u -> this.modelMapper.map(u, CustomerDTO.class))
+                .collect(Collectors.toList());
         return new PageDTO<CustomerDTO>(
                 page.getTotalPages(),
                 page.getTotalElements(),
@@ -62,8 +64,7 @@ public class CustomerServiceImpl {
                 page.isFirst(),
                 page.isLast(),
                 page.hasNext(),
-                page.hasPrevious()
-        );
+                page.hasPrevious());
     }
 
     @Transactional
@@ -104,15 +105,12 @@ public class CustomerServiceImpl {
             throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Email"));
         }
 
-
-
-
         Customer customer = this.modelMapper.map(customerDTO, Customer.class);
         Set<Role> roles = new HashSet<>();
         String passwordEncrypt = this.passwordEncoder.encode("4ManFashion");
 
         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                .orElseThrow(() -> new DATNException(ErrorMessage.UNHANDLED_ERROR.format( "Error: Role is not found.")));
+                .orElseThrow(() -> new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Error: Role is not found.")));
         roles.add(userRole);
         Account account = new Account();
         Cart cart = new Cart();
@@ -123,29 +121,28 @@ public class CustomerServiceImpl {
         account.setPassword(passwordEncrypt);
         account.setCustomer(customer);
         cart.setCustomer(customer);
-        System.out.println("id. " +customer.getId());
+        System.out.println("id. " + customer.getId());
         try {
             accountRepository.save(account);
         } catch (Exception e) {
-            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format( "Lỗi lưu vào db"));
+            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Lỗi lưu vào db"));
         }
-//        try {
-//            cartRepository.save(cart);
-//        } catch (Exception e) {
-//            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format( "Lỗi lưu vào db"));
-//        }
+        // try {
+        // cartRepository.save(cart);
+        // } catch (Exception e) {
+        // throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format( "Lỗi lưu vào
+        // db"));
+        // }
 
         customerDTO.setAccount(account);
-        customerDTO.setCtime(LocalDateTime.now());
+        customerDTO.setCtime(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         customerDTO.setStatus(Constant.Status.ACTIVE);
-
-
 
         return this.customerRepository.save(Customer.fromDTO(customerDTO));
 
     }
 
-    public Cart createCustomer(CustomerDTO customerDTO){
+    public Cart createCustomer(CustomerDTO customerDTO) {
         if (StringCommon.isNullOrBlank(customerDTO.getCustomerName())) {
             throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
         }
@@ -176,15 +173,12 @@ public class CustomerServiceImpl {
             throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Email"));
         }
 
-
-
-
         Customer customer = this.modelMapper.map(customerDTO, Customer.class);
         Set<Role> roles = new HashSet<>();
         String passwordEncrypt = this.passwordEncoder.encode("4ManFashion");
 
         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                .orElseThrow(() -> new DATNException(ErrorMessage.UNHANDLED_ERROR.format( "Error: Role is not found.")));
+                .orElseThrow(() -> new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Error: Role is not found.")));
         roles.add(userRole);
         Account account = new Account();
         Cart cart = new Cart();
@@ -195,23 +189,23 @@ public class CustomerServiceImpl {
         account.setPassword(passwordEncrypt);
         account.setCustomer(customer);
 
-        System.out.println("id. " +customer.getId());
+        System.out.println("id. " + customer.getId());
         try {
             accountRepository.save(account);
         } catch (Exception e) {
-            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format( "Lỗi lưu vào db"));
+            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Lỗi lưu vào db"));
         }
         customerDTO.setAccount(account);
-        customerDTO.setCtime(LocalDateTime.now());
+        customerDTO.setCtime(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         customerDTO.setStatus(Constant.Status.ACTIVE);
 
         try {
             Customer customer1 = customerRepository.save(Customer.fromDTO(customerDTO));
-            System.out.println("id. " +customer1.getId());
+            System.out.println("id. " + customer1.getId());
             cart.setCustomer(customer1);
             return this.cartRepository.save(cart);
         } catch (Exception e) {
-            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format( "Lỗi lưu vào db 2"));
+            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Lỗi lưu vào db 2"));
         }
 
     }
@@ -238,7 +232,8 @@ public class CustomerServiceImpl {
             }
         }
         if (!customer.getPhoneNumber().equals(customerDTO.getPhoneNumber())) {
-            boolean isExitsPhoneNumber = customerRepository.existsByPhoneNumberLike(customerDTO.getPhoneNumber().trim());
+            boolean isExitsPhoneNumber = customerRepository
+                    .existsByPhoneNumberLike(customerDTO.getPhoneNumber().trim());
             if (isExitsPhoneNumber) {
                 throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Số điện thoại"));
             }
@@ -276,7 +271,7 @@ public class CustomerServiceImpl {
         customer.setStatus(customerDTO.getStatus());
         return this.customerRepository.save(customer);
 
-}
+    }
 
     public void delete(Integer id) {
         Optional<Customer> optionalCustomer = this.customerRepository.findById(id);
@@ -307,8 +302,9 @@ public class CustomerServiceImpl {
                 .phoneNumber(customer.getPhoneNumber())
                 .email(customer.getEmail())
                 .note(customer.getNote())
-                .ctime(customer.getCtime())
-                .mtime(customer.getMtime())
+                .ctime(customer.getCtime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .mtime((customer.getMtime() == null) ? ""
+                        : customer.getMtime().format(DateTimeFormatter.ISO_DATE_TIME))
                 .status(customer.getStatus())
                 .build();
     }
