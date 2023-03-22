@@ -9,8 +9,6 @@ import com.example._4_man_fashion.entities.ProductDetail;
 import com.example._4_man_fashion.models.UpdateOrderStatus;
 import com.example._4_man_fashion.repositories.OrderDetailsRepository;
 import com.example._4_man_fashion.repositories.OrderRepository;
-import com.example._4_man_fashion.utils.DATNException;
-import com.example._4_man_fashion.utils.ErrorMessage;
 import com.example._4_man_fashion.utils.StringCommon;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,14 +69,25 @@ public class OrderServiceImpl implements OrderService {
         orderDTO.setCtime(LocalDateTime.now());
         orderDTO.setOrderStatus(Constant.Status.ACTIVE);
         Order o = this.mapOrderDtoToOrder(orderDTO);
-        final Order o2 = this.orderRepository.saveAndFlush(o);
+        o = this.orderRepository.saveAndFlush(o);
+        Order finalOrder = o;
         List<OrderDetails> orderDetails = orderDTO.getOrderDetails().stream().map(oDetail -> {
-            ProductDetail pro = oDetail.getProductDetail();
-            pro.setOrderDetails(oDetail);
-            oDetail.setProductDetail(pro);
-            oDetail.setOrder(o2);
-            return oDetail;
-        }).toList();
+            ProductDetail pro = ProductDetail
+                    .builder()
+                    .id(oDetail.getProductDetail().getId())
+                    .build();
+            return OrderDetails
+                    .builder()
+                    .productDetail(pro)
+                    .id(oDetail.getId())
+                    .price(oDetail.getPrice())
+                    .quantity(oDetail.getQuantity())
+                    .exchangeId(oDetail.getExchangeId())
+                    .statusExchange(oDetail.getStatusExchange())
+                    .statusOrderDetail(oDetail.getStatusOrderDetail())
+                    .order(finalOrder)
+                    .build();
+        }).collect(Collectors.toList());
         this.orderDetailsRepository.saveAll(orderDetails);
         return o;
     }
