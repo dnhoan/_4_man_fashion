@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query("select od from Order od where od.orderId = :valueSearch" +
-            " or (lower(od.customerId.customerName) like  '%' || lower(:valueSearch) || '%')" +
+            " or (lower(od.customer.customerName) like  '%' || lower(:valueSearch) || '%')" +
             " or (lower(od.orderId) like  '%' || lower(:valueSearch) || '%')" +
             " or (lower(od.recipientName) like  '%' || lower(:valueSearch) || '%')" +
             " or (lower(od.recipientPhone) like  '%' || lower(:valueSearch) || '%')" +
