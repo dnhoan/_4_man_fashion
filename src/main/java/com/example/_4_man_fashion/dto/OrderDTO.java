@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -46,11 +47,11 @@ public class OrderDTO {
 
     private String  note;
 
-    private String cancelNot;
+    private String cancelNote;
 
     private LocalDateTime ctime;
 
     private LocalDateTime mtime;
 
-    private OrderDetails orderDetails;
+    private List<OrderDetails> orderDetails;
 }

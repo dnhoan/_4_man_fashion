@@ -71,7 +71,7 @@ public class Order {
     private String  note;
 
     @Column(name = "cancel_not", nullable = false)
-    private String cancelNot;
+    private String cancelNote;
 
     private LocalDateTime ctime;
 

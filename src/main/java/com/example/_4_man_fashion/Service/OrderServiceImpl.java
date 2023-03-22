@@ -4,6 +4,7 @@ import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.OrderDTO;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.entities.Order;
+import com.example._4_man_fashion.models.UpdateOrderStatus;
 import com.example._4_man_fashion.repositories.OrderRepository;
 import com.example._4_man_fashion.utils.DATNException;
 import com.example._4_man_fashion.utils.ErrorMessage;
@@ -54,6 +55,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Transactional
+    public void updateOrderStatus(UpdateOrderStatus updateOrderStatus) {
+        this.orderRepository.updateOrderStatus(updateOrderStatus);
+    }
+
+    @Transactional
     public Order create(OrderDTO orderDTO) {
         if(StringCommon.isNullOrBlank(orderDTO.getOrderId())) {
             throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
@@ -77,6 +83,7 @@ public class OrderServiceImpl implements OrderService {
     public void delete(Integer id) {
 
     }
+
 
     @Transactional
     public boolean restore(Integer modelsId) {
