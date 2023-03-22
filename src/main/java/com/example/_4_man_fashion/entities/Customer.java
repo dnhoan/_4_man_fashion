@@ -66,8 +66,6 @@ public class Customer {
     public static Customer fromDTO(CustomerDTO dto) {
         Customer entity = new Customer();
         BeanUtils.copyProperties(dto, entity);
-        entity.setCtime(dto.getCtime());
-        entity.setMtime(dto.getMtime());
         entity.setStatus(1);
 
         return entity;
