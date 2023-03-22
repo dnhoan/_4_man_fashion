@@ -4,6 +4,8 @@ import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.ProductDetailDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+
+import org.hibernate.annotations.Cascade;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
@@ -51,10 +53,8 @@ public class ProductDetail {
     @Column(name = "product_detail_name", nullable = false, length = 1000)
     private String productDetailName;
 
-
-
-//    @Column(name = "product_id", nullable = false)
-//    private Integer productId;
+    // @Column(name = "product_id", nullable = false)
+    // private Integer productId;
 
     @Column(name = "status")
     private int status;
@@ -64,10 +64,10 @@ public class ProductDetail {
     @JoinColumn(name = "product_id")
     private Product product;
 
-
     @JsonIgnore
-    @OneToOne(mappedBy = "productDetail",fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "productDetail", fetch = FetchType.LAZY)
     private OrderDetails orderDetails;
+
     @PrePersist
     public void prePersist() {
         status = Constant.Status.ACTIVE;
@@ -76,8 +76,8 @@ public class ProductDetail {
 
     @PreUpdate
     public void preUpdate() {
-//        materialName = material.getMaterialName();
-//        categoryName = category.getCategoryName();
+        // materialName = material.getMaterialName();
+        // categoryName = category.getCategoryName();
     }
 
     public static ProductDetail fromDTO(ProductDetailDTO dto) {

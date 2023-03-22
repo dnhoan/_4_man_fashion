@@ -4,7 +4,10 @@ import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.OrderDTO;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.entities.Order;
+import com.example._4_man_fashion.entities.OrderDetails;
+import com.example._4_man_fashion.entities.ProductDetail;
 import com.example._4_man_fashion.models.UpdateOrderStatus;
+import com.example._4_man_fashion.repositories.OrderDetailsRepository;
 import com.example._4_man_fashion.repositories.OrderRepository;
 import com.example._4_man_fashion.utils.DATNException;
 import com.example._4_man_fashion.utils.ErrorMessage;
@@ -17,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,13 +33,16 @@ public class OrderServiceImpl implements OrderService {
     private OrderRepository orderRepository;
 
     @Autowired
+    private OrderDetailsRepository orderDetailsRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @Override
     public PageDTO<OrderDTO> getAll(int offset, int limit, Integer status, String search) {
         Pageable pageable = PageRequest.of(offset, limit);
         Page<Order> page = this.orderRepository.getAllOrder(pageable, status, StringCommon.getLikeCondition(search));
-        List<OrderDTO> orderDTOList = page.stream().map(u -> this.modelMapper.map(u, OrderDTO.class)).collect(Collectors.toList());
+        List<OrderDTO> orderDTOList = page.stream().map(u -> this.mapOrderToOrderDTO(u)).collect(Collectors.toList());
         return new PageDTO<OrderDTO>(
                 page.getTotalPages(),
                 page.getTotalElements(),
@@ -45,8 +52,7 @@ public class OrderServiceImpl implements OrderService {
                 page.isFirst(),
                 page.isLast(),
                 page.hasNext(),
-                page.hasPrevious()
-        );
+                page.hasPrevious());
     }
 
     @Transactional
@@ -61,17 +67,21 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     public Order create(OrderDTO orderDTO) {
-        if(StringCommon.isNullOrBlank(orderDTO.getOrderId())) {
-            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
-        }
-        boolean isExistOrderId = orderRepository.existsByOrderId(orderDTO.getOrderId().trim());
-        if(isExistOrderId) {
-            throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("OrderId"));
-        }
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        orderDTO.setOrderId(timestamp.getTime() + "");
         orderDTO.setCtime(LocalDateTime.now());
         orderDTO.setOrderStatus(Constant.Status.ACTIVE);
-
-        return this.orderRepository.save(Order.fromDTO(orderDTO));
+        Order o = this.mapOrderDtoToOrder(orderDTO);
+        final Order o2 = this.orderRepository.saveAndFlush(o);
+        List<OrderDetails> orderDetails = orderDTO.getOrderDetails().stream().map(oDetail -> {
+            ProductDetail pro = oDetail.getProductDetail();
+            pro.setOrderDetails(oDetail);
+            oDetail.setProductDetail(pro);
+            oDetail.setOrder(o2);
+            return oDetail;
+        }).toList();
+        this.orderDetailsRepository.saveAll(orderDetails);
+        return o;
     }
 
     @Transactional
@@ -84,9 +94,18 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
-
     @Transactional
     public boolean restore(Integer modelsId) {
         return false;
+    }
+
+    private OrderDTO mapOrderToOrderDTO(Order order) {
+        OrderDTO orderDTO = this.modelMapper.map(order, OrderDTO.class);
+        return orderDTO;
+    }
+
+    private Order mapOrderDtoToOrder(OrderDTO dto) {
+        Order o = this.modelMapper.map(dto, Order.class);
+        return o;
     }
 }
