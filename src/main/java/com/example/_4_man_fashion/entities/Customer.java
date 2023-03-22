@@ -4,6 +4,8 @@ import com.example._4_man_fashion.dto.CustomerDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+
+import org.hibernate.annotations.Cascade;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;

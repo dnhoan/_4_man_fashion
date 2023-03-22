@@ -18,5 +18,6 @@ CREATE TABLE ORDERS
     note text,
     cancel_not text,
     ctime timestamp DEFAULT current_timestamp,
-    mtime timestamp
+    mtime timestamp,
+    constraint fk_customer FOREIGN KEY (customer_id) REFERENCES customers(id)
 );

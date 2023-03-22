@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -17,16 +18,15 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name="orders")
+@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private int id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
+    @Column(name = "customer_id", nullable = true)
+    private Integer customerId;
 
     @Column(name = "order_id", nullable = false)
     private String orderId;
@@ -68,7 +68,7 @@ public class Order {
     private int purchaseType;
 
     @Column(name = "note", nullable = false)
-    private String  note;
+    private String note;
 
     @Column(name = "cancel_not", nullable = false)
     private String cancelNote;
@@ -80,14 +80,6 @@ public class Order {
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_detail_id")
-    private List<OrderDetails> orderDetails ;
-
-    public static Order fromDTO(OrderDTO dto) {
-        Order entity = new Order();
-        BeanUtils.copyProperties(dto, entity);
-        entity.setOrderStatus(1);
-
-        return entity;
-    }
+    private List<OrderDetails> orderDetails;
 
 }
