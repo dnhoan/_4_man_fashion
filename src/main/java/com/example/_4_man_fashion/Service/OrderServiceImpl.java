@@ -45,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
     public PageDTO<OrderDTO> getAll(int offset, int limit, Integer status, String search) {
         Pageable pageable = PageRequest.of(offset, limit);
         Page<Order> page = this.orderRepository.getAllOrder(pageable, status, StringCommon.getLikeCondition(search));
-        List<OrderDTO> orderDTOList = page.stream().map(u -> this.mapOrderToOrderDTO(u)).collect(Collectors.toList());
+        List<OrderDTO> orderDTOList = page.stream().map(this::mapOrderToOrderDTO).collect(Collectors.toList());
         return new PageDTO<OrderDTO>(
                 page.getTotalPages(),
                 page.getTotalElements(),
@@ -128,12 +128,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private OrderDTO mapOrderToOrderDTO(Order order) {
-        OrderDTO orderDTO = this.modelMapper.map(order, OrderDTO.class);
-        return orderDTO;
+        System.out.println(order.getOrderDetails().size());
+        return this.modelMapper.map(order, OrderDTO.class);
     }
 
     private Order mapOrderDtoToOrder(OrderDTO dto) {
-        Order o = this.modelMapper.map(dto, Order.class);
-        return o;
+        return this.modelMapper.map(dto, Order.class);
     }
 }

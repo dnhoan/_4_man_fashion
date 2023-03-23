@@ -31,7 +31,7 @@ public class OrderDetails {
     private int quantity;
 
     @Cascade(org.hibernate.annotations.CascadeType.LOCK)
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_detail_id", nullable = false)
     private ProductDetail productDetail;
 

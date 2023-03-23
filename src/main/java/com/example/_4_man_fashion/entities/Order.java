@@ -1,15 +1,10 @@
 package com.example._4_man_fashion.entities;
 
-import com.example._4_man_fashion.dto.OrderDTO;
-import com.example._4_man_fashion.dto.SizeDto;
 import lombok.*;
-import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.Cascade;
-import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -25,7 +20,7 @@ public class Order {
     @Column(name = "id", nullable = false)
     private int id;
 
-    @Column(name = "customer_id", nullable = true)
+    @Column(name = "customer_id")
     private Integer customerId;
 
     @Column(name = "order_id", nullable = false)
@@ -78,8 +73,7 @@ public class Order {
     private LocalDateTime mtime;
 
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_detail_id")
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<OrderDetails> orderDetails;
 
 }
