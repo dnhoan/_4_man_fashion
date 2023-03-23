@@ -1,7 +1,7 @@
 CREATE TABLE ORDER_DETAILS
 (
     id serial primary key,
-    order_id bigint  null,
+    order_id bigint,
     price float,
     quantity int,
     product_detail_id int,
