@@ -6,10 +6,15 @@ import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.LogOrderStatusDTO;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.dto.SizeDto;
+import com.example._4_man_fashion.entities.LogOrderStatus;
+import com.example._4_man_fashion.entities.Material;
 import com.example._4_man_fashion.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(Constant.Api.Path.ADMIN)
@@ -19,11 +24,9 @@ public class LogOrderStatusController {
     @Autowired
     private LogOrderStatusService logOrderStatusService;
 
-    @GetMapping("logOrderStatus/getAll")
-    public ResponseEntity<ApiResponse<PageDTO<LogOrderStatusDTO>>> getAll(@RequestParam(defaultValue = "0") int offset,
-                                                                          @RequestParam(defaultValue = "10") int limit,
-                                                                          @RequestParam(defaultValue = "") Integer id) {
-        PageDTO<LogOrderStatusDTO> result = logOrderStatusService.getAll(offset, limit, id);
-        return ResponseEntity.ok(ApiResponse.success(result));
+    @GetMapping("logOrderStatus/getList")
+    public ResponseEntity<ApiResponse<List<LogOrderStatus>>> getList(@RequestParam(defaultValue = "") Integer orderId) {
+        List<LogOrderStatus> logOrderStatuses = this.logOrderStatusService.getListLog(orderId);
+        return ResponseEntity.ok(ApiResponse.success(logOrderStatuses));
     }
 }
