@@ -1,16 +1,16 @@
 package com.example._4_man_fashion.Service;
 
 import com.example._4_man_fashion.constants.Constant;
+import com.example._4_man_fashion.dto.CustomerDTO;
 import com.example._4_man_fashion.dto.OrderDTO;
 import com.example._4_man_fashion.dto.PageDTO;
-import com.example._4_man_fashion.entities.LogOrderStatus;
-import com.example._4_man_fashion.entities.Order;
-import com.example._4_man_fashion.entities.OrderDetails;
-import com.example._4_man_fashion.entities.ProductDetail;
+import com.example._4_man_fashion.entities.*;
 import com.example._4_man_fashion.models.UpdateOrderStatus;
 import com.example._4_man_fashion.repositories.LogOrderStatusRepository;
 import com.example._4_man_fashion.repositories.OrderDetailsRepository;
 import com.example._4_man_fashion.repositories.OrderRepository;
+import com.example._4_man_fashion.utils.DATNException;
+import com.example._4_man_fashion.utils.ErrorMessage;
 import com.example._4_man_fashion.utils.StringCommon;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private LogOrderStatusRepository logOrderStatusRepository;
-
+    @Autowired
+    private CustomerService customerService;
     @Autowired
     private ModelMapper modelMapper;
 
@@ -61,6 +62,15 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public List<Order> getListOrder() {
         return null;
+    }
+
+    @Override
+    public OrderDTO getOrderByOrderId(String orderId) {
+        Optional<Order> order = this.orderRepository.getOrderByOrderId(orderId);
+        if(order.isPresent()) {
+            return  this.mapOrderToOrderDTO(order.get());
+        }
+        else throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("OrderID"));
     }
 
     @Transactional
@@ -102,9 +112,9 @@ public class OrderServiceImpl implements OrderService {
                     .id(oDetail.getId())
                     .price(oDetail.getPrice())
                     .quantity(oDetail.getQuantity())
-                    .exchangeId(oDetail.getExchangeId())
-                    .statusExchange(oDetail.getStatusExchange())
-                    .statusOrderDetail(oDetail.getStatusOrderDetail())
+//                    .exchangeId(oDetail.getExchangeId())
+//                    .statusExchange(oDetail.getStatusExchange())
+//                    .statusOrderDetail(oDetail.getStatusOrderDetail())
                     .order(finalOrder)
                     .build();
         }).collect(Collectors.toList());
@@ -128,8 +138,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private OrderDTO mapOrderToOrderDTO(Order order) {
-        System.out.println(order.getOrderDetails().size());
-        return this.modelMapper.map(order, OrderDTO.class);
+        OrderDTO orderDTO = this.modelMapper.map(order, OrderDTO.class);
+        if (order.getCustomerId() != null) {
+            CustomerDTO customer = this.customerService.getCustomerById(order.getCustomerId());
+            orderDTO.setCustomerInfo(customer);
+        }
+        return orderDTO;
     }
 
     private Order mapOrderDtoToOrder(OrderDTO dto) {

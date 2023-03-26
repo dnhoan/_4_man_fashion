@@ -7,6 +7,7 @@ import com.example._4_man_fashion.entities.Customer;
 public interface CustomerService {
     PageDTO<CustomerDTO> getAll(int offset, int limit, Integer status, String search);
     Customer create(CustomerDTO customerDTO);
+    CustomerDTO getCustomerById(Integer id);
 
     Customer update(CustomerDTO customerDTO);
 

@@ -1,6 +1,5 @@
 package com.example._4_man_fashion.dto;
 
-import com.example._4_man_fashion.entities.Customer;
 import com.example._4_man_fashion.entities.OrderDetails;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -18,7 +17,7 @@ public class OrderDTO {
     private int id;
 
     private Integer customerId;
-
+    private CustomerDTO customerInfo;
     private String orderId;
 
     private int orderStatus;

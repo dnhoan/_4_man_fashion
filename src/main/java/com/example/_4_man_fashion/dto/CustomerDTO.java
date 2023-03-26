@@ -1,6 +1,5 @@
 package com.example._4_man_fashion.dto;
 
-import com.example._4_man_fashion.entities.Account;
 import lombok.*;
 
 @Builder
@@ -24,7 +23,6 @@ public class CustomerDTO {
 
     private String email;
 
-    private Account account;
 
     private String avatar;
 

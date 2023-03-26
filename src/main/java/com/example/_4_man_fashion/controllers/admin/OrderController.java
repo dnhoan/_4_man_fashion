@@ -37,6 +37,12 @@ public class OrderController {
         return ResponseEntity.ok(ApiResponse.success(lstOrder));
     }
 
+    @GetMapping("order/{orderId}")
+    public ResponseEntity<ApiResponse<OrderDTO>> getOrderByOrderId(@PathVariable String orderId) {
+        OrderDTO o = this.orderService.getOrderByOrderId(orderId);
+        return ResponseEntity.ok(ApiResponse.success(o));
+    }
+
 
     @PostMapping("order/create")
     public ResponseEntity<ApiResponse<Order>> create(@Valid @RequestBody OrderDTO dto) {

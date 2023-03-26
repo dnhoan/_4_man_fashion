@@ -12,6 +12,7 @@ public interface OrderService {
     PageDTO<OrderDTO> getAll(int offset, int limit, Integer status, String search);
 
     List<Order> getListOrder();
+    OrderDTO getOrderByOrderId(String orderId);
     void updateOrderStatus(UpdateOrderStatus updateOrderStatus);
     Order create(OrderDTO orderDTO);
     Order update(OrderDTO orderDTO);
