@@ -1,8 +1,11 @@
 package com.example._4_man_fashion.entities;
 
+import com.example._4_man_fashion.dto.LogOrderStatusDTO;
+import com.example._4_man_fashion.dto.MaterialDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
+import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -49,4 +52,12 @@ public class LogOrderStatus {
     @JsonIgnore
     @OneToMany(mappedBy = "color", cascade = CascadeType.ALL)
     private List<ProductDetail> productDetails;
+
+
+    public static LogOrderStatus fromDTO(LogOrderStatusDTO dto) {
+        LogOrderStatus entity = new LogOrderStatus();
+        BeanUtils.copyProperties(dto, entity);
+
+        return entity;
+    }
 }

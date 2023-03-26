@@ -23,7 +23,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
         Page<Order> getAllOrder(Pageable pageable, Integer status, String valueSearch);
 
         @Modifying
-        @Query("update Order o set o.orderStatus =:#{#updateOrderStatus.newStatus},  o.cancelNote =:#{#updateOrderStatus.note} where o.id =:#{#updateOrderStatus.id}")
+        @Query("update Order o set o.orderStatus =:#{#updateOrderStatus.newStatus},  o.cancelNote =:#{#updateOrderStatus.note} where o.id =:#{#updateOrderStatus.orderId}")
         void updateOrderStatus(
                         @Param("updateOrderStatus") UpdateOrderStatus updateOrderStatus);
 
