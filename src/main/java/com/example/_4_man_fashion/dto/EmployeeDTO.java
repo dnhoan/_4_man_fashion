@@ -29,6 +29,7 @@ public class EmployeeDTO {
     private LocalDateTime ctime;
     private LocalDateTime mtime;
     private Integer status;
+    private Integer workType;
     private LocalDate timeOnboard;
     private LocalDate dayOff;
 }

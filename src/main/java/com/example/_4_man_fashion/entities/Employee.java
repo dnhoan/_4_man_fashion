@@ -8,6 +8,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.example._4_man_fashion.dto.EmployeeDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -76,7 +77,11 @@ public class Employee {
     @Column(name = "status")
     private Integer status;
 
-    @OneToOne
+    @Column(name = "work_type")
+    private Integer workType;
+
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     private Account account;
 

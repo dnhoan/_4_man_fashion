@@ -85,7 +85,7 @@ public class EmployeeController {
         return ResponseEntity.ok(ApiResponse.success());
     }
 
-    @DeleteMapping("/employee/delete/{id}")
+    @PutMapping("/employee/delete/{id}")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Integer id) throws SQLException {
         this.employeeService.delete(id);
         return ResponseEntity.ok(ApiResponse.success());
