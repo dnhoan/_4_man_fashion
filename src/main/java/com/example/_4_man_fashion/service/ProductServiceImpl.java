@@ -94,6 +94,7 @@ public class ProductServiceImpl implements ProductService {
             throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Tên sản phẩm"));
         }
 
+        productDTO.setProductId("4ManFashion");
         Product product = this.modelMapper.map(productDTO, Product.class);
         return getProductDTO(productDTO, product);
     }
@@ -114,7 +115,6 @@ public class ProductServiceImpl implements ProductService {
                 throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Tên sản phẩm"));
             }
         }
-
         product = this.modelMapper.map(productDTO, Product.class);
         product.setMtime(LocalDateTime.now());
 

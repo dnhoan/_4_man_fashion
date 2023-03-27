@@ -1,0 +1,1 @@
+alter table PRODUCTS alter column product_id type varchar(100);

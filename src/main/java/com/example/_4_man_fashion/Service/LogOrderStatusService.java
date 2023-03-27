@@ -1,9 +1,10 @@
 package com.example._4_man_fashion.Service;
 
-import com.example._4_man_fashion.dto.LogOrderStatusDTO;
-import com.example._4_man_fashion.dto.PageDTO;
+import com.example._4_man_fashion.entities.LogOrderStatus;
+
+import java.util.List;
 
 public interface LogOrderStatusService {
 
-    PageDTO<LogOrderStatusDTO> getAll(int offset, int limit, Integer id);
+    List<LogOrderStatus> getListLog(Integer orderId);
 }

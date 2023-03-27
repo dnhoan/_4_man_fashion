@@ -65,7 +65,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     public void updateOrderStatus(UpdateOrderStatus updateOrderStatus) {
-        Optional<Order> order = this.orderRepository.findById(updateOrderStatus.getId());
+        Optional<Order> order = this.orderRepository.findById(updateOrderStatus.getOrderId());
         if (order.isPresent()) {
             this.orderRepository.updateOrderStatus(updateOrderStatus);
         }

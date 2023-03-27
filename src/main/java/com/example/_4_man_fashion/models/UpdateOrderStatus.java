@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class UpdateOrderStatus {
-    private Integer id;
+    private Integer orderId;
     private Integer newStatus;
     private String note;
 }
