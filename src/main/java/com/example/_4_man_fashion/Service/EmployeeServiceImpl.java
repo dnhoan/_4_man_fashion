@@ -3,8 +3,10 @@ package com.example._4_man_fashion.Service;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -14,12 +16,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.EmployeeDTO;
 import com.example._4_man_fashion.dto.PageDTO;
+import com.example._4_man_fashion.entities.Account;
 import com.example._4_man_fashion.entities.Employee;
+import com.example._4_man_fashion.entities.Role;
+import com.example._4_man_fashion.models.ERole;
+import com.example._4_man_fashion.repositories.AccountRepository;
 import com.example._4_man_fashion.repositories.EmployeeRepository;
+import com.example._4_man_fashion.repositories.RoleRepository;
 import com.example._4_man_fashion.utils.DATNException;
 import com.example._4_man_fashion.utils.ErrorMessage;
 import com.example._4_man_fashion.utils.StringCommon;
@@ -30,7 +38,16 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository employeeRepository;
 
     @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public PageDTO<EmployeeDTO> getAll(int offset, int limit) {
         Pageable pageable = PageRequest.of(offset, limit);
@@ -92,7 +109,27 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         employeeDto.setTimeOnboard(LocalDate.now());
-        employeeDto.setStatus(1);
+        employeeDto.setStatus(Constant.Status.ACTIVE);
+
+        String passwordEncrypt = this.passwordEncoder.encode("4ManFashion");
+        Set<Role> roles = new HashSet<>();
+        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                .orElseThrow(() -> new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Error: Role is not found.")));
+        roles.add(userRole);
+        Account account = new Account();
+        account.setRoles(roles);
+        account.setPhoneNumber(employeeDto.getPhoneNumber());
+        account.setEmail(employeeDto.getEmail());
+        account.setStatus(Constant.Status.ACTIVE);
+        account.setPassword(passwordEncrypt);
+        account.setEmployee(Employee.fromDTO(employeeDto));
+
+        try {
+            accountRepository.save(account);
+        } catch (Exception e) {
+            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Lỗi lưu vào db"));
+        }
+
         return this.employeeRepository.saveAndFlush(Employee.fromDTO(employeeDto));
     }
 
@@ -118,6 +155,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         emp.setMtime(LocalDateTime.now());
         emp.setStatus(Constant.Status.INACTIVE);
         emp.setDayOff(LocalDate.now());
+
+        Optional<Account> optionalAccount = this.accountRepository.findById(emp.getAccount().getId());
+        Account account = optionalAccount.get();
+        account.setStatus(Constant.Status.INACTIVE);
+        this.accountRepository.save(account);
+
         this.employeeRepository.save(emp);
     }
 
@@ -130,6 +173,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee emp = optionalEmp.get();
         emp.setMtime(LocalDateTime.now());
         emp.setStatus(Constant.Status.ACTIVE);
+
+        Optional<Account> optionalAccount = this.accountRepository.findById(emp.getAccount().getId());
+        Account account = optionalAccount.get();
+        account.setStatus(Constant.Status.ACTIVE);
+        this.accountRepository.save(account);
+
         this.employeeRepository.save(emp);
     }
 
