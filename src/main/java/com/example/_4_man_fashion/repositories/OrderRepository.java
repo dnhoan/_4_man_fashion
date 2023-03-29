@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Integer> {
         @Query("select od from Order od where od.orderId = :valueSearch" +
@@ -25,6 +27,11 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
         void updateOrderStatus(
                         @Param("updateOrderStatus") UpdateOrderStatus updateOrderStatus);
 
+        @Modifying
+        @Query(value = "CALL updateOrderMoney(:idOrder);", nativeQuery = true)
+        void updateOrderMoney(Integer idOrder);
+
         boolean existsByOrderId(String orderId);
 
+        Optional<Order> getOrderByOrderId(String orderId);
 }

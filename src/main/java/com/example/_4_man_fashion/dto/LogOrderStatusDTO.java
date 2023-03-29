@@ -16,8 +16,6 @@ import java.util.List;
 public class LogOrderStatusDTO {
     private Integer id;
 
-    private Order order;
-
     private LocalDateTime times;
 
     private String user_change;
@@ -28,7 +26,4 @@ public class LogOrderStatusDTO {
 
     private Integer newStatus;
 
-    private List<Account> accounts;
-
-    private List<ProductDetail> productDetails;
 }

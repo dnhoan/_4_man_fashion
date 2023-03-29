@@ -12,7 +12,7 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderDetailsDTO {
     private int id;
-    private String orderId;
+    private int orderId;
     private float price;
     private int quantity;
     private int productDetailId;

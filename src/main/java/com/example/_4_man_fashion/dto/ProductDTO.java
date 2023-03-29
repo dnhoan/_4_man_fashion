@@ -43,6 +43,9 @@ public class ProductDTO {
     private LocalDateTime ctime;
     private LocalDateTime mtime;
     private boolean isExpand = false;
+    private Size sizeSelected;
+    private Color colorSelected;
+    private int amount = 0;
 
 //    public void setProductImages(List<ProductImage> productImages) {
 //        this.productImages = productImages.stream().map(ProductImage::getImage).collect(Collectors.toList());

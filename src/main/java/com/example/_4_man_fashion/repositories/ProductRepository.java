@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
-    @Query("select product from Product product where (:name is null or product.productName like :name) and (:status = -1 or product.status = :status) order by product.ctime desc, product.productName")
+    @Query("select product from Product product where (:name is null or lower(product.productName) like lower(:name)) and (:status = -1 or product.status = :status) order by product.ctime desc, product.productName")
     Page<Product> getProductByName(Pageable pageable, Integer status, String name);
 
     @Query("select product from Product product where (:id is null or product.id like :id) and (:status = -1 or product.status = :status) order by product.ctime, product.id")

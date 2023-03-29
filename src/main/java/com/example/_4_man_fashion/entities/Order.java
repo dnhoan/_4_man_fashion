@@ -2,6 +2,7 @@ package com.example._4_man_fashion.entities;
 
 import lombok.*;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -74,6 +75,8 @@ public class Order {
 
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    @OrderBy()
+    @Where(clause = "status_order_detail = 1")
     private List<OrderDetails> orderDetails;
 
 }

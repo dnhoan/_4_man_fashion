@@ -45,7 +45,14 @@ public class ProductServiceImpl implements ProductService {
     public PageDTO<ProductDTO> getAll(int offset, int limit, Integer status, String search) {
         Pageable pageable = PageRequest.of(offset, limit);
         Page<Product> page = this.productRepository.getProductByName(pageable, status, StringCommon.getLikeCondition(search));
-        List<ProductDTO> productDTOList = page.stream().map(product -> this.modelMapper.map(product, ProductDTO.class)).collect(Collectors.toList());
+        List<ProductDTO> productDTOList = page.stream().map(product -> {
+            ProductDTO productDTO =  this.modelMapper.map(product, ProductDTO.class);
+            List<Color> colors = this.colorRepository.getColorsByProductId(product.getId());
+            List<Size> sizes = this.sizeRepository.getSizesByProductId(product.getId());
+            productDTO.setColors(colors);
+            productDTO.setSizes(sizes);
+            return productDTO;
+        }).collect(Collectors.toList());
         return new PageDTO<ProductDTO>(
                 page.getTotalPages(),
                 page.getTotalElements(),

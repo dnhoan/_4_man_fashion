@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class CustomerServiceImpl {
+public class CustomerServiceImpl implements CustomerService{
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -134,12 +134,19 @@ public class CustomerServiceImpl {
         // db"));
         // }
 
-        customerDTO.setAccount(account);
+//        customerDTO.setAccount(account);
         customerDTO.setCtime(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         customerDTO.setStatus(Constant.Status.ACTIVE);
 
         return this.customerRepository.save(Customer.fromDTO(customerDTO));
 
+    }
+
+    @Override
+    public CustomerDTO getCustomerById(Integer id) {
+        Optional<Customer> customer = this.customerRepository.findById(id);
+        if (customer.isPresent()) return this.modelMapper.map(customer.get(), CustomerDTO.class);
+        else return new CustomerDTO();
     }
 
     public Cart createCustomer(CustomerDTO customerDTO) {
@@ -195,7 +202,7 @@ public class CustomerServiceImpl {
         } catch (Exception e) {
             throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Lỗi lưu vào db"));
         }
-        customerDTO.setAccount(account);
+//        customerDTO.setAccount(account);
         customerDTO.setCtime(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         customerDTO.setStatus(Constant.Status.ACTIVE);
 

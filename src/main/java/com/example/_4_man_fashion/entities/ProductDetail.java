@@ -65,7 +65,8 @@ public class ProductDetail {
     private Product product;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "productDetail", fetch = FetchType.LAZY)
+    @Transient
+    @OneToOne(mappedBy = "productDetail")
     private OrderDetails orderDetails;
 
     @PrePersist

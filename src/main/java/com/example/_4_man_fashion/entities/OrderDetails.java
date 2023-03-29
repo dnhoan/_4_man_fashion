@@ -35,12 +35,12 @@ public class OrderDetails {
     @JoinColumn(name = "product_detail_id", nullable = false)
     private ProductDetail productDetail;
 
-    @Column(name = "exchange_id")
-    private int exchangeId;
-
-    @Column(name = "status_exchange")
-    private int statusExchange;
-
+//    @Column(name = "exchange_id")
+//    private int exchangeId;
+//
+//    @Column(name = "status_exchange")
+//    private int statusExchange;
+//
     @Column(name = "status_order_detail")
     private int statusOrderDetail;
 }

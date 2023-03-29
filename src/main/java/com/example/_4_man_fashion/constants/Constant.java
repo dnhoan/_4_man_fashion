@@ -46,6 +46,17 @@ public final class Constant {
         public static final Integer ALL = -1;
     }
 
+    public static final class OrderStatus {
+        public static final Integer DRAFT = 0;
+        public static final Integer PENDING = 1;
+        public static final Integer CONFIRMED = 2;
+        public static final Integer PACKAGING = 3;
+        public static final Integer DELIVERING = 4;
+        public static final Integer COMPLETE = 5;
+        public static final Integer EXCHANGE = 6;
+        public static final Integer CANCEL_ORDER = 7;
+    }
+
     public static final class Role {
         public static final String ADMIN = "ROLE_ADMIN";
         public static final String EMPLOYEE = "ROLE_EMPLOYEE";
