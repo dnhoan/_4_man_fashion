@@ -2,6 +2,7 @@ package com.example._4_man_fashion.Service;
 
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.CustomerDTO;
+import com.example._4_man_fashion.dto.LogOrderStatusDTO;
 import com.example._4_man_fashion.dto.OrderDTO;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.entities.*;
@@ -74,11 +75,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Transactional
-    public void updateOrderStatus(UpdateOrderStatus updateOrderStatus) {
+    public LogOrderStatusDTO updateOrderStatus(UpdateOrderStatus updateOrderStatus) {
         Optional<Order> order = this.orderRepository.findById(updateOrderStatus.getOrderId());
-        if (order.isPresent()) {
-            this.orderRepository.updateOrderStatus(updateOrderStatus);
+        if (order.isEmpty()) {
+            throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("order id"));
         }
+        this.orderRepository.updateOrderStatus(updateOrderStatus);
         LogOrderStatus logOrderStatus = new LogOrderStatus();
         logOrderStatus.setOrder(order.get());
         logOrderStatus.setTimes(LocalDateTime.now());
@@ -88,8 +90,8 @@ public class OrderServiceImpl implements OrderService {
         logOrderStatus.setNewStatus(updateOrderStatus.getNewStatus());
         logOrderStatus.setAccounts(null);
         logOrderStatus.setProductDetails(null);
-        this.logOrderStatusRepository.save(logOrderStatus);
-
+        logOrderStatus = this.logOrderStatusRepository.save(logOrderStatus);
+        return this.modelMapper.map(logOrderStatus, LogOrderStatusDTO.class);
     }
 
     @Transactional
@@ -97,7 +99,6 @@ public class OrderServiceImpl implements OrderService {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         orderDTO.setOrderId(timestamp.getTime() + "");
         orderDTO.setCtime(LocalDateTime.now());
-        orderDTO.setOrderStatus(Constant.Status.ACTIVE);
         Order o = this.mapOrderDtoToOrder(orderDTO);
         o = this.orderRepository.saveAndFlush(o);
         Order finalOrder = o;
@@ -112,12 +113,16 @@ public class OrderServiceImpl implements OrderService {
                     .id(oDetail.getId())
                     .price(oDetail.getPrice())
                     .quantity(oDetail.getQuantity())
-//                    .exchangeId(oDetail.getExchangeId())
-//                    .statusExchange(oDetail.getStatusExchange())
-//                    .statusOrderDetail(oDetail.getStatusOrderDetail())
                     .order(finalOrder)
                     .build();
         }).collect(Collectors.toList());
+        Order finalO = o;
+        List<LogOrderStatus> logOrderStatuses = orderDTO.getLogsOrderStatus().stream().map(log -> {
+            LogOrderStatus logOrderStatus = this.modelMapper.map(log, LogOrderStatus.class);
+            logOrderStatus.setOrder(finalO);
+            return logOrderStatus;
+        }).toList();
+        this.logOrderStatusRepository.saveAll(logOrderStatuses);
         this.orderDetailsRepository.saveAll(orderDetails);
         return o;
     }
@@ -143,6 +148,9 @@ public class OrderServiceImpl implements OrderService {
             CustomerDTO customer = this.customerService.getCustomerById(order.getCustomerId());
             orderDTO.setCustomerInfo(customer);
         }
+        List<LogOrderStatusDTO> logOrderStatusDTOS = this.logOrderStatusRepository
+                .getLogOrderStatusesByOrderIdOrderByTimesDesc(order.getId()).stream().map(log -> this.modelMapper.map(log, LogOrderStatusDTO.class)).toList();
+        orderDTO.setLogsOrderStatus(logOrderStatusDTOS);
         return orderDTO;
     }
 

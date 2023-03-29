@@ -16,4 +16,7 @@ public interface LogOrderStatusRepository extends JpaRepository<LogOrderStatus, 
 
     @Query("select log from LogOrderStatus log where (:id is null or log.id =:id) order by log.id")
     List<LogOrderStatus> getAllById(Integer id);
+
+//    @Query("select log from LogOrderStatus log where (:id is null or log.id =:id) order by log.id")
+    List<LogOrderStatus> getLogOrderStatusesByOrderIdOrderByTimesDesc(Integer order_id);
 }

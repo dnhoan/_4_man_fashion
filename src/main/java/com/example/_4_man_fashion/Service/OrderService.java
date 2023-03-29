@@ -1,5 +1,6 @@
 package com.example._4_man_fashion.Service;
 
+import com.example._4_man_fashion.dto.LogOrderStatusDTO;
 import com.example._4_man_fashion.dto.OrderDTO;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.entities.Order;
@@ -13,7 +14,7 @@ public interface OrderService {
 
     List<Order> getListOrder();
     OrderDTO getOrderByOrderId(String orderId);
-    void updateOrderStatus(UpdateOrderStatus updateOrderStatus);
+    LogOrderStatusDTO updateOrderStatus(UpdateOrderStatus updateOrderStatus);
     Order create(OrderDTO orderDTO);
     Order update(OrderDTO orderDTO);
 

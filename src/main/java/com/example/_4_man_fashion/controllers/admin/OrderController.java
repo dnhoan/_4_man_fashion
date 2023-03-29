@@ -2,6 +2,7 @@ package com.example._4_man_fashion.controllers.admin;
 
 import com.example._4_man_fashion.Service.OrderService;
 import com.example._4_man_fashion.constants.Constant;
+import com.example._4_man_fashion.dto.LogOrderStatusDTO;
 import com.example._4_man_fashion.dto.OrderDTO;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.entities.Order;
@@ -64,8 +65,8 @@ public class OrderController {
     }
 
     @PutMapping("order/updateOrderStatus")
-    public ResponseEntity<ApiResponse<Void>> updateOrderStatus(@RequestBody UpdateOrderStatus statusUpdate) {
-        orderService.updateOrderStatus(statusUpdate);
-        return ResponseEntity.ok(ApiResponse.success());
+    public ResponseEntity<ApiResponse<LogOrderStatusDTO>> updateOrderStatus(@RequestBody UpdateOrderStatus statusUpdate) {
+        LogOrderStatusDTO logOrderStatusDTO = orderService.updateOrderStatus(statusUpdate);
+        return ResponseEntity.ok(ApiResponse.success(logOrderStatusDTO));
     }
 }

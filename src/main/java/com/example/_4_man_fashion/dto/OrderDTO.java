@@ -53,4 +53,5 @@ public class OrderDTO {
     private LocalDateTime mtime;
 
     private List<OrderDetails> orderDetails;
+    private List<LogOrderStatusDTO> logsOrderStatus;
 }
