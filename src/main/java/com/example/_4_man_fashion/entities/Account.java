@@ -50,6 +50,9 @@ public class Account {
         @OneToOne(mappedBy = "account", fetch = FetchType.EAGER)
         private Customer customer;
 
+        @OneToOne(mappedBy = "account", fetch = FetchType.EAGER)
+        private Employee employee;
+
         @Column(name = "status")
         private Integer status;
 
