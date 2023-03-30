@@ -38,7 +38,7 @@ public class OrderOnlineController {
 
     @PostMapping("order/create")
     public ResponseEntity<ApiResponse<Order>> create(@Valid @RequestBody OrderDTO dto) {
-        Order order = orderService.create(dto);
+        Order order = orderService.createOrderOnline(dto);
         return ResponseEntity.ok(ApiResponse.success(order));
     }
 

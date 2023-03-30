@@ -34,7 +34,7 @@ public class CartItem {
     public static CartItem fromDTO(CartItemDTO dto) {
         CartItem entity = new CartItem();
         BeanUtils.copyProperties(dto, entity);
-        entity.setProductDetailId(dto.getProductDetailCartDto().getId());
+        entity.setProductDetailId(dto.getProductDetailDTO().getId());
         return entity;
     }
 }

@@ -2,6 +2,7 @@ package com.example._4_man_fashion.entities;
 
 import lombok.*;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;

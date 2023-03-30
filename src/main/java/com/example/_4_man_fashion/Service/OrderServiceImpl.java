@@ -7,6 +7,7 @@ import com.example._4_man_fashion.dto.OrderDTO;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.entities.*;
 import com.example._4_man_fashion.models.UpdateOrderStatus;
+import com.example._4_man_fashion.repositories.CartItemRepository;
 import com.example._4_man_fashion.repositories.LogOrderStatusRepository;
 import com.example._4_man_fashion.repositories.OrderDetailsRepository;
 import com.example._4_man_fashion.repositories.OrderRepository;
@@ -42,6 +43,8 @@ public class OrderServiceImpl implements OrderService {
     private CustomerService customerService;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private CartItemRepository cartItemRepository;
 
     @Override
     public PageDTO<OrderDTO> getAll(int offset, int limit, Integer status, String search) {
@@ -96,10 +99,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     public Order create(OrderDTO orderDTO) {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        orderDTO.setOrderId(timestamp.getTime() + "");
         orderDTO.setCtime(LocalDateTime.now());
         Order o = this.mapOrderDtoToOrder(orderDTO);
+        int maxId = this.orderRepository.getMaxOrderId();
+        String orderId = "DH0" + (maxId + 1);
+        o.setCustomerId(orderDTO.getCustomerId());
+        o.setOrderId(orderId);
         o = this.orderRepository.saveAndFlush(o);
         Order finalOrder = o;
         List<OrderDetails> orderDetails = orderDTO.getOrderDetails().stream().map(oDetail -> {
@@ -109,6 +114,43 @@ public class OrderServiceImpl implements OrderService {
                     .build();
             return OrderDetails
                     .builder()
+                    .productDetail(pro)
+                    .id(oDetail.getId())
+                    .statusOrderDetail(Constant.Status.ACTIVE)
+                    .price(oDetail.getPrice())
+                    .quantity(oDetail.getQuantity())
+                    .order(finalOrder)
+                    .build();
+        }).collect(Collectors.toList());
+        Order finalO = o;
+        List<LogOrderStatus> logOrderStatuses = orderDTO.getLogsOrderStatus().stream().map(log -> {
+            LogOrderStatus logOrderStatus = this.modelMapper.map(log, LogOrderStatus.class);
+            logOrderStatus.setOrder(finalO);
+            return logOrderStatus;
+        }).toList();
+        this.logOrderStatusRepository.saveAll(logOrderStatuses);
+        this.orderDetailsRepository.saveAll(orderDetails);
+        return o;
+    }
+
+    @Override
+    @Transactional
+    public Order createOrderOnline(OrderDTO orderDTO) {
+        orderDTO.setCtime(LocalDateTime.now());
+        Order o = this.mapOrderDtoToOrder(orderDTO);
+        int maxId = this.orderRepository.getMaxOrderId();
+        String orderId = "DH0" + (maxId + 1);
+        o.setOrderId(orderId);
+        o = this.orderRepository.saveAndFlush(o);
+        Order finalOrder = o;
+        List<OrderDetails> orderDetails = orderDTO.getOrderDetails().stream().map(oDetail -> {
+            ProductDetail pro = ProductDetail
+                    .builder()
+                    .id(oDetail.getProductDetail().getId())
+                    .build();
+            return OrderDetails
+                    .builder()
+                    .statusOrderDetail(Constant.Status.ACTIVE)
                     .productDetail(pro)
                     .id(oDetail.getId())
                     .price(oDetail.getPrice())
@@ -124,6 +166,7 @@ public class OrderServiceImpl implements OrderService {
         }).toList();
         this.logOrderStatusRepository.saveAll(logOrderStatuses);
         this.orderDetailsRepository.saveAll(orderDetails);
+        this.cartItemRepository.deleteCartItemsByCustomerId(o.getCustomerId());
         return o;
     }
 

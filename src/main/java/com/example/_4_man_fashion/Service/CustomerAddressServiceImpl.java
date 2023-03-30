@@ -98,10 +98,6 @@ public class CustomerAddressServiceImpl {
 
     @Transactional
     public void delete(Integer id) {
-        Optional<CustomerAddress> optionalCustomerAddress = this.customerAddressRepository.findById(id);
-        if (optionalCustomerAddress.isEmpty())
-            throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Địa chỉ"));
-
         if (!this.customerAddressRepository.existsById(id)) {
             throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Address ID"));
         }
