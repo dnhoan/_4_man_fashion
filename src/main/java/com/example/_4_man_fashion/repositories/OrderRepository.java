@@ -40,30 +40,36 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
         Optional<Order> getOrderByOrderId(String orderId);
 
-        @Query(nativeQuery = true,value = "\t\t\t\t\t\tselect  COALESCE(o1.DT_STORE, 0) as dt_store,\n" +
+        @Query(nativeQuery = true,value = "select  COALESCE(o1.DT_STORE, 0) as dt_store,\n" +
                 "                                  COALESCE(o2.DT_ONLINE, 0) as dt_online,\n" +
-                "                                  COALESCE(o1.ngay, o2.ngay) as ngay\n" +
+                "                                  COALESCE(o1.ngay, o2.ngay) as ngay,\n" +
+                "                               COALESCE(o1.thang, o2.thang) as thang,\n" +
+                "                                COALESCE(o1.nam, o2.nam) as nam\n" +
                 "                                from\n" +
                 "                                    (select\n" +
                 "                                       sum(orders.total_money) as DT_STORE,\n" +
-                "                                        TO_CHAR(orders.ctime, 'dd/mm/yyyy') as ngay\n" +
+                "                                        TO_CHAR(orders.ctime, 'dd/mm/yyyy') as ngay,\n" +
+                "                                         TO_CHAR(orders.ctime, 'mm') as thang,\n" +
+                "                                         TO_CHAR(orders.ctime, 'yyyy') as nam\n" +
                 "                                    from orders                  \n" +
                 "                                    where   orders.purchase_type =1  \n" +
                 "                                            and ( orders.order_status = 1) and\n" +
                 "                                            orders.ctime BETWEEN '31-01-2023' and '31-08-2024'\n" +
-                "                                    group by ngay\n" +
+                "                                    group by  ngay ,thang,nam\n" +
                 "                                    ) as o1\n" +
                 "                               full join\n" +
                 "                                    (select\n" +
                 "                                        sum(orders.total_money) as DT_ONLINE,\n" +
-                "                                    TO_CHAR(orders.ctime, 'dd/mm/yyyy') as ngay\n" +
+                "                                    TO_CHAR(orders.ctime, 'dd/mm/yyyy') as ngay,\n" +
+                "                                         TO_CHAR(orders.ctime, 'mm') as thang,\n" +
+                "                                         TO_CHAR(orders.ctime, 'yyyy') as nam\n" +
                 "                                   from orders                 \n" +
                 "                                    where   orders.purchase_type = 2   \n" +
                 "                                            and ( orders.order_status = 1) and\n" +
                 "                                            orders.ctime BETWEEN '31-01-2023' and '31-08-2024'              \n" +
-                "                                    group by ngay\n" +
+                "                                    group by  ngay,thang,nam\n" +
                 "                                    ) as o2    \n" +
-                "                               on o1.ngay = o2.ngay order by ngay ")
+                "                               on o1.ngay = o2.ngay order by  nam,thang,ngay  ")
                 List<StatisticIncome> statisticByDate(Date time1, Date time2);
 
         @Query(nativeQuery = true,
