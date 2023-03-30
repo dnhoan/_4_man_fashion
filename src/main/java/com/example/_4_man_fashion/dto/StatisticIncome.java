@@ -7,7 +7,6 @@ public interface StatisticIncome {
 
     Integer getThang();
 
-    Integer getNgay();
+    String getNgay();
 
-    Integer getNam();
 }
