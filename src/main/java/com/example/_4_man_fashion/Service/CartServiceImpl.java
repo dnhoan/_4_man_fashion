@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.example._4_man_fashion.dto.ProductDetailDTO;
+import com.example._4_man_fashion.entities.ProductDetail;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +21,8 @@ import com.example._4_man_fashion.repositories.CartRepository;
 public class CartServiceImpl implements CartService {
     @Autowired
     CartRepository cartRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
     public List<CartDTO> getAll() {
@@ -60,7 +65,7 @@ public class CartServiceImpl implements CartService {
                 .builder()
                 .id(cartItemDTO.getId())
                 .amount(cartItemDTO.getAmount())
-                .productDetailId(cartItemDTO.getProductDetailCartDto().getId())
+                .productDetailId(cartItemDTO.getProductDetailDTO().getId())
                 // .productDetail(this.cartItemRepository.getProductDetailById(
                 // cartItemDTO.getProductDetailCartDto().getId()
                 // ))
@@ -69,12 +74,12 @@ public class CartServiceImpl implements CartService {
 
     private CartItemDTO cartItemMapToCartItemDto(CartItem cartItem) {
         // get product detail by cart item id
-        ProductDetailCartDTO productDetailCartDto = this.cartRepository.getProductDetailByCartItemId(cartItem.getId());
+        ProductDetail productDetail = this.cartRepository.getProductDetailByCartItemId(cartItem.getId());
         return CartItemDTO
                 .builder()
                 .id(cartItem.getId())
                 .amount(cartItem.getAmount())
-                .productDetailCartDto(productDetailCartDto)
+                .productDetailDTO(this.modelMapper.map(productDetail, ProductDetailDTO.class))
                 .build();
     }
 

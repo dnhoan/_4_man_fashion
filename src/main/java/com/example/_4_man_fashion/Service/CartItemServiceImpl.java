@@ -2,6 +2,8 @@ package com.example._4_man_fashion.Service;
 
 import java.util.Optional;
 
+import com.example._4_man_fashion.entities.ProductDetail;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,7 @@ import com.example._4_man_fashion.entities.CartItem;
 import com.example._4_man_fashion.entities.Customer;
 import com.example._4_man_fashion.repositories.CartItemRepository;
 import com.example._4_man_fashion.repositories.CartRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CartItemServiceImpl implements CartItemService {
@@ -21,14 +24,16 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Autowired
     CartItemRepository cartItemRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     private CartItemDTO cartItemMapToCartItemDto(CartItem cartItem) {
-        ProductDetailCartDTO productDetailCartDto = this.cartRepository.getProductDetailByCartItemId(cartItem.getId());
+        ProductDetail productDetail = this.cartRepository.getProductDetailByCartItemId(cartItem.getId());
         return CartItemDTO
                 .builder()
                 .id(cartItem.getId())
                 .amount(cartItem.getAmount())
-                .productDetailCartDto(productDetailCartDto)
+                .productDetailDTO(this.modelMapper.map(productDetail, ProductDetailDTO.class))
                 .build();
     }
 
@@ -37,11 +42,12 @@ public class CartItemServiceImpl implements CartItemService {
                 .builder()
                 .id(cartItemDTO.getId())
                 .amount(cartItemDTO.getAmount())
-                .productDetailId(cartItemDTO.getProductDetailCartDto().getId())
+                .productDetailId(cartItemDTO.getProductDetailDTO().getId())
                 .build();
     }
 
     @Override
+    @Transactional
     public CartItemDTO addCartItem(CartItemDTO cartItemDTO, Integer customerId) {
         Cart cart = new Cart();
         Optional<Cart> cartOptional = this.cartRepository.getCartByCustomerId(customerId);

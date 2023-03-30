@@ -31,6 +31,9 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
         @Query(value = "CALL updateOrderMoney(:idOrder);", nativeQuery = true)
         void updateOrderMoney(Integer idOrder);
 
+        @Query("select max(o.id) from Order o")
+        int getMaxOrderId();
+
         boolean existsByOrderId(String orderId);
 
         Optional<Order> getOrderByOrderId(String orderId);
