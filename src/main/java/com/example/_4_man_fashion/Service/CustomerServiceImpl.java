@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class CustomerServiceImpl implements CustomerService{
+public class CustomerServiceImpl {
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -134,19 +134,12 @@ public class CustomerServiceImpl implements CustomerService{
         // db"));
         // }
 
-//        customerDTO.setAccount(account);
+        customerDTO.setAccount(account);
         customerDTO.setCtime(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         customerDTO.setStatus(Constant.Status.ACTIVE);
 
         return this.customerRepository.save(Customer.fromDTO(customerDTO));
 
-    }
-
-    @Override
-    public CustomerDTO getCustomerById(Integer id) {
-        Optional<Customer> customer = this.customerRepository.findById(id);
-        if (customer.isPresent()) return this.modelMapper.map(customer.get(), CustomerDTO.class);
-        else return new CustomerDTO();
     }
 
     public Cart createCustomer(CustomerDTO customerDTO) {
@@ -202,7 +195,7 @@ public class CustomerServiceImpl implements CustomerService{
         } catch (Exception e) {
             throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Lỗi lưu vào db"));
         }
-//        customerDTO.setAccount(account);
+        customerDTO.setAccount(account);
         customerDTO.setCtime(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         customerDTO.setStatus(Constant.Status.ACTIVE);
 
@@ -278,6 +271,61 @@ public class CustomerServiceImpl implements CustomerService{
         customer.setStatus(customerDTO.getStatus());
         return this.customerRepository.save(customer);
 
+    }
+
+    @Transactional
+    public JwtResponse updateOnline(CustomerOnlineDTO customerDTO) {
+        Optional<Customer> optionalCustomer = this.customerRepository.findById(customerDTO.getId());
+        if (optionalCustomer.isEmpty())
+            throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Khách hàng Id"));
+
+        if (StringCommon.isNullOrBlank(customerDTO.getEmail()))
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID.format("Email khách hàng"));
+
+        if (StringCommon.isNullOrBlank(customerDTO.getPhoneNumber()))
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID.format("Số điện thoại khách hàng"));
+
+        Customer customer = optionalCustomer.get();
+        if (!customer.getEmail().equals(customerDTO.getEmail())) {
+            boolean isExistEmail = customerRepository.existsByEmailLike(customerDTO.getEmail().trim());
+            if (isExistEmail) {
+                throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Email"));
+            }
+        }
+        if (!customer.getPhoneNumber().equals(customerDTO.getPhoneNumber())) {
+            boolean isExitsPhoneNumber = customerRepository
+                    .existsByPhoneNumberLike(customerDTO.getPhoneNumber().trim());
+            if (isExitsPhoneNumber) {
+                throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Số điện thoại"));
+            }}
+
+        customer.setCustomerName(customerDTO.getCustomerName());
+        customer.setEmail(customerDTO.getEmail());
+        customer.setAddress(customerDTO.getAddress());
+        customer.setAvatar(customerDTO.getAvatar());
+        customer.setBirthday(customerDTO.getBirthday());
+        customer.setNote(customerDTO.getNote());
+        customer.setPhoneNumber(customerDTO.getPhoneNumber());
+        customer.setGender(customerDTO.getGender());
+        customer.setMtime(LocalDateTime.now());
+        customer.setStatus(customerDTO.getStatus());
+        this.customerRepository.save(customer);
+        Account account = this.customerRepository.getAccountByCustomerId(customerDTO.getId(), customerDTO.getStatus());
+        UserDetailsImpl userDetails = UserDetailsImpl.build(account);
+
+        String jwt = Jwts.builder()
+                .claim("info", userDetails)
+                .setSubject(userDetails.getEmail())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date().getTime()) + this.jwtExpiration))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+        return JwtResponse
+                .builder()
+                .email(userDetails.getEmail())
+                .phoneNumber(userDetails.getUsername())
+                .token(jwt)
+                .build();
     }
 
     public void delete(Integer id) {

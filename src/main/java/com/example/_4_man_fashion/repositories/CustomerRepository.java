@@ -1,5 +1,6 @@
 package com.example._4_man_fashion.repositories;
 
+import com.example._4_man_fashion.entities.Account;
 import com.example._4_man_fashion.entities.Customer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,10 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
             "(:status = -1 or customer.status = :status) order by customer.ctime, customer.customerName")
     Page<Customer> getCustomerByName(Pageable pageable, Integer status, String name);
 
+    @Query("select customer.account  from Customer customer " +
+            "where  customer.id = :customerId and (:status = -1 or customer.status = :status) " +
+            "and (:status = -1 or customer.status = :status)")
+    Account getAccountByCustomerId(Integer customerId, Integer status);
 
     boolean existsByEmailLike(String email);
     boolean existsByPhoneNumberLike(String phoneNumber);

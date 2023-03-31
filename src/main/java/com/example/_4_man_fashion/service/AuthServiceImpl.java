@@ -22,6 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -82,9 +84,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public JwtResponse login(LoginRequest loginRequest) {
+    public JwtResponse login(LoginRequest loginRequest, HttpServletRequest request) {
         String phoneOrEmail = loginRequest.getPhoneOrEmail();
         String password = loginRequest.getPassword();
+        HttpSession session = request.getSession();
+            session.setAttribute("username", phoneOrEmail);
+            session.setAttribute("password", password);
         if (phoneOrEmail.matches(Constant.Regex.EMAIL) || phoneOrEmail.matches(Constant.Regex.PHONE_NUMBER)) {
             Authentication authentication;
             try {
