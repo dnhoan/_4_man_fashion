@@ -1,9 +1,11 @@
 package com.example._4_man_fashion.Service;
 
+import com.example._4_man_fashion.configs.security.UserDetailsImpl;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.*;
 import com.example._4_man_fashion.entities.*;
 import com.example._4_man_fashion.models.ERole;
+import com.example._4_man_fashion.models.JwtResponse;
 import com.example._4_man_fashion.repositories.AccountRepository;
 import com.example._4_man_fashion.repositories.CustomerRepository;
 import com.example._4_man_fashion.repositories.CartRepository;
@@ -11,8 +13,11 @@ import com.example._4_man_fashion.repositories.RoleRepository;
 import com.example._4_man_fashion.utils.DATNException;
 import com.example._4_man_fashion.utils.ErrorMessage;
 import com.example._4_man_fashion.utils.StringCommon;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,14 +27,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class CustomerServiceImpl {
+public class CustomerServiceImpl implements CustomerService{
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -48,7 +50,13 @@ public class CustomerServiceImpl {
 
     @Autowired
     private ModelMapper modelMapper;
+    @Value("${4manFashion.app.jwtSecret}")
+    private String jwtSecret;
 
+    @Value("${4manFashion.app.jwtExpirationMs}")
+    private Long jwtExpiration;
+
+    @Override
     public PageDTO<CustomerDTO> getAll(int offset, int limit, Integer status, String search) {
         Pageable pageable = PageRequest.of(offset, limit);
         Page<Customer> page = this.customerRepository.getCustomerByName(pageable, status,
@@ -134,7 +142,6 @@ public class CustomerServiceImpl {
         // db"));
         // }
 
-        customerDTO.setAccount(account);
         customerDTO.setCtime(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         customerDTO.setStatus(Constant.Status.ACTIVE);
 
@@ -142,6 +149,12 @@ public class CustomerServiceImpl {
 
     }
 
+    @Override
+    public CustomerDTO getCustomerById(Integer id) {
+         return null;
+    }
+
+    @Transactional
     public Cart createCustomer(CustomerDTO customerDTO) {
         if (StringCommon.isNullOrBlank(customerDTO.getCustomerName())) {
             throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
@@ -195,7 +208,6 @@ public class CustomerServiceImpl {
         } catch (Exception e) {
             throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Lỗi lưu vào db"));
         }
-        customerDTO.setAccount(account);
         customerDTO.setCtime(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         customerDTO.setStatus(Constant.Status.ACTIVE);
 
@@ -209,7 +221,7 @@ public class CustomerServiceImpl {
         }
 
     }
-
+@Transactional
     public Customer update(CustomerDTO customerDTO) {
         Optional<Customer> optionalCustomer = this.customerRepository.findById(customerDTO.getId());
         if (optionalCustomer.isEmpty())
