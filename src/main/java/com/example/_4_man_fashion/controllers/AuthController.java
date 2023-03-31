@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -21,9 +22,9 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("login")
-    public ResponseEntity<ApiResponse<JwtResponse>> authenticateUser(@RequestBody @Valid LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse<JwtResponse>> authenticateUser(@RequestBody @Valid LoginRequest loginRequest, HttpServletRequest request) {
 
-        JwtResponse jwtResponse = this.authService.login(loginRequest);
+        JwtResponse jwtResponse = this.authService.login(loginRequest, request);
 
         return ResponseEntity.ok(ApiResponse.success(jwtResponse));
     }
