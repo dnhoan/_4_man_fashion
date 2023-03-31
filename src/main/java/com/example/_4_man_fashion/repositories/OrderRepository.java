@@ -76,10 +76,10 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
                 List<StatisticIncome> statisticByDate(Date time1, Date time2);
 
         @Query(nativeQuery = true,
-                value = "SELECT count(fp.product_detail_id) as quantity , pds.product_detail_name as name , pds.price as price from favorite_product fp \n" +
-                        "join product_details pds on fp.product_detail_id = pds.id\n" +
+                value = "SELECT count(fp.product_id) as quantity , pds.product_name as name from favorite_product fp \n" +
+                        "join products pds on fp.product_id = pds.id\n" +
                         "where fp.ctime  between :time1 and :time2\n" +
-                        "group by product_detail_id , product_detail_name,price \n" +
+                        "group by fp.product_id , product_name \n" +
                         "order by quantity desc\n" +
                         "LIMIT 10")
         List<StatisticFavorite> statisticsByBestFavoriteProducts(Date time1, Date time2);

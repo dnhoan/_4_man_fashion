@@ -1,6 +1,5 @@
 package com.example._4_man_fashion.entities;
 
-import com.example._4_man_fashion.dto.ColorDTO;
 import com.example._4_man_fashion.dto.FavoriteProductDTO;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
@@ -25,8 +24,8 @@ public class FavoriteProduct {
     private Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "product_detail_id")
-    private ProductDetail productDetail;
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @Column(name = "ctime")
     private LocalDateTime ctime;
