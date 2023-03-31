@@ -1,7 +1,7 @@
 package com.example._4_man_fashion.dto;
 
 import com.example._4_man_fashion.entities.Customer;
-import com.example._4_man_fashion.entities.ProductDetail;
+import com.example._4_man_fashion.entities.Product;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -14,6 +14,6 @@ import java.time.LocalDateTime;
 public class FavoriteProductDTO {
     private int id;
     private Customer customer;
-    private ProductDetail productDetail;
+    private Product product;
     LocalDateTime ctime;
 }
