@@ -1,9 +1,12 @@
 package com.example._4_man_fashion.Service;
 
+import com.example._4_man_fashion.configs.jwt.JwtUtils;
+import com.example._4_man_fashion.configs.security.UserDetailsImpl;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.*;
 import com.example._4_man_fashion.entities.*;
 import com.example._4_man_fashion.models.ERole;
+import com.example._4_man_fashion.models.JwtResponse;
 import com.example._4_man_fashion.repositories.AccountRepository;
 import com.example._4_man_fashion.repositories.CustomerRepository;
 import com.example._4_man_fashion.repositories.CartRepository;
@@ -11,21 +14,27 @@ import com.example._4_man_fashion.repositories.RoleRepository;
 import com.example._4_man_fashion.utils.DATNException;
 import com.example._4_man_fashion.utils.ErrorMessage;
 import com.example._4_man_fashion.utils.StringCommon;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,13 +51,20 @@ public class CustomerServiceImpl {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
     @Autowired
     private CartRepository cartRepository;
 
     @Autowired
+    AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtUtils jwtUtils;
+    @Autowired
     private ModelMapper modelMapper;
+    @Value("${4manFashion.app.jwtSecret}")
+    private String jwtSecret;
 
+    @Value("${4manFashion.app.jwtExpirationMs}")
+    private Long jwtExpiration;
     public PageDTO<CustomerDTO> getAll(int offset, int limit, Integer status, String search) {
         Pageable pageable = PageRequest.of(offset, limit);
         Page<Customer> page = this.customerRepository.getCustomerByName(pageable, status,
@@ -141,6 +157,7 @@ public class CustomerServiceImpl {
         return this.customerRepository.save(Customer.fromDTO(customerDTO));
 
     }
+
 
     public Cart createCustomer(CustomerDTO customerDTO) {
         if (StringCommon.isNullOrBlank(customerDTO.getCustomerName())) {
@@ -238,7 +255,6 @@ public class CustomerServiceImpl {
                 throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Số điện thoại"));
             }
         }
-        System.out.println("hihiahah" + customerDTO);
         Optional<Account> optionalAccount = this.accountRepository.findById(customer.getAccount().getId());
         Account account = optionalAccount.get();
         if (!account.getEmail().equals(customerDTO.getEmail())) {
@@ -271,6 +287,61 @@ public class CustomerServiceImpl {
         customer.setStatus(customerDTO.getStatus());
         return this.customerRepository.save(customer);
 
+    }
+
+    @Transactional
+    public JwtResponse updateOnline(CustomerOnlineDTO customerDTO) {
+        Optional<Customer> optionalCustomer = this.customerRepository.findById(customerDTO.getId());
+        if (optionalCustomer.isEmpty())
+            throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Khách hàng Id"));
+
+        if (StringCommon.isNullOrBlank(customerDTO.getEmail()))
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID.format("Email khách hàng"));
+
+        if (StringCommon.isNullOrBlank(customerDTO.getPhoneNumber()))
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID.format("Số điện thoại khách hàng"));
+
+        Customer customer = optionalCustomer.get();
+        if (!customer.getEmail().equals(customerDTO.getEmail())) {
+            boolean isExistEmail = customerRepository.existsByEmailLike(customerDTO.getEmail().trim());
+            if (isExistEmail) {
+                throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Email"));
+            }
+        }
+        if (!customer.getPhoneNumber().equals(customerDTO.getPhoneNumber())) {
+            boolean isExitsPhoneNumber = customerRepository
+                    .existsByPhoneNumberLike(customerDTO.getPhoneNumber().trim());
+            if (isExitsPhoneNumber) {
+                throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Số điện thoại"));
+            }}
+
+        customer.setCustomerName(customerDTO.getCustomerName());
+        customer.setEmail(customerDTO.getEmail());
+        customer.setAddress(customerDTO.getAddress());
+        customer.setAvatar(customerDTO.getAvatar());
+        customer.setBirthday(customerDTO.getBirthday());
+        customer.setNote(customerDTO.getNote());
+        customer.setPhoneNumber(customerDTO.getPhoneNumber());
+        customer.setGender(customerDTO.getGender());
+        customer.setMtime(LocalDateTime.now());
+        customer.setStatus(customerDTO.getStatus());
+        this.customerRepository.save(customer);
+        Account account = this.customerRepository.getAccountByCustomerId(customerDTO.getId(), customerDTO.getStatus());
+        UserDetailsImpl userDetails = UserDetailsImpl.build(account);
+
+        String jwt = Jwts.builder()
+                .claim("info", userDetails)
+                .setSubject(userDetails.getEmail())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date().getTime()) + this.jwtExpiration))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+        return JwtResponse
+                .builder()
+                .email(userDetails.getEmail())
+                .phoneNumber(userDetails.getUsername())
+                .token(jwt)
+                .build();
     }
 
     public void delete(Integer id) {
