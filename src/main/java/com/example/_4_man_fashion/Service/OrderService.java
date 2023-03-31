@@ -16,6 +16,7 @@ public interface OrderService {
     OrderDTO getOrderByOrderId(String orderId);
     LogOrderStatusDTO updateOrderStatus(UpdateOrderStatus updateOrderStatus);
     Order create(OrderDTO orderDTO);
+    Order createOrderOnline(OrderDTO orderDTO);
     Order update(OrderDTO orderDTO);
 
     void delete(Integer id);
