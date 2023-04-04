@@ -17,7 +17,7 @@ public class StatisticServiceImpl {
     private OrderRepository orderRepository;
 
 
-    public List<StatisticFavorite> statisticsByBestSellingProducts(Date time1, Date time2){
+    public List<StatisticFavorite> statisticsByBestFavoriteProducts(Date time1, Date time2){
         return this.orderRepository.statisticsByBestFavoriteProducts(time1, time2);
 
 
@@ -31,4 +31,13 @@ public class StatisticServiceImpl {
         return this.orderRepository.getStatisticIncomeByYear(year);
     }
 
+    public List<Integer> statisticOrderStatus(Date s_date, Date e_date) {
+        return this.orderRepository.statisticOrderStatus(s_date, e_date);
+    }
+
+    public List<StatisticFavorite> statisticsByBestSellingProducts(Date time1, Date time2){
+        return this.orderRepository.statisticsByBestSellingProducts(time1, time2);
+
+
+    }
 }
