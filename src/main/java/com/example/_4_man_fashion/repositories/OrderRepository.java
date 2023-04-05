@@ -107,4 +107,35 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
                 "        having EXTRACT(YEAR  from orders.ctime) = ?1\n" +
                 ") as o2 on o1.thang = o2.thang")
         List<StatisticIncome> getStatisticIncomeByYear(Integer year);
+
+        @Query(nativeQuery = true,
+                value = "select count(order_status) from orders  where order_status = 0 and ctime between ?1 and ?2\n" +
+                        "union all \n" +
+                        "select count(order_status) from orders  where order_status = 1 and ctime between ?1 and ?2\n" +
+                        "union all \n" +
+                        "select count(order_status) from orders  where order_status = 2 and ctime between ?1 and ?2\n" +
+                        "union all \n" +
+                        "select count(order_status) from orders  where order_status = 3 and ctime between ?1 and ?2\n" +
+                        "union all \n" +
+                        "select count(order_status) from orders  where order_status = 4 and ctime between ?1 and ?2\n" +
+                        "union all \n" +
+                        "select count(order_status) from orders  where order_status = -2 and ctime between ?1 and ?2\n" +
+                        "union all \n" +
+                        "select count(order_status) from orders  where order_status = -1 and ctime between ?1 and ?2\n"
+
+        )
+        List<Integer> statisticOrderStatus(Date s_date, Date e_date);
+
+
+        @Query(nativeQuery = true,
+                value = "SELECT sum(od.quantity) as quantity , pds.product_detail_name as name, pds.price as price from order_details od \n" +
+                        "join product_details pds on od.product_detail_id = pds.id\n" +
+                        "join orders o on od.order_id = o.id\n" +
+                        "where od.status_order_detail = 1 and o.ctime between ?1 and ?2\n" +
+                        "group by product_detail_id , product_detail_name , pds.price\n" +
+                        "order by quantity desc\n" +
+                        "LIMIT 10"
+
+        )
+        List<StatisticFavorite> statisticsByBestSellingProducts(Date time1, Date time2);
 }

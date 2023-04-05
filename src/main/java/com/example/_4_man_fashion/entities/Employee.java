@@ -90,7 +90,8 @@ public class Employee {
         BeanUtils.copyProperties(dto, entity);
         entity.setCtime(dto.getCtime());
         entity.setMtime(dto.getMtime());
-        entity.setStatus(1);
+        entity.setStatus(dto.getStatus());
+        entity.setAccount(dto.getAccount());
 
         return entity;
     }
