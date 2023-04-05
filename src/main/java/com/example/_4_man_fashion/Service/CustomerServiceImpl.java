@@ -151,7 +151,11 @@ public class CustomerServiceImpl implements CustomerService{
 
     @Override
     public CustomerDTO getCustomerById(Integer id) {
-         return null;
+         Optional<Customer> customer = this.customerRepository.findById(id);
+         if(customer.isPresent()) {
+             return this.modelMapper.map(customer.get(), CustomerDTO.class);
+         }
+         return new CustomerDTO();
     }
 
     @Transactional

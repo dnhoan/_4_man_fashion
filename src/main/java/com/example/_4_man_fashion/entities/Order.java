@@ -77,7 +77,7 @@ public class Order {
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     @OrderBy()
-    @Where(clause = "status_order_detail = 1")
+    @Where(clause = "status_order_detail != 0")
     private List<OrderDetails> orderDetails;
 
 }

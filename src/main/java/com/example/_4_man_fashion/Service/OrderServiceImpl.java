@@ -7,10 +7,7 @@ import com.example._4_man_fashion.dto.OrderDTO;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.entities.*;
 import com.example._4_man_fashion.models.UpdateOrderStatus;
-import com.example._4_man_fashion.repositories.CartItemRepository;
-import com.example._4_man_fashion.repositories.LogOrderStatusRepository;
-import com.example._4_man_fashion.repositories.OrderDetailsRepository;
-import com.example._4_man_fashion.repositories.OrderRepository;
+import com.example._4_man_fashion.repositories.*;
 import com.example._4_man_fashion.utils.DATNException;
 import com.example._4_man_fashion.utils.ErrorMessage;
 import com.example._4_man_fashion.utils.StringCommon;
@@ -45,11 +42,30 @@ public class OrderServiceImpl implements OrderService {
     private ModelMapper modelMapper;
     @Autowired
     private CartItemRepository cartItemRepository;
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Override
     public PageDTO<OrderDTO> getAll(int offset, int limit, Integer status, String search) {
         Pageable pageable = PageRequest.of(offset, limit);
         Page<Order> page = this.orderRepository.getAllOrder(pageable, status, StringCommon.getLikeCondition(search));
+        List<OrderDTO> orderDTOList = page.stream().map(this::mapOrderToOrderDTO).collect(Collectors.toList());
+        return new PageDTO<OrderDTO>(
+                page.getTotalPages(),
+                page.getTotalElements(),
+                page.getNumber(),
+                page.getSize(),
+                orderDTOList,
+                page.isFirst(),
+                page.isLast(),
+                page.hasNext(),
+                page.hasPrevious());
+    }
+
+    @Override
+    public PageDTO<OrderDTO> getOrderByCustomerId(int customerId, int offset, int limit, Integer status, String search) {
+        Pageable pageable = PageRequest.of(offset, limit);
+        Page<Order> page = this.orderRepository.getOrderByCustomerId(pageable, status, StringCommon.getLikeCondition(search), customerId);
         List<OrderDTO> orderDTOList = page.stream().map(this::mapOrderToOrderDTO).collect(Collectors.toList());
         return new PageDTO<OrderDTO>(
                 page.getTotalPages(),
@@ -98,6 +114,29 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Transactional
+    public void updateOrderShopStatus(UpdateOrderStatus updateOrderStatus) {
+        Optional<Order> order = this.orderRepository.findById(updateOrderStatus.getOrderId());
+        if (order.isEmpty()) {
+            throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("order id"));
+        }
+        Optional<Account> account = this.accountRepository.getAccountByCustomerId(updateOrderStatus.getUserId());
+        if (account.isEmpty()) {
+            throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("account id"));
+        }
+        this.orderRepository.updateOrderStatus(updateOrderStatus);
+        LogOrderStatus logOrderStatus = new LogOrderStatus();
+        logOrderStatus.setOrder(order.get());
+        logOrderStatus.setTimes(LocalDateTime.now());
+        logOrderStatus.setUser_change(account.get().getEmail() + " - " + account.get().getPhoneNumber());
+        logOrderStatus.setNote(updateOrderStatus.getNote());
+        logOrderStatus.setCurrentStatus(order.get().getOrderStatus());
+        logOrderStatus.setNewStatus(updateOrderStatus.getNewStatus());
+        logOrderStatus.setAccounts(null);
+        logOrderStatus.setProductDetails(null);
+        this.logOrderStatusRepository.save(logOrderStatus);
+    }
+
+    @Transactional
     public Order create(OrderDTO orderDTO) {
         orderDTO.setCtime(LocalDateTime.now());
         Order o = this.mapOrderDtoToOrder(orderDTO);
@@ -133,6 +172,7 @@ public class OrderServiceImpl implements OrderService {
         return o;
     }
 
+
     @Override
     @Transactional
     public Order createOrderOnline(OrderDTO orderDTO) {
@@ -161,6 +201,7 @@ public class OrderServiceImpl implements OrderService {
         Order finalO = o;
         List<LogOrderStatus> logOrderStatuses = orderDTO.getLogsOrderStatus().stream().map(log -> {
             LogOrderStatus logOrderStatus = this.modelMapper.map(log, LogOrderStatus.class);
+            logOrderStatus.setTimes(LocalDateTime.now());
             logOrderStatus.setOrder(finalO);
             return logOrderStatus;
         }).toList();
@@ -171,8 +212,35 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Transactional
-    public Order update(OrderDTO orderDTO) {
-        return null;
+    public OrderDTO update(OrderDTO orderDTO) {
+        Order o = this.mapOrderDtoToOrder(orderDTO);
+        o.setCustomerId(orderDTO.getCustomerId());
+        o = this.orderRepository.saveAndFlush(o);
+        Order finalOrder = o;
+        List<OrderDetails> orderDetails = orderDTO.getOrderDetails().stream().map(oDetail -> {
+            ProductDetail pro = ProductDetail
+                    .builder()
+                    .id(oDetail.getProductDetail().getId())
+                    .build();
+            return OrderDetails
+                    .builder()
+                    .productDetail(pro)
+                    .id(oDetail.getId())
+                    .statusOrderDetail(Constant.Status.ACTIVE)
+                    .price(oDetail.getPrice())
+                    .quantity(oDetail.getQuantity())
+                    .order(finalOrder)
+                    .build();
+        }).collect(Collectors.toList());
+        Order finalO = o;
+        List<LogOrderStatus> logOrderStatuses = orderDTO.getLogsOrderStatus().stream().map(log -> {
+            LogOrderStatus logOrderStatus = this.modelMapper.map(log, LogOrderStatus.class);
+            logOrderStatus.setOrder(finalO);
+            return logOrderStatus;
+        }).toList();
+        this.logOrderStatusRepository.saveAll(logOrderStatuses);
+        this.orderDetailsRepository.saveAll(orderDetails);
+        return this.mapOrderToOrderDTO(o);
     }
 
     @Transactional

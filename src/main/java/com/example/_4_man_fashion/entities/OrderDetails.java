@@ -35,6 +35,12 @@ public class OrderDetails {
     @JoinColumn(name = "product_detail_id", nullable = false)
     private ProductDetail productDetail;
 
+
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "exchange_id", nullable = false)
+    private Exchange exchange;
+
 //    @Column(name = "exchange_id")
 //    private int exchangeId;
 //
