@@ -27,6 +27,14 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
                         "and (:status = -1 or od.orderStatus = :status) order by od.ctime desc")
         Page<Order> getAllOrder(Pageable pageable, Integer status, String valueSearch);
 
+        @Query("select od from Order od where od.customerId = :customerId and ( od.orderId = :valueSearch" +
+                " or (lower(od.orderId) like  '%' || lower(:valueSearch) || '%')" +
+                " or (lower(od.recipientName) like  '%' || lower(:valueSearch) || '%')" +
+                " or (lower(od.recipientPhone) like  '%' || lower(:valueSearch) || '%')" +
+                " or (lower(od.recipientEmail) like  '%' || lower(:valueSearch) || '%') )" +
+                "and (:status = -1 or od.orderStatus = :status) order by od.ctime desc")
+        Page<Order> getOrderByCustomerId(Pageable pageable, Integer status, String valueSearch, Integer customerId);
+
         @Modifying
         @Query("update Order o set o.orderStatus =:#{#updateOrderStatus.newStatus},  o.cancelNote =:#{#updateOrderStatus.note} where o.id =:#{#updateOrderStatus.orderId}")
         void updateOrderStatus(

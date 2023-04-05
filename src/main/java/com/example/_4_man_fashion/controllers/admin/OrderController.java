@@ -53,8 +53,8 @@ public class OrderController {
 
 
     @PutMapping("order/update")
-    public ResponseEntity<ApiResponse<Order>> update(@Valid @RequestBody OrderDTO dto) {
-        Order order = orderService.update(dto);
+    public ResponseEntity<ApiResponse<OrderDTO>> update(@Valid @RequestBody OrderDTO dto) {
+        OrderDTO order = orderService.update(dto);
         return ResponseEntity.ok(ApiResponse.success(order));
     }
 

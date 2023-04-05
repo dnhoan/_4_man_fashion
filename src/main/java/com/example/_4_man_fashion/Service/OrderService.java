@@ -11,13 +11,15 @@ import java.util.List;
 public interface OrderService {
 
     PageDTO<OrderDTO> getAll(int offset, int limit, Integer status, String search);
+    PageDTO<OrderDTO> getOrderByCustomerId(int customerId, int offset, int limit, Integer status, String search);
 
     List<Order> getListOrder();
     OrderDTO getOrderByOrderId(String orderId);
     LogOrderStatusDTO updateOrderStatus(UpdateOrderStatus updateOrderStatus);
+    void updateOrderShopStatus(UpdateOrderStatus updateOrderStatus);
     Order create(OrderDTO orderDTO);
     Order createOrderOnline(OrderDTO orderDTO);
-    Order update(OrderDTO orderDTO);
+    OrderDTO update(OrderDTO orderDTO);
 
     void delete(Integer id);
 

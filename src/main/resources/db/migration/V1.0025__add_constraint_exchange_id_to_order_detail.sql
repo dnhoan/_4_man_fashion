@@ -1,0 +1,5 @@
+ALTER TABLE ORDER_DETAILS
+    ADD exchange_id INTEGER;
+ALTER TABLE ORDER_DETAILS
+  ADD CONSTRAINT fk_exchanges FOREIGN KEY (exchange_id)
+      REFERENCES exchanges(id);
