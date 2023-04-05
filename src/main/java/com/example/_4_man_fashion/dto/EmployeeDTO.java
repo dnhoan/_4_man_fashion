@@ -3,6 +3,7 @@ package com.example._4_man_fashion.dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.example._4_man_fashion.entities.Account;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.*;
@@ -32,4 +33,5 @@ public class EmployeeDTO {
     private Integer workType;
     private LocalDate timeOnboard;
     private LocalDate dayOff;
+    private Account account;
 }

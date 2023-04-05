@@ -122,13 +122,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         account.setEmail(employeeDto.getEmail());
         account.setStatus(Constant.Status.ACTIVE);
         account.setPassword(passwordEncrypt);
-        account.setEmployee(Employee.fromDTO(employeeDto));
 
         try {
-            accountRepository.save(account);
+            this.accountRepository.save(account);
         } catch (Exception e) {
             throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Lỗi lưu vào db"));
         }
+        
+        employeeDto.setAccount(account);
 
         return this.employeeRepository.saveAndFlush(Employee.fromDTO(employeeDto));
     }
