@@ -10,5 +10,9 @@ public interface AuthService {
 
     void signup(SignupRequest signupRequest);
 
-    JwtResponse login(LoginRequest loginRequest, HttpServletRequest request);
+    JwtResponse login(LoginRequest loginRequest);
+
+    void forgot(String email);
+
+    void changePassWord(String email, String password,String newPassword,String rePassword);
 }

@@ -14,7 +14,7 @@ public enum ErrorMessage implements BaseMessage {
 
     OBJECT_CAN_NOT_UPDATE("010", "Object can not update", "%s không được phép cập nhật"),
     CUSTOM_ARGUMENT_NOT_VALID("007", "Method argument not valid", "Tham số không chính xác %s"),
-    CUSTOM_ARGUMENT_NOT_VALID_V2("054", "Method argument not valid", "Tham số %s không chính xác"),
+    CUSTOM_ARGUMENT_NOT_VALID_V2("054", "Method argument not valid", "%s không chính xác"),
     OBJECT_NOT_FOUND_OR_INACTIVE("012", "Object not found or inactive", "%s không tồn tại hặc không hoạt động"),
     CAN_NOT_UPDATE("013", "Can not update", "Không thể cập nhật đối tượng"),
     DUPLICATE_PARAMS("409", "Duplicate unique params", "%s đã tồn tại trên hệ thống"),
@@ -22,6 +22,7 @@ public enum ErrorMessage implements BaseMessage {
     OBJECT_ARCHIVED("034", "Object archived", "%s đã ở trạng thái lưu trữ"),
     FIELD_CANNOT_UNSET("043", "Fields cannot unset", "%s trường không được phép để trống"),
     OBJECT_CAN_NOT_DELETE("045", "Object can not delete", "%s không được phép xóa"),
+    REPASSWORD_NOT_DUPLICATE("046","Password is not duplicate", "%s không được trùng %s cũ!")
     ;
 
     private final String code;
