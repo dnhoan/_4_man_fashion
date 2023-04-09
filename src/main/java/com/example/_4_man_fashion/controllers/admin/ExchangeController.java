@@ -3,6 +3,7 @@ package com.example._4_man_fashion.controllers.admin;
 import com.example._4_man_fashion.Service.ExchangeService;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.OrderDetailsDTO;
+import com.example._4_man_fashion.models.ReturnOrderRequestBody;
 import com.example._4_man_fashion.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +44,22 @@ public class ExchangeController {
 
         this.exchangeService.confirmExchange(orderDetailsDTO);
 
+        return ResponseEntity.ok(ApiResponse.success(true));
+    }
+
+    @PostMapping("order/return")
+    public ResponseEntity<ApiResponse<Boolean>> returnOrderDetail(
+            @RequestBody ReturnOrderRequestBody returnOrderRequestBody
+    ) {
+        this.exchangeService.returnOrderDetail(returnOrderRequestBody);
+        return ResponseEntity.ok(ApiResponse.success(true));
+    }
+
+    @PostMapping("order/exchange")
+    public ResponseEntity<ApiResponse<Boolean>> exchangeOrderDetail(
+            @RequestBody ReturnOrderRequestBody returnOrderRequestBody
+    ) {
+        this.exchangeService.exchangeOrderDetail(returnOrderRequestBody);
         return ResponseEntity.ok(ApiResponse.success(true));
     }
 }
