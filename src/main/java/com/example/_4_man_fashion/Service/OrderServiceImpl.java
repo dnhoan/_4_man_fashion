@@ -239,6 +239,7 @@ public class OrderServiceImpl implements OrderService {
                     .id(oDetail.getId())
                     .price(oDetail.getPrice())
                     .quantity(oDetail.getQuantity())
+                    .quantityOrigin(oDetail.getQuantityOrigin())
                     .order(finalOrder)
                     .build();
         }).collect(Collectors.toList());
@@ -266,15 +267,10 @@ public class OrderServiceImpl implements OrderService {
                     .builder()
                     .id(oDetail.getProductDetail().getId())
                     .build();
-            return OrderDetails
-                    .builder()
-                    .productDetail(pro)
-                    .id(oDetail.getId())
-                    .statusOrderDetail(Constant.Status.ACTIVE)
-                    .price(oDetail.getPrice())
-                    .quantity(oDetail.getQuantity())
-                    .order(finalOrder)
-                    .build();
+            OrderDetails orderDetail = this.modelMapper.map(oDetail, OrderDetails.class);
+            orderDetail.setOrder(finalOrder);
+            orderDetail.setProductDetail(pro);
+            return orderDetail;
         }).collect(Collectors.toList());
         Order finalO = o;
         List<LogOrderStatus> logOrderStatuses = orderDTO.getLogsOrderStatus().stream().map(log -> {

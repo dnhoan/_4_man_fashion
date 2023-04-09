@@ -17,8 +17,8 @@ public interface OrderDetailsRepository extends JpaRepository<OrderDetails, Inte
     void createOrderDetails(Integer order_id, Float price, Integer quantity, Integer quantityOrigin, Integer product_detail_id, Integer status_order_detail);
 
     @Modifying
-    @Query(value = "update order_details set quantity = :quantity, quantity_origin = :quantityOrigin, price = :price, status_order_detail = :status_order_detail  where id = :orderDetailId", nativeQuery = true)
-    void updateOrderDetail(Integer quantity,Integer quantityOrigin, float price,Integer status_order_detail, Integer orderDetailId);
+    @Query(value = "update order_details set quantity = :quantity, quantity_origin = :quantityOrigin, price = :price, product_detail_id = :productDetailId,  status_order_detail = :status_order_detail  where id = :orderDetailId", nativeQuery = true)
+    void updateOrderDetail(Integer quantity,Integer quantityOrigin, float price,Integer status_order_detail, Integer orderDetailId, Integer productDetailId);
 
     @Modifying
     @Query(value = "update order_details set quantity = (order_details.quantity - :quantity) where id = :orderDetailId", nativeQuery = true)
