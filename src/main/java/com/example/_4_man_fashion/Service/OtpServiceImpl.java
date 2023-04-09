@@ -22,4 +22,9 @@ public class OtpServiceImpl implements OtpService{
     public Optional<Otp> findByEmail(String email) {
         return this.otpRepository.findByEmail(email);
     }
+
+    @Override
+    public Optional<Otp> findByPhoneNumber(String phoneNumber) {
+        return this.otpRepository.findByPhoneNumber(phoneNumber);
+    }
 }

@@ -8,4 +8,6 @@ public interface OtpService {
 
     Otp save(Otp otp);
     Optional<Otp> findByEmail(String email);
+
+    Optional<Otp> findByPhoneNumber(String phoneNumber);
 }
