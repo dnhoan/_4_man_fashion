@@ -33,7 +33,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         if (!this.orderDetailsRepository.existsById(orderDetailsDTO.getId())) {
             throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("order_detail_id"));
         }
-        this.orderDetailsRepository.updateOrderDetail(orderDetailsDTO.getQuantity(), orderDetailsDTO.getPrice(), orderDetailsDTO.getStatusOrderDetail(), orderDetailsDTO.getId());
+        this.orderDetailsRepository.updateOrderDetail(orderDetailsDTO.getQuantity(),orderDetailsDTO.getQuantityOrigin(), orderDetailsDTO.getPrice(), orderDetailsDTO.getStatusOrderDetail(), orderDetailsDTO.getId());
         this.orderRepository.updateOrderMoney(orderDetailsDTO.getOrderId());
         return this.orderService.getOrderByOrderId(oder_id);
     }
@@ -44,6 +44,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         this.orderDetailsRepository.createOrderDetails(
                 orderDetailsDTO.getOrderId(),
                 orderDetailsDTO.getPrice(),
+                orderDetailsDTO.getQuantity(),
                 orderDetailsDTO.getQuantity(),
                 orderDetailsDTO.getProductDetail().getId(),
                 Constant.Status.ACTIVE);

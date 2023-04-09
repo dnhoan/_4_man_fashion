@@ -15,5 +15,7 @@ public class ReturnOrderRequestBody {
     @NotEmpty
     Integer orderId;
     @NotEmpty
+    Integer currentOrderDetailId;
+    @NotEmpty
     Integer statusOrder;
 }

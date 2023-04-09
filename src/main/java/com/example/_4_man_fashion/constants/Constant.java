@@ -48,11 +48,14 @@ public final class Constant {
 
     public static final class OrderDetailStatus {
         public static  final Integer INACTIVE = 0;
+
         public static  final Integer ACTIVE = 1;
         public static  final Integer RETURN_PENDING = 2;
         public static  final Integer RETURN = 3;
         public static  final Integer EXCHANGE_PENDING = 4;
         public static  final Integer EXCHANGE = 5;
+        public static  final Integer REJECT_RETURN = 6;
+        public static  final Integer REJECT_EXCHANGE = 7;
     }
 
     public static final class OrderStatus {

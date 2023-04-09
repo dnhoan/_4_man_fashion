@@ -29,6 +29,8 @@ public class OrderDetails {
 
     @Column(name = "quantity", nullable = false)
     private int quantity;
+    @Column(name = "quantity_origin", nullable = false)
+    private int quantityOrigin;
 
     @Cascade(org.hibernate.annotations.CascadeType.LOCK)
     @OneToOne(fetch = FetchType.EAGER)

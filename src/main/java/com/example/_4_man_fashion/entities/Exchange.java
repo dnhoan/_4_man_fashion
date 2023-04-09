@@ -36,6 +36,13 @@ public class Exchange {
     @Type(type = "org.hibernate.type.TextType")
     private String reason;
 
+    @Column(name = "note")
+    @Type(type = "org.hibernate.type.TextType")
+    private String note;
+
+    @Column(name = "order_detail_id_origin")
+    private Integer orderDetailIdOrigin;
+
     @Column(name = "ctime")
     private LocalDateTime ctime;
 }
