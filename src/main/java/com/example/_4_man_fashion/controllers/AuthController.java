@@ -1,6 +1,7 @@
 package com.example._4_man_fashion.controllers;
 
 import com.example._4_man_fashion.Service.AuthService;
+import com.example._4_man_fashion.Service.OtpService;
 import com.example._4_man_fashion.models.JwtResponse;
 import com.example._4_man_fashion.models.LoginRequest;
 import com.example._4_man_fashion.models.SignupRequest;
@@ -21,6 +22,9 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private OtpService otpService;
+
     @PostMapping("login")
     public ResponseEntity<ApiResponse<JwtResponse>> authenticateUser(@RequestBody @Valid LoginRequest loginRequest, HttpServletRequest request) {
 
@@ -36,6 +40,29 @@ public class AuthController {
 
         return ResponseEntity.ok(ApiResponse.success("User registered successfully!"));
     }
+
+//    @GetMapping("changepass")
+//    public ResponseEntity<ApiResponse<String>> changePass(@RequestParam(value = "email") String email,
+//                                                       @RequestParam(value = "isOtp") String otp,
+//                                                       @RequestParam(value = "password") String password,
+//                                                       @RequestParam(value = "repassword") String repassword
+//    ) {
+//        try {
+//            Optional<Otp> isOtp = this.otpService.findByEmail(email);
+//            if (isOtp.isPresent() && (otp.equals(isOtp.get().getOtpCode().toString())) && password.equals(repassword)) {
+//                Account account = accountService.findByEmail(email);
+//                account.setPassword(passwordEncoder.encode(password));
+//                accountService.update(account);
+//                return ResponseEntity.ok(ApiResponse.success("Change Password successfully!"));
+//            } else {
+//                return ResponseEntity.ok(ApiResponse.success("Change Password false!"));
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.ok(ApiResponse.success("Change Password false!"));
+//        }
+//    }
+
 }
 
 @Data

@@ -1,5 +1,6 @@
 package com.example._4_man_fashion.repositories;
 
+import com.example._4_man_fashion.dto.SendEmailStatus;
 import com.example._4_man_fashion.dto.StatisticFavorite;
 import com.example._4_man_fashion.dto.StatisticIncome;
 import com.example._4_man_fashion.entities.Order;
@@ -50,6 +51,11 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
         boolean existsByOrderId(String orderId);
 
         Optional<Order> getOrderByOrderId(String orderId);
+
+        @Query(nativeQuery = true,value = "select cus.email as email, cus.customer_name as name, od.order_id as id from customers as cus\n" +
+                "join orders as od on cus.id = od.customer_id\n" +
+                "where od.id = :id")
+        Optional<SendEmailStatus> getEmailCustomerByOrderId(Integer id);
 
         @Query(nativeQuery = true,value = "select  COALESCE(o1.DT_STORE, 0) as dt_store,\n" +
                 "                                  COALESCE(o2.DT_ONLINE, 0) as dt_online,\n" +
