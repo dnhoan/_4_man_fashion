@@ -12,11 +12,20 @@ public interface OrderDetailsRepository extends JpaRepository<OrderDetails, Inte
 
     @Modifying
     @Query(value = "INSERT INTO order_details(\n" +
-                     "\torder_id, price, quantity, product_detail_id, status_order_detail)\n" +
-            "\tVALUES (:order_id, :price, :quantity, :product_detail_id, :status_order_detail);", nativeQuery = true)
-    void createOrderDetails(Integer order_id, Float price, Integer quantity, Integer product_detail_id, Integer status_order_detail);
+                     "\torder_id, price, quantity, product_detail_id, status_order_detail, quantity_origin)\n" +
+            "\tVALUES (:order_id, :price, :quantity, :product_detail_id, :status_order_detail, :quantityOrigin);", nativeQuery = true)
+    void createOrderDetails(Integer order_id, Float price, Integer quantity, Integer quantityOrigin, Integer product_detail_id, Integer status_order_detail);
 
     @Modifying
-    @Query(value = "update order_details set quantity = :quantity, price = :price, status_order_detail = :status_order_detail  where id = :orderDetailId", nativeQuery = true)
-    void updateOrderDetail(Integer quantity, float price,Integer status_order_detail, Integer orderDetailId);
+    @Query(value = "update order_details set quantity = :quantity, quantity_origin = :quantityOrigin, price = :price, status_order_detail = :status_order_detail  where id = :orderDetailId", nativeQuery = true)
+    void updateOrderDetail(Integer quantity,Integer quantityOrigin, float price,Integer status_order_detail, Integer orderDetailId);
+
+    @Modifying
+    @Query(value = "update order_details set quantity = (order_details.quantity - :quantity) where id = :orderDetailId", nativeQuery = true)
+    void updateQuantityOrderDetail(Integer quantity, Integer orderDetailId);
+
+    @Modifying
+    @Query(value = "update order_details set status_order_detail = :statusOrderDetail where id = :orderDetailId", nativeQuery = true)
+    void updateStatusOrderDetail(Integer statusOrderDetail, Integer orderDetailId);
+
 }
