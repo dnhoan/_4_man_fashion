@@ -15,4 +15,6 @@ public interface FavoriteProductRepository extends JpaRepository<FavoriteProduct
 
     @Query("select f from FavoriteProduct f where f.customer.id = :customer_id")
     Page<FavoriteProduct> getFavoriteProductByCustomerId(Pageable pageable, Integer customer_id);;
+
+    boolean existsFavoriteProductByProductId(Integer productId);
 }
