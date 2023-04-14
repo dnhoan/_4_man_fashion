@@ -2,10 +2,10 @@ package com.example._4_man_fashion.Service;
 
 import com.example._4_man_fashion.dto.FavoriteProductDTO;
 import com.example._4_man_fashion.dto.PageDTO;
-import com.example._4_man_fashion.entities.Customer;
 import com.example._4_man_fashion.entities.FavoriteProduct;
-import com.example._4_man_fashion.entities.ProductDetail;
 import com.example._4_man_fashion.repositories.FavoriteProductRepository;
+import com.example._4_man_fashion.utils.DATNException;
+import com.example._4_man_fashion.utils.ErrorMessage;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,6 +46,10 @@ public class FavoriteProductServiceImpl {
 
     @Transactional
     public FavoriteProduct create(FavoriteProductDTO favoriteProductDTO) {
+
+        if(favoriteProductRepository.existsFavoriteProductByProductId(favoriteProductDTO.getProduct().getId())){
+            throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Sản phẩm này"));
+        }
 
         favoriteProductDTO.setCtime(LocalDateTime.now());
 
