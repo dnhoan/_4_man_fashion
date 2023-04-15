@@ -1,4 +1,4 @@
-package com.example._4_man_fashion.controllers.admin;
+package com.example._4_man_fashion.controllers.user;
 
 import com.example._4_man_fashion.Service.FavoriteProductServiceImpl;
 import com.example._4_man_fashion.constants.Constant;
@@ -26,7 +26,7 @@ public class FavoriteProductController {
     public ResponseEntity<ApiResponse<PageDTO<FavoriteProductDTO>>> getAll(@RequestParam(defaultValue = "0") int offset,
                                                                  @RequestParam(defaultValue = "10") int limit,
                                                                  @RequestParam(defaultValue = "1") Integer customerId) {
-        PageDTO<FavoriteProductDTO> result = favoriteProductService.getAll(offset, limit, customerId);
+        PageDTO<FavoriteProductDTO> result = favoriteProductService.getAllByCustomerId(offset, limit, customerId);
         return ResponseEntity.ok(ApiResponse.success(result));
     }
 

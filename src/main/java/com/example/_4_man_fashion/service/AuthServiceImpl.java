@@ -156,7 +156,7 @@ public class AuthServiceImpl implements AuthService {
                 }
                 this.otpService.save(isOtp);
 
-                CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> sendMailService.sendSimpleEmail(email,subject,body), executor);
+                CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> sendMailService.sendSimpleEmail(email, subject, body), executor);
                 executor.shutdown();
             }
 
@@ -169,22 +169,26 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public void changePassWord(String email, String password, String newPassword, String rePassword) {
-        if (!newPassword.equals(rePassword)){
-            throw new DATNException(ErrorMessage.CUSTOM_ARGUMENT_NOT_VALID_V2.format("Mật khẩu xác nhận"));
-        }
-        if (password.equals(newPassword)){
-            throw new DATNException(ErrorMessage.REPASSWORD_NOT_DUPLICATE.format("Mật khẩu mới", "mật khẩu cũ"));
-        }
-        if (newPassword.equals(rePassword)) {
-            Account account = accountService.findByEmail(email);
-            if (account == null) {
-                throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Tài khoản"));
-            } else {
+        Account account = accountService.findByEmail(email);
+        if (account != null) {
+            boolean checkpw = passwordEncoder.matches(password, account.getPassword());
+            if (checkpw == false) {
+                throw new DATNException(ErrorMessage.PASSWORD_NOT_MATCH.format("Mật khẩu cũ"));
+
+            }
+            if (!newPassword.equals(rePassword)) {
+                throw new DATNException(ErrorMessage.CUSTOM_ARGUMENT_NOT_VALID_V2.format("Mật khẩu xác nhận"));
+            }
+            if (password.equals(newPassword)) {
+                throw new DATNException(ErrorMessage.REPASSWORD_NOT_DUPLICATE.format("Mật khẩu mới", "mật khẩu cũ"));
+            }
+            if (newPassword.equals(rePassword)) {
                 account.setPassword(passwordEncoder.encode(newPassword));
                 accountService.update(account);
             }
         } else {
-            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("OTP không chính xác! Kiểm tra lại mã OTP trong gmail của bạn!"));
+            throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Tài khoản"));
         }
+
     }
 }

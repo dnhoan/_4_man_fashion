@@ -6,7 +6,6 @@ public enum ErrorMessage implements BaseMessage {
     OBJECT_NOT_FOUND("002", "Object not found", "%s không tồn tại"),
     OBJECT_ALREADY_EXIST("003", "Object already exist", "%s đã tồn tại"),
     ARGUMENT_NOT_VALID("007", "Method argument not valid", "Tham số không chính xác"),
-
     //AuthError
     AUTH_USER_PASS_INVALID("AUTH_001", "User or Password invalid", "Tài khoản hoặc mật khẩu không chính xác"),
     UPDATE_FAIL_OBJECT_ALREADY_EXIST("008", "Update Fail, Object already exist", "Cập nhật lỗi, %s đã tồn tại thông tin tương ứng"),
@@ -22,8 +21,8 @@ public enum ErrorMessage implements BaseMessage {
     OBJECT_ARCHIVED("034", "Object archived", "%s đã ở trạng thái lưu trữ"),
     FIELD_CANNOT_UNSET("043", "Fields cannot unset", "%s trường không được phép để trống"),
     OBJECT_CAN_NOT_DELETE("045", "Object can not delete", "%s không được phép xóa"),
-    REPASSWORD_NOT_DUPLICATE("046","Password is not duplicate", "%s không được trùng %s cũ!")
-    ;
+    REPASSWORD_NOT_DUPLICATE("046","Password is not duplicate", "%s không được trùng %s cũ!"),
+    PASSWORD_NOT_MATCH("047", "Password does not match","%s không chính xác!");
 
     private final String code;
     private String desc;
