@@ -1,11 +1,15 @@
 package com.example._4_man_fashion.entities;
 
 import com.example._4_man_fashion.dto.VoucherDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Where;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -52,7 +56,10 @@ public class Voucher {
 
     @Column(name = "status")
     private int status;
-
+    @JsonIgnore
+    @Cascade(org.hibernate.annotations.CascadeType.LOCK)
+    @OneToMany(mappedBy = "voucher", fetch = FetchType.LAZY)
+    private List<Order> orders;
     public static Voucher fromDTO(VoucherDTO dto) {
         Voucher entity = new Voucher();
         BeanUtils.copyProperties(dto, entity);

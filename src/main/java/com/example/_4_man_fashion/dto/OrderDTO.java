@@ -1,6 +1,7 @@
 package com.example._4_man_fashion.dto;
 
 import com.example._4_man_fashion.entities.OrderDetails;
+import com.example._4_man_fashion.entities.Voucher;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -41,6 +42,8 @@ public class OrderDTO {
     private float totalMoney;
 
     private int delivery;
+
+    private Voucher voucher;
 
     private int purchaseType;
 
