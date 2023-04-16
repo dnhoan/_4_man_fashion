@@ -1,5 +1,6 @@
 package com.example._4_man_fashion.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
@@ -79,5 +80,10 @@ public class Order {
     @OrderBy()
     @Where(clause = "status_order_detail != 0")
     private List<OrderDetails> orderDetails;
+
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "voucher_id")
+    private Voucher voucher;
 
 }
