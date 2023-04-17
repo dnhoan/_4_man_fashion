@@ -58,6 +58,15 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.success("Mã OTP đã được gửi đến email của bạn!"));
     }
 
+    @GetMapping("resetPassword")
+    public ResponseEntity<ApiResponse<String>> resetPassword(@RequestParam(value = "email") String email,
+                                                             @RequestParam(value = "isOtp") String isOtp,
+                                                             @RequestParam(value = "newPassword") String newPassword,
+                                                             @RequestParam(value = "rePassword") String rePassword) {
+        this.authService.resetPassWord(email,isOtp,newPassword, rePassword);
+        return ResponseEntity.ok(ApiResponse.success("Mật khẩu đã được đặt lại thành công!"));
+    }
+
     @GetMapping("changepass")
     public ResponseEntity<ApiResponse<String>> changePass(@RequestParam(value = "email") String email,
                                                           @RequestParam(value = "password") String password,
