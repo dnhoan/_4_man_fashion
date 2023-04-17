@@ -22,5 +22,6 @@ public class ProductDetailDTO {
     private String sizeName;
     private String colorName;
     private String productDetailName;
+    private String image;
     private int status;
 }
