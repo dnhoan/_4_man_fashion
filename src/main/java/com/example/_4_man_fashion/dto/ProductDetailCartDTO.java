@@ -19,4 +19,5 @@ public class ProductDetailCartDTO {
     private Color color;
     private int stock;
     private String productDetailName;
+    private String image;
 }
