@@ -2,10 +2,7 @@ package com.example._4_man_fashion.controllers.user;
 
 import com.example._4_man_fashion.Service.FavoriteProductServiceImpl;
 import com.example._4_man_fashion.constants.Constant;
-import com.example._4_man_fashion.dto.CartItemDTO;
-import com.example._4_man_fashion.dto.ColorDTO;
-import com.example._4_man_fashion.dto.FavoriteProductDTO;
-import com.example._4_man_fashion.dto.PageDTO;
+import com.example._4_man_fashion.dto.*;
 import com.example._4_man_fashion.entities.Color;
 import com.example._4_man_fashion.entities.FavoriteProduct;
 import com.example._4_man_fashion.utils.ApiResponse;
@@ -22,11 +19,11 @@ public class FavoriteProductController {
     @Autowired
     public FavoriteProductServiceImpl favoriteProductService;
 
-    @GetMapping("favorite/getList")
-    public ResponseEntity<ApiResponse<PageDTO<FavoriteProductDTO>>> getAll(@RequestParam(defaultValue = "0") int offset,
+    @GetMapping("favorite/getList/{customerId}")
+    public ResponseEntity<ApiResponse<PageDTO<ProductDTO>>> getAll(@RequestParam(defaultValue = "0") int offset,
                                                                  @RequestParam(defaultValue = "10") int limit,
-                                                                 @RequestParam(defaultValue = "1") Integer customerId) {
-        PageDTO<FavoriteProductDTO> result = favoriteProductService.getAllByCustomerId(offset, limit, customerId);
+                                                                 @PathVariable() Integer customerId) {
+        PageDTO<ProductDTO> result = favoriteProductService.getAllByCustomerId(offset, limit, customerId);
         return ResponseEntity.ok(ApiResponse.success(result));
     }
 
