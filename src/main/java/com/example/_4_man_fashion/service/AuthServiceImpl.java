@@ -11,6 +11,7 @@ import com.example._4_man_fashion.models.JwtResponse;
 import com.example._4_man_fashion.models.LoginRequest;
 import com.example._4_man_fashion.models.SignupRequest;
 import com.example._4_man_fashion.repositories.AccountRepository;
+import com.example._4_man_fashion.repositories.OtpRepository;
 import com.example._4_man_fashion.repositories.RoleRepository;
 import com.example._4_man_fashion.utils.ApiResponse;
 import com.example._4_man_fashion.utils.DATNException;
@@ -55,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
     private RoleRepository roleRepository;
 
     @Autowired
-    private OtpService otpService;
+    private OtpRepository otpRepository;
 
     @Autowired
     public JavaMailSender emailSender;
@@ -150,11 +151,11 @@ public class AuthServiceImpl implements AuthService {
                 isOtp.setEmailAccount(account.getEmail());
                 isOtp.setStatus(1);
                 isOtp.setIsUse_At(System.currentTimeMillis() + 300000);
-                Optional<Otp> otp1 = this.otpService.findByEmail(email);
+                Optional<Otp> otp1 = this.otpRepository.findByEmail(email);
                 if (otp1.isPresent()) {
                     isOtp.setId(otp1.get().getId());
                 }
-                this.otpService.save(isOtp);
+                this.otpRepository.save(isOtp);
 
                 CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> sendMailService.sendSimpleEmail(email, subject, body), executor);
                 executor.shutdown();
@@ -165,6 +166,34 @@ public class AuthServiceImpl implements AuthService {
             throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Lấy mã OTP thất bại"));
         }
     }
+
+    @Override
+    @Transactional
+    public void resetPassWord(String email, String isOtp, String newPassword, String rePassword) {
+        Account account = this.accountRepository.findAccountByEmail(email);
+        if (account != null) {
+            Optional<Otp> otp = this.otpRepository.findByEmail(email);
+            if (otp.isPresent()) {
+                if (otp.get().getOtpCode().equals(isOtp)) {
+                    if (newPassword.equals(rePassword)) {
+                        account.setPassword(passwordEncoder.encode(newPassword));
+                        this.accountService.update(account);
+                    } else {
+                        throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Mật khẩu xác nhận không chính xác!"));
+                    }
+                } else {
+                    throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Mã OTP không chính xác. Vui lòng kiểm tra lại!"));
+                }
+            } else {
+                throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Không tìm thấy mã OTP. Bạn vui lòng yêu cầu gửi lại mã!"));
+            }
+        } else {
+            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Không tìm thấy tài khoản này!"));
+        }
+
+    }
+
+
 
     @Override
     @Transactional
