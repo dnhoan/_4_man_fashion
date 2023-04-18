@@ -3,6 +3,7 @@ package com.example._4_man_fashion.repositories;
 import com.example._4_man_fashion.dto.SendEmailStatus;
 import com.example._4_man_fashion.dto.StatisticFavorite;
 import com.example._4_man_fashion.dto.StatisticIncome;
+import com.example._4_man_fashion.dto.StatisticRevenue;
 import com.example._4_man_fashion.entities.Order;
 import com.example._4_man_fashion.models.UpdateOrderStatus;
 import org.springframework.data.domain.Page;
@@ -71,7 +72,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
                 "                                    from orders                  \n" +
                 "                                    where   orders.purchase_type =1  \n" +
                 "                                            and ( orders.order_status = 1) and\n" +
-                "                                            orders.ctime BETWEEN '31-01-2023' and '31-08-2024'\n" +
+                "                                            orders.ctime BETWEEN :time1 and :time2\n" +
                 "                                    group by  ngay ,thang,nam\n" +
                 "                                    ) as o1\n" +
                 "                               full join\n" +
@@ -83,7 +84,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
                 "                                   from orders                 \n" +
                 "                                    where   orders.purchase_type = 2   \n" +
                 "                                            and ( orders.order_status = 1) and\n" +
-                "                                            orders.ctime BETWEEN '31-01-2023' and '31-08-2024'              \n" +
+                "                                            orders.ctime BETWEEN :time1 and :time2              \n" +
                 "                                    group by  ngay,thang,nam\n" +
                 "                                    ) as o2    \n" +
                 "                               on o1.ngay = o2.ngay order by  nam,thang,ngay  ")
@@ -144,4 +145,22 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
         )
         List<StatisticFavorite> statisticsByBestSellingProducts(Date time1, Date time2);
+
+        @Query(nativeQuery = true,
+                value = "select count(od.customer_id) from orders od where od.ctime between :time1 and :time2 ")
+        int getOrders(Date time1, Date time2);
+
+        @Query(nativeQuery = true,
+                value = "select o1.DT_STORE as dt_store ,o2.DT_ONLINE as dt_online from  \n" +
+                        "(select sum(od.total_money) as DT_STORE, od.order_status stt from orders od where od.order_status = 1 \n" +
+                        "and od.purchase_type = 1\n" +
+                        "and od.ctime between :time1 and :time2 \n" +
+                        "group by stt) as o1\n" +
+                        "full join \n" +
+                        "(select sum(od.total_money) as DT_ONLINE, od.order_status stt from orders od where od.order_status = 1 \n" +
+                        "and od.purchase_type = 2\n" +
+                        "and od.ctime between :time1 and :time2 \n" +
+                        "group by stt) as o2 \n" +
+                        "on o1.stt = o2.stt ")
+        List<StatisticRevenue> getRevenue(Date time1, Date time2);
 }
