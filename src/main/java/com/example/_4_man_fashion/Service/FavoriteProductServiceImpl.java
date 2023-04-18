@@ -7,7 +7,10 @@ import com.example._4_man_fashion.dto.ProductDTO;
 import com.example._4_man_fashion.entities.Color;
 import com.example._4_man_fashion.entities.FavoriteProduct;
 import com.example._4_man_fashion.entities.Product;
+import com.example._4_man_fashion.entities.Size;
+import com.example._4_man_fashion.repositories.ColorRepository;
 import com.example._4_man_fashion.repositories.FavoriteProductRepository;
+import com.example._4_man_fashion.repositories.SizeRepository;
 import com.example._4_man_fashion.utils.DATNException;
 import com.example._4_man_fashion.utils.ErrorMessage;
 import com.example._4_man_fashion.utils.StringCommon;
@@ -31,36 +34,29 @@ public class FavoriteProductServiceImpl {
     private FavoriteProductRepository favoriteProductRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private ColorRepository colorRepository;
+    @Autowired
+    private SizeRepository sizeRepository;
 
 
-    public PageDTO<ProductDTO> getAll(int offset, int limit, String search) {
+    public PageDTO<ProductDTO> getAllByCustomerId(int offset, int limit, Integer customer_Id){
         Pageable pageable = PageRequest.of(offset, limit);
-        Page<Product> page = this.favoriteProductRepository.getFavoriteProductByProductName(pageable, StringCommon.getLikeCondition(search));
-        List<ProductDTO> productDTOList = page.stream().map(u -> this.modelMapper.map(u, ProductDTO.class)).collect(Collectors.toList());
+        Page<Product>  page = this.favoriteProductRepository.getFavoriteProductByCustomerId(pageable, customer_Id);
+        List<ProductDTO> productDTOList = page.stream().map(product -> {
+            ProductDTO productDTO =  this.modelMapper.map(product, ProductDTO.class);
+            List<Color> colors = this.colorRepository.getColorsByProductId(product.getId());
+            List<Size> sizes = this.sizeRepository.getSizesByProductId(product.getId());
+            productDTO.setColors(colors);
+            productDTO.setSizes(sizes);
+            return productDTO;
+        }).collect(Collectors.toList());
         return new PageDTO<ProductDTO>(
                 page.getTotalPages(),
                 page.getTotalElements(),
                 page.getNumber(),
                 page.getSize(),
                 productDTOList,
-                page.isFirst(),
-                page.isLast(),
-                page.hasNext(),
-                page.hasPrevious()
-        );
-    }
-
-
-    public PageDTO<FavoriteProductDTO> getAllByCustomerId(int offset, int limit, Integer customer_Id){
-        Pageable pageable = PageRequest.of(offset, limit);
-        Page<FavoriteProduct>  page = this.favoriteProductRepository.getFavoriteProductByCustomerId(pageable, customer_Id);
-        List<FavoriteProductDTO> favoriteProductDTOS = page.stream().map(u -> this.modelMapper.map(u, FavoriteProductDTO.class)).collect(Collectors.toList());
-        return new PageDTO<FavoriteProductDTO>(
-                page.getTotalPages(),
-                page.getTotalElements(),
-                page.getNumber(),
-                page.getSize(),
-                favoriteProductDTOS,
                 page.isFirst(),
                 page.isLast(),
                 page.hasNext(),
