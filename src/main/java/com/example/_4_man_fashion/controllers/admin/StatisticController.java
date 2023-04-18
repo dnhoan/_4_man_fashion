@@ -5,6 +5,7 @@ import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.ResponseDTO;
 import com.example._4_man_fashion.dto.StatisticFavorite;
 import com.example._4_man_fashion.dto.StatisticIncome;
+import com.example._4_man_fashion.dto.StatisticRevenue;
 import com.example._4_man_fashion.entities.Customer;
 import com.example._4_man_fashion.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +36,8 @@ public class StatisticController {
             @RequestParam("e_date") String e_date
     ) {
         try {
-            Date sDate = new SimpleDateFormat("MM/dd/yyyy").parse(s_date);
-            Date eDate = new SimpleDateFormat("MM/dd/yyyy").parse(e_date);
+            Date sDate = new SimpleDateFormat("dd/MM/yyyy").parse(s_date);
+            Date eDate = new SimpleDateFormat("dd/MM/yyyy").parse(e_date);
 
             List<StatisticIncome> statisticIncomes = this.statisticService
                     .getStatisticByDate(sDate,eDate);
@@ -98,6 +99,38 @@ public class StatisticController {
             Date time_2 = new SimpleDateFormat("dd/MM/yyyy").parse(time2);
             List<StatisticFavorite> statisticFavorites = this.statisticService.statisticsByBestSellingProducts(time_1, time_2);
             return ResponseEntity.ok(ApiResponse.success(statisticFavorites));
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @GetMapping("amountOrder")
+    public ResponseEntity<ApiResponse<Integer>>getAmountOrder(
+            @RequestParam("time1") String time1,
+            @RequestParam("time2") String time2
+    ) {
+        try {
+            Date time_1 = new SimpleDateFormat("dd/MM/yyyy").parse(time1);
+            Date time_2 = new SimpleDateFormat("dd/MM/yyyy").parse(time2);
+            int amount = this.statisticService.getAmountOrder(time_1, time_2);
+            return ResponseEntity.ok(ApiResponse.success(amount));
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @GetMapping("getRevenue")
+    public ResponseEntity<ApiResponse<List<StatisticRevenue>>>getRevenue(
+            @RequestParam("time1") String time1,
+            @RequestParam("time2") String time2
+    ) {
+        try {
+            Date time_1 = new SimpleDateFormat("dd/MM/yyyy").parse(time1);
+            Date time_2 = new SimpleDateFormat("dd/MM/yyyy").parse(time2);
+            List revenue = this.statisticService.getRevenue(time_1, time_2);
+            return ResponseEntity.ok(ApiResponse.success(revenue));
 
         } catch (Exception e) {
             return null;
