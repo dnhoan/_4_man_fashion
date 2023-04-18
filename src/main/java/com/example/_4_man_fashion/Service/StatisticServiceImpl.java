@@ -2,6 +2,7 @@ package com.example._4_man_fashion.Service;
 
 import com.example._4_man_fashion.dto.StatisticFavorite;
 import com.example._4_man_fashion.dto.StatisticIncome;
+import com.example._4_man_fashion.dto.StatisticRevenue;
 import com.example._4_man_fashion.repositories.FavoriteProductRepository;
 import com.example._4_man_fashion.repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,18 @@ public class StatisticServiceImpl {
 
     public List<StatisticFavorite> statisticsByBestSellingProducts(Date time1, Date time2){
         return this.orderRepository.statisticsByBestSellingProducts(time1, time2);
+
+
+    }
+
+    public int getAmountOrder(Date time1, Date time2){
+        return this.orderRepository.getOrders(time1, time2);
+
+
+    }
+
+    public List<StatisticRevenue> getRevenue(Date time1, Date time2){
+        return this.orderRepository.getRevenue(time1, time2);
 
 
     }
