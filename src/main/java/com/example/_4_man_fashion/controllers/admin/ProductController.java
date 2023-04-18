@@ -5,6 +5,7 @@ import com.example._4_man_fashion.dto.ProductDTO;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.entities.Product;
+import com.example._4_man_fashion.models.UpdateStatus;
 import com.example._4_man_fashion.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -54,9 +55,9 @@ public class ProductController {
         return ResponseEntity.ok(ApiResponse.success(product));
     }
 
-    @PutMapping("/product/updateStatus/{id}")
-    public ResponseEntity<ApiResponse<String>> updateStatus(@PathVariable Integer id, @RequestParam(value = "status", defaultValue = "0") Integer status) {
-        productService.updateStatus(id, status);
-        return ResponseEntity.ok(ApiResponse.success(Objects.equals(status, Constant.Status.ACTIVE) ? "Xóa sản phẩm thành công" : "Khôi phục sản phẩm thành công"));
+    @PutMapping("/product/updateStatus")
+    public ResponseEntity<ApiResponse<String>> updateStatus(@RequestBody UpdateStatus updateStatus) {
+        productService.updateStatus(updateStatus.getId(), updateStatus.getStatus());
+        return ResponseEntity.ok(ApiResponse.success(Objects.equals(updateStatus.getStatus(), Constant.Status.ACTIVE) ? "Khôi phục sản phẩm thành công" : "Xóa sản phẩm thành công"));
     }
 }

@@ -53,6 +53,9 @@ public class ProductDetail {
     @Column(name = "product_detail_name", nullable = false, length = 1000)
     private String productDetailName;
 
+    @Column(name = "image", length = 1000)
+    private String image;
+
     // @Column(name = "product_id", nullable = false)
     // private Integer productId;
 
