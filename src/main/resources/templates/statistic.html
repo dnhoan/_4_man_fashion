@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'/>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-size: 48px;
+        }
+        h3 {
+            text-align:center;
+        }
+        p {
+            text-decoration-color: black;
+            text-emphasis-color: black;
+        }
+    </style>
+</head>
+<body>
+<h3>THỐNG KÊ DOANH THU 4MANFASHION</h3>
+
+<p th:text="${'Xin chào ' + name + '!' }"></p>
+<p th:text="${'Đây là bản thống kê doanh thu tại cửa hàng 4ManFashion từ ' + time1 + ' đến ' +time2 +': ' }"></p>
+<p th:text="${'Số lượng đơn hàng tại quầy đã hoàn thành: ' + sl_store }"></p>
+<p th:text="${'Doanh thu: ' + dt_store }"></p>
+<p>--</p>
+<p th:text="${'Số lượng đơn hàng online đã hoàn thành: ' + sl_online }"></p>
+<p th:text="${'Doanh thu: ' + dt_online }"></p>
+<p>--</p>
+<p th:text="${'Tổng số lượng đơn hàng đã hoàn thành: ' + sl }"></p>
+<p th:text="${'Tổng doanh thu: ' + dt }"></p>
+<h3>-4ManFashion-</h3>
+
+
+</body>
+</html>
