@@ -1,5 +1,6 @@
 package com.example._4_man_fashion.controllers.admin;
 
+import com.example._4_man_fashion.Service.StatisticService;
 import com.example._4_man_fashion.Service.StatisticServiceImpl;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.ResponseDTO;
@@ -22,12 +23,11 @@ import static org.springframework.http.HttpStatus.EXPECTATION_FAILED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping(Constant.Api.Path.ADMIN)
 @CrossOrigin("*")
 public class StatisticController {
 
     @Autowired
-    private StatisticServiceImpl statisticService;
+    private StatisticService statisticService;
 
 
     @GetMapping("statisticIncome/date")
@@ -133,6 +133,23 @@ public class StatisticController {
             return ResponseEntity.ok(ApiResponse.success(revenue));
 
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @GetMapping("getRevenueAndQuantityOrder")
+    public ResponseEntity<ApiResponse<StatisticRevenue>>getRevenueAndQuantityOrder(
+            @RequestParam("time1") String time1,
+            @RequestParam("time2") String time2
+    ) {
+        try {
+            Date time_1 = new SimpleDateFormat("dd/MM/yyyy").parse(time1);
+            Date time_2 = new SimpleDateFormat("dd/MM/yyyy").parse(time2);
+            StatisticRevenue revenue = this.statisticService.getRevenueAndQuantityOrder(time_1, time_2);
+            return ResponseEntity.ok(ApiResponse.success(revenue));
+
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
