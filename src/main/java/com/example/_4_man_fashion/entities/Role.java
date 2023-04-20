@@ -27,7 +27,7 @@ public class Role {
     @Column(name = "role_name", nullable = false, length = 50)
     private ERole name;
 
-    @ManyToMany(mappedBy = "roles")
-    @JsonBackReference
-    Set<Account> likes;
+    @JsonIgnore
+    @OneToMany(mappedBy = "role")
+    Set<AccountRoles> accountRoles;
 }

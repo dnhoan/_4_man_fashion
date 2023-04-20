@@ -3,6 +3,7 @@ package com.example._4_man_fashion.Service;
 import com.example._4_man_fashion.configs.jwt.JwtUtils;
 import com.example._4_man_fashion.configs.security.UserDetailsImpl;
 import com.example._4_man_fashion.constants.Constant;
+import com.example._4_man_fashion.dto.AccountDTO;
 import com.example._4_man_fashion.entities.Account;
 import com.example._4_man_fashion.entities.Otp;
 import com.example._4_man_fashion.entities.Role;
@@ -13,12 +14,10 @@ import com.example._4_man_fashion.models.SignupRequest;
 import com.example._4_man_fashion.repositories.AccountRepository;
 import com.example._4_man_fashion.repositories.OtpRepository;
 import com.example._4_man_fashion.repositories.RoleRepository;
-import com.example._4_man_fashion.utils.ApiResponse;
 import com.example._4_man_fashion.utils.DATNException;
 import com.example._4_man_fashion.utils.ErrorMessage;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,12 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,6 +40,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -69,20 +66,25 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public void signup(SignupRequest signupRequest) {
-        String phoneOrEmail = signupRequest.getPhoneOrEmail();
+        String email = signupRequest.getEmail();
+        String phone = signupRequest.getPhoneNumber();
 
         Account account = new Account();
 
-        if (phoneOrEmail.matches(Constant.Regex.EMAIL)) {
-            if (accountRepository.existsByEmail(signupRequest.getPhoneOrEmail()))
+        if (email.matches(Constant.Regex.EMAIL)) {
+            if (accountRepository.existsByEmail(email)) {
                 throw new DATNException(ErrorMessage.OBJECT_ALREADY_EXIST.format("Email"));
-            account.setEmail(phoneOrEmail);
-        } else if (phoneOrEmail.matches(Constant.Regex.PHONE_NUMBER)) {
-            if (accountRepository.existsByPhoneNumber(signupRequest.getPhoneOrEmail()))
+            } else {
+                account.setEmail(email);
+            }
+        }
+        if (phone.matches(Constant.Regex.PHONE_NUMBER)) {
+            if (accountRepository.existsByPhoneNumber(phone)) {
                 throw new DATNException(ErrorMessage.OBJECT_ALREADY_EXIST.format("Số điện thoại"));
-            account.setPhoneNumber(phoneOrEmail);
-        } else
-            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
+            } else {
+                account.setPhoneNumber(phone);
+            }
+        }
 
         Set<Role> roles = new HashSet<>();
         String passwordEncrypt = this.passwordEncoder.encode(signupRequest.getPassword());
@@ -177,7 +179,7 @@ public class AuthServiceImpl implements AuthService {
                 if (otp.get().getOtpCode().equals(isOtp)) {
                     if (newPassword.equals(rePassword)) {
                         account.setPassword(passwordEncoder.encode(newPassword));
-                        this.accountService.update(account);
+                        this.accountService.update(this.modelMapper.map(account, AccountDTO.class));
                     } else {
                         throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Mật khẩu xác nhận không chính xác!"));
                     }
@@ -194,13 +196,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
-
     @Override
     @Transactional
     public void changePassWord(String email, String password, String newPassword, String rePassword) {
-        Account account = accountService.findByEmail(email);
+        List<Account> account = accountService.findByEmail(email);
         if (account != null) {
-            boolean checkpw = passwordEncoder.matches(password, account.getPassword());
+            boolean checkpw = passwordEncoder.matches(password, account.get(0).getPassword());
             if (checkpw == false) {
                 throw new DATNException(ErrorMessage.PASSWORD_NOT_MATCH.format("Mật khẩu cũ"));
 
@@ -212,8 +213,8 @@ public class AuthServiceImpl implements AuthService {
                 throw new DATNException(ErrorMessage.REPASSWORD_NOT_DUPLICATE.format("Mật khẩu mới", "mật khẩu cũ"));
             }
             if (newPassword.equals(rePassword)) {
-                account.setPassword(passwordEncoder.encode(newPassword));
-                accountService.update(account);
+                account.get(0).setPassword(passwordEncoder.encode(newPassword));
+                accountService.update(this.modelMapper.map(account, AccountDTO.class));
             }
         } else {
             throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Tài khoản"));
