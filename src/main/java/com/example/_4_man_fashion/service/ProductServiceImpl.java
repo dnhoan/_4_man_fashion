@@ -149,7 +149,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     public void updateStatus(Integer id, Integer status) {
-        if (this.productRepository.existsById(id))
+        if (!this.productRepository.existsById(id))
             throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Mã sản phẩm"));
 
         this.productDetailRepository.updateProductDetailStatus(id, status);

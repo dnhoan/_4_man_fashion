@@ -196,6 +196,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
+
     @Override
     @Transactional
     public void changePassWord(String email, String password, String newPassword, String rePassword) {

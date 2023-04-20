@@ -23,7 +23,7 @@ public class FavoriteAdminController {
     public ResponseEntity<ApiResponse<PageDTO<ProductDTO>>> getAll(@RequestParam(defaultValue = "0") int offset,
                                                                 @RequestParam(defaultValue = "10") int limit,
                                                                 @RequestParam(defaultValue = "") String search) {
-        PageDTO<ProductDTO> result = favoriteProductService.getAll(offset, limit, search);
-        return ResponseEntity.ok(ApiResponse.success(result));
+//        PageDTO<ProductDTO> result = favoriteProductService.getAll(offset, limit, search);
+        return ResponseEntity.ok(ApiResponse.success());
     }
 }
