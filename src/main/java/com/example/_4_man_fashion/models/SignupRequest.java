@@ -13,7 +13,11 @@ public class SignupRequest {
 
     @NotBlank
     @NotNull
-    private String phoneOrEmail;
+    private String phoneNumber;
+
+    @NotBlank
+    @NotNull
+    private String email;;
 
     @NotBlank
     @NotNull
