@@ -46,7 +46,14 @@ public class CustomerAddress {
 
     @Column(name = "detail")
     private String detail;
+    @Column(name = "recipient_name", nullable = false)
+    private String recipientName;
 
+    @Column(name = "recipient_phone", nullable = false)
+    private String recipientPhone;
+
+    @Column(name = "recipient_email", nullable = false)
+    private String recipientEmail;
     @Column(name = "status")
     private Integer status;
 

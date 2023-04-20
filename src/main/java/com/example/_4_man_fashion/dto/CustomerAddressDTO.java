@@ -21,4 +21,7 @@ public class CustomerAddressDTO {
     private String province;
     private String detail;
     private int status;
+    private String recipientName;
+    private String recipientPhone;
+    private String recipientEmail;
 }
