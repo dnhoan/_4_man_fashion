@@ -93,6 +93,9 @@ public class CustomerAddressServiceImpl {
         customerAddress.setProvince(customerAddressDTO.getProvince());
         customerAddress.setDetail(customerAddressDTO.getDetail());
         customerAddress.setStatus(customerAddressDTO.getStatus());
+        customerAddress.setRecipientEmail(customerAddressDTO.getRecipientEmail());
+        customerAddress.setRecipientName(customerAddressDTO.getRecipientName());
+        customerAddress.setRecipientPhone(customerAddressDTO.getRecipientPhone());
         return this.customerAddressRepository.save(customerAddress);
     }
 

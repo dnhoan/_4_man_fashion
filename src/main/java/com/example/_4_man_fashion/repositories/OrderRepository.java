@@ -71,7 +71,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
                 "                                         TO_CHAR(orders.ctime, 'yyyy') as nam\n" +
                 "                                    from orders                  \n" +
                 "                                    where   orders.purchase_type =0  \n" +
-                "                                            and ( orders.order_status = 5) and\n" +
+                "                                            and (orders.order_status = 5 or orders.order_status = 6) and\n" +
                 "                                            orders.ctime BETWEEN :time1 and :time2\n" +
                 "                                    group by  ngay ,thang,nam\n" +
                 "                                    ) as o1\n" +
@@ -83,7 +83,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
                 "                                         TO_CHAR(orders.ctime, 'yyyy') as nam\n" +
                 "                                   from orders                 \n" +
                 "                                    where   orders.purchase_type = 1   \n" +
-                "                                            and ( orders.order_status = 5) and\n" +
+                "                                            and (orders.order_status = 5 or orders.order_status = 6) and\n" +
                 "                                            orders.ctime BETWEEN :time1 and :time2              \n" +
                 "                                    group by  ngay,thang,nam\n" +
                 "                                    ) as o2    \n" +
@@ -103,13 +103,13 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
         @Query(nativeQuery = true, value = "select COALESCE(o1.DT_STORE, 0) as dt_store, COALESCE(o2.DT_ONLINE, 0) as dt_online, COALESCE(o1.thang, o2.thang) as thang from (\n" +
                 "       select sum(orders.total_money) as DT_STORE, EXTRACT(YEAR  from orders.ctime) nam, EXTRACT(MONTH from orders.ctime) as thang \n" +
                 "        from orders\n" +
-                "        where orders.purchase_type = 0 and orders.order_status = 5\n" +
+                "        where orders.purchase_type = 0 and (orders.order_status = 5 or orders.order_status = 6)\n" +
                 "        group by EXTRACT(YEAR  from orders.ctime), EXTRACT(MONTH from orders.ctime)\n" +
                 "        having EXTRACT(YEAR  from orders.ctime) = ?1\n" +
                 ") as o1 full join (\n" +
                 "        select sum(orders.total_money) as DT_ONLINE,EXTRACT(YEAR  from orders.ctime) nam, EXTRACT(MONTH from orders.ctime) as thang \n" +
                 "        from orders\n" +
-                "        where orders.purchase_type = 1 and orders.order_status = 5 \n" +
+                "        where orders.purchase_type = 1 and (orders.order_status = 5 or orders.order_status = 6) \n" +
                 "        group by EXTRACT(YEAR  from orders.ctime), EXTRACT(MONTH from orders.ctime), EXTRACT(MONTH from orders.ctime)\n" +
                 "        having EXTRACT(YEAR  from orders.ctime) = ?1\n" +
                 ") as o2 on o1.thang = o2.thang")
@@ -152,12 +152,12 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
         @Query(nativeQuery = true,
                 value = "select o1.DT_STORE as dt_store ,o2.DT_ONLINE as dt_online from  \n" +
-                        "(select sum(od.total_money) as DT_STORE, od.order_status stt from orders od where od.order_status = 5 \n" +
+                        "(select sum(od.total_money) as DT_STORE, od.order_status stt from orders od where (od.order_status = 5 or od.order_status = 6) \n" +
                         "and od.purchase_type = 0\n" +
                         "and od.ctime between :time1 and :time2 \n" +
                         "group by stt) as o1\n" +
                         "full join \n" +
-                        "(select sum(od.total_money) as DT_ONLINE, od.order_status stt from orders od where od.order_status = 5 \n" +
+                        "(select sum(od.total_money) as DT_ONLINE, od.order_status stt from orders od where (od.order_status = 5 or od.order_status = 6) \n" +
                         "and od.purchase_type = 1\n" +
                         "and od.ctime between :time1 and :time2 \n" +
                         "group by stt) as o2 \n" +
