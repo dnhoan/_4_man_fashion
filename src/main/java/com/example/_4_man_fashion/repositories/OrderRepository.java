@@ -163,4 +163,28 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
                         "group by stt) as o2 \n" +
                         "on o1.stt = o2.stt ")
         List<StatisticRevenue> getRevenue(Date time1, Date time2);
+
+        @Query(nativeQuery = true,
+                value = "select \tCOALESCE(o1.DT_STORE, 0) as dt_store ,\n" +
+                        "COALESCE(o2.DT_ONLINE, 0) as dt_online, \n" +
+                        "COALESCE(o1.SL_STORE, 0) as sl_store ,\n" +
+                        "COALESCE(o2.SL_ONLINE, 0) as sl_online  \n" +
+                        "from \n" +
+                        "(select sum(od.total_money) as DT_STORE,\n" +
+                        "count(od.purchase_type) as SL_STORE , \n" +
+                        "od.order_status stt from orders od  \n" +
+                        "where od.order_status = 5 \n" +
+                        "and od.purchase_type = 0\n" +
+                        "and od.ctime between '04-10-2023' and '04-30-2023'\n" +
+                        "group by stt) as o1\n" +
+                        "full join \n" +
+                        "(select sum(od.total_money) as DT_ONLINE,\n" +
+                        " count(od.purchase_type) as SL_ONLINE, \n" +
+                        " od.order_status stt from orders od \n" +
+                        " where od.order_status = 5 \n" +
+                        "and od.purchase_type = 1\n" +
+                        "and od.ctime between '04-10-2023' and '04-30-2023'\n" +
+                        "group by stt) as o2 \n" +
+                        "on o1.stt = o2.stt")
+        Optional<StatisticRevenue> getRevenueAndQuantityOrder(Date time1, Date time2);
 }
