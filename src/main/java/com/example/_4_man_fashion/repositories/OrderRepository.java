@@ -126,20 +126,21 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
                         "union all \n" +
                         "select count(order_status) from orders  where order_status = 4 and ctime between ?1 and ?2\n" +
                         "union all \n" +
-                        "select count(order_status) from orders  where order_status = -2 and ctime between ?1 and ?2\n" +
+                        "select count(order_status) from orders  where order_status = 5 and ctime between ?1 and ?2\n" +
                         "union all \n" +
-                        "select count(order_status) from orders  where order_status = -1 and ctime between ?1 and ?2\n"
-
+                        "select count(order_status) from orders  where order_status = 6 and ctime between ?1 and ?2\n" +
+                        "union all \n" +
+                        "select count(order_status) from orders  where order_status = 7 and ctime between ?1 and ?2\n"
         )
         List<Integer> statisticOrderStatus(Date s_date, Date e_date);
 
 
         @Query(nativeQuery = true,
-                value = "SELECT sum(od.quantity) as quantity , pds.product_detail_name as name, pds.price as price from order_details od \n" +
+                value = "SELECT sum(od.quantity) as quantity , pds.product_detail_name as name, pds.image as image, pds.price as price from order_details od \n" +
                         "join product_details pds on od.product_detail_id = pds.id\n" +
                         "join orders o on od.order_id = o.id\n" +
                         "where od.status_order_detail = 1 and o.ctime between ?1 and ?2\n" +
-                        "group by product_detail_id , product_detail_name , pds.price\n" +
+                        "group by product_detail_id , product_detail_name, pds.image , pds.price\n" +
                         "order by quantity desc\n" +
                         "LIMIT 10"
 
@@ -147,8 +148,25 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
         List<StatisticFavorite> statisticsByBestSellingProducts(Date time1, Date time2);
 
         @Query(nativeQuery = true,
-                value = "select count(od.customer_id) from orders od where od.ctime between :time1 and :time2 ")
-        int getOrders(Date time1, Date time2);
+                value = "select count(*) from orders od where (od.ctime between :time1 and :time2) and od.total_money = od.checkout ")
+        int getOrderTotalIsCheckout(Date time1, Date time2);
+
+        @Query(nativeQuery = true,
+                value = "select count(*) from orders od where od.ctime between :time1 and :time2")
+        int getOrdersTotal(Date time1, Date time2);
+        @Query(nativeQuery = true,
+                value = "select coalesce(o1.DT_STORE, 0) as dt_store ,coalesce(o2.DT_ONLINE,0) as dt_online from  \n" +
+                        "(select sum(od.total_money) as DT_STORE, 1 as re from orders od where (od.order_status = 5 or od.order_status = 6) \n" +
+                        "and od.purchase_type = 0\n" +
+                        "and od.ctime between :time1 and :time2 \n" +
+                        "group by re) as o1\n" +
+                        "full join \n" +
+                        "(select sum(od.total_money) as DT_ONLINE, 1 as re  from orders od where (od.order_status = 5 or od.order_status = 6) \n" +
+                        "and od.purchase_type = 1\n" +
+                        "and od.ctime between :time1 and :time2 \n" +
+                        "group by re) as o2 \n" +
+                        "on o1.re = o2.re ")
+        StatisticRevenue getTotalRevenue(Date time1, Date time2);
 
         @Query(nativeQuery = true,
                 value = "select o1.DT_STORE as dt_store ,o2.DT_ONLINE as dt_online from  \n" +
