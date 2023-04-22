@@ -51,18 +51,24 @@ public class StatisticServiceImpl implements StatisticService {
 
     }
 
-    public int getAmountOrder(Date time1, Date time2){
-        return this.orderRepository.getOrders(time1, time2);
+    public int getOrderTotal(Date time1, Date time2){
+        return this.orderRepository.getOrdersTotal(time1, time2);
+    }
 
-
+    public int getOrderTotalIsCheckout(Date time1, Date time2){
+        return this.orderRepository.getOrderTotalIsCheckout(time1, time2);
     }
 
     public List<StatisticRevenue> getRevenue(Date time1, Date time2){
         return this.orderRepository.getRevenue(time1, time2);
-
-
     }
 
+    @Override
+    public StatisticRevenue getRevenueTotal(Date time1, Date time2)  {
+        return this.orderRepository.getTotalRevenue(time1, time2);
+    }
+
+    // Gửi mail
     public StatisticRevenue getRevenueAndQuantityOrder(Date time1, Date time2) {
 
 //        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

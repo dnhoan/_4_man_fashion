@@ -15,7 +15,8 @@ public interface StatisticService {
     List<StatisticIncome> getStatisticIncomeByYear(Integer year);
     List<Integer> statisticOrderStatus(Date s_date, Date e_date);
     List<StatisticFavorite> statisticsByBestSellingProducts(Date time1, Date time2);
-    int getAmountOrder(Date time1, Date time2);
+    int getOrderTotal(Date time1, Date time2);
+    int getOrderTotalIsCheckout(Date time1, Date time2);
     List<StatisticRevenue> getRevenue(Date time1, Date time2);
-    StatisticRevenue getRevenueAndQuantityOrder(Date time1, Date time2) throws ParseException;
+    StatisticRevenue getRevenueTotal(Date time1, Date time2);
 }

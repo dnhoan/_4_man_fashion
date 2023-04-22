@@ -9,6 +9,8 @@ import com.example._4_man_fashion.dto.StatisticIncome;
 import com.example._4_man_fashion.dto.StatisticRevenue;
 import com.example._4_man_fashion.entities.Customer;
 import com.example._4_man_fashion.utils.ApiResponse;
+import com.example._4_man_fashion.utils.DATNException;
+import com.example._4_man_fashion.utils.ErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,7 @@ import static org.springframework.http.HttpStatus.EXPECTATION_FAILED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
+@RequestMapping(Constant.Api.Path.ADMIN)
 @CrossOrigin("*")
 public class StatisticController {
 
@@ -32,8 +35,8 @@ public class StatisticController {
 
     @GetMapping("statisticIncome/date")
     public ResponseEntity<ApiResponse<List<StatisticIncome>>> getStatisticByDate(
-            @RequestParam("s_date") String s_date,
-            @RequestParam("e_date") String e_date
+            @RequestParam("time1") String s_date,
+            @RequestParam("time2") String e_date
     ) {
         try {
             Date sDate = new SimpleDateFormat("dd/MM/yyyy").parse(s_date);
@@ -43,7 +46,7 @@ public class StatisticController {
                     .getStatisticByDate(sDate,eDate);
             return ResponseEntity.ok(ApiResponse.success(statisticIncomes));
         } catch (Exception e) {
-            return null;
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
         }
 
 
@@ -61,7 +64,7 @@ public class StatisticController {
             return ResponseEntity.ok(ApiResponse.success(statisticFavorites));
 
         } catch (Exception e) {
-            return null;
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
         }
     }
 
@@ -71,13 +74,12 @@ public class StatisticController {
     ) {
         List<StatisticIncome> statisticIncomes = this.statisticService.getStatisticIncomeByYear(year);
         return ResponseEntity.ok(ApiResponse.success(statisticIncomes));
-
     }
 
     @GetMapping("statisticOrderStatus")
     public ResponseEntity<ApiResponse<List<Integer>>> statisticOrderStatus(
-            @RequestParam("s_date") String s_date,
-            @RequestParam("e_date") String e_date
+            @RequestParam("time1") String s_date,
+            @RequestParam("time2") String e_date
     ) {
         try {
             Date sDate = new SimpleDateFormat("dd/MM/yyyy").parse(s_date);
@@ -85,7 +87,7 @@ public class StatisticController {
             List<Integer> statisticOrderStatus = this.statisticService.statisticOrderStatus(sDate, eDate);
             return ResponseEntity.ok(ApiResponse.success(statisticOrderStatus));
         } catch (Exception e) {
-            return null;
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
         }
     }
 
@@ -101,56 +103,67 @@ public class StatisticController {
             return ResponseEntity.ok(ApiResponse.success(statisticFavorites));
 
         } catch (Exception e) {
-            return null;
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
         }
     }
 
-    @GetMapping("amountOrder")
-    public ResponseEntity<ApiResponse<Integer>>getAmountOrder(
+    @GetMapping("getOrderTotalIsCheckout")
+    public ResponseEntity<ApiResponse<Integer>>getOrderTotalIsCheckout(
             @RequestParam("time1") String time1,
             @RequestParam("time2") String time2
     ) {
         try {
             Date time_1 = new SimpleDateFormat("dd/MM/yyyy").parse(time1);
             Date time_2 = new SimpleDateFormat("dd/MM/yyyy").parse(time2);
-            int amount = this.statisticService.getAmountOrder(time_1, time_2);
+            int amount = this.statisticService.getOrderTotalIsCheckout(time_1, time_2);
             return ResponseEntity.ok(ApiResponse.success(amount));
-
         } catch (Exception e) {
-            return null;
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
+        }
+    }
+
+    @GetMapping("getOrderTotal")
+    public ResponseEntity<ApiResponse<Integer>>getOrderTotal(
+            @RequestParam("time1") String time1,
+            @RequestParam("time2") String time2
+    ) {
+        try {
+            Date time_1 = new SimpleDateFormat("dd/MM/yyyy").parse(time1);
+            Date time_2 = new SimpleDateFormat("dd/MM/yyyy").parse(time2);
+            int amount = this.statisticService.getOrderTotal(time_1, time_2);
+            return ResponseEntity.ok(ApiResponse.success(amount));
+        } catch (Exception e) {
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
         }
     }
 
     @GetMapping("getRevenue")
-    public ResponseEntity<ApiResponse<List<StatisticRevenue>>>getRevenue(
+    public ResponseEntity<ApiResponse<StatisticRevenue>>getRevenue(
             @RequestParam("time1") String time1,
             @RequestParam("time2") String time2
     ) {
         try {
             Date time_1 = new SimpleDateFormat("dd/MM/yyyy").parse(time1);
             Date time_2 = new SimpleDateFormat("dd/MM/yyyy").parse(time2);
-            List revenue = this.statisticService.getRevenue(time_1, time_2);
+            StatisticRevenue revenue = this.statisticService.getRevenueTotal(time_1, time_2);
             return ResponseEntity.ok(ApiResponse.success(revenue));
-
         } catch (Exception e) {
-            return null;
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
         }
     }
 
-    @GetMapping("getRevenueAndQuantityOrder")
-    public ResponseEntity<ApiResponse<StatisticRevenue>>getRevenueAndQuantityOrder(
+    @GetMapping("getRevenueTotal")
+    public ResponseEntity<ApiResponse<StatisticRevenue>>getRevenueTotal(
             @RequestParam("time1") String time1,
             @RequestParam("time2") String time2
     ) {
         try {
             Date time_1 = new SimpleDateFormat("dd/MM/yyyy").parse(time1);
             Date time_2 = new SimpleDateFormat("dd/MM/yyyy").parse(time2);
-            StatisticRevenue revenue = this.statisticService.getRevenueAndQuantityOrder(time_1, time_2);
+            StatisticRevenue revenue = this.statisticService.getRevenueTotal(time_1, time_2);
             return ResponseEntity.ok(ApiResponse.success(revenue));
-
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
         }
     }
 }
