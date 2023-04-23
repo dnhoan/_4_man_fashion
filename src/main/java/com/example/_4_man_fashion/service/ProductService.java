@@ -3,6 +3,7 @@ package com.example._4_man_fashion.Service;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.dto.ProductDTO;
 import com.example._4_man_fashion.entities.Product;
+import com.example._4_man_fashion.models.SearchProduct;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ public interface ProductService {
     ProductDTO update(ProductDTO productDTO);
 
     void updateStatus(Integer id, Integer status);
+    PageDTO<ProductDTO> searchProduct(SearchProduct searchProduct);
+    List<Float> getMinMaxPrice();
 }

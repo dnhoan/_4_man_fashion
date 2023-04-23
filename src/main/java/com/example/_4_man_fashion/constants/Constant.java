@@ -46,6 +46,14 @@ public final class Constant {
         public static final Integer ALL = -1;
     }
 
+    public static final class Sort {
+        public static final Integer DEFAULT = 0;
+        public static final Integer DESC_PRICE = 1;
+        public static final Integer ASC_PRICE = 2;
+        public static final Integer DESC_ALPHA = 3;
+        public static final Integer ASC_ALPHA = 4;
+    }
+
     public static final class OrderDetailStatus {
         public static  final Integer INACTIVE = 0;
 
