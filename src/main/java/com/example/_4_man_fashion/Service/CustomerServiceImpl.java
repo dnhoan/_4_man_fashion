@@ -255,26 +255,26 @@ public class CustomerServiceImpl implements CustomerService{
                 throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Số điện thoại"));
             }
         }
-        System.out.println("hihiahah" + customerDTO);
-        Optional<Account> optionalAccount = this.accountRepository.findById(customer.getAccount().getId());
-        Account account = optionalAccount.get();
-        if (!account.getEmail().equals(customerDTO.getEmail())) {
-            boolean isExistEmail = accountRepository.existsByEmail(customerDTO.getEmail().trim());
-            if (isExistEmail) {
-                throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Email"));
-            }
-        }
-        if (!account.getPhoneNumber().equals(customerDTO.getPhoneNumber())) {
-            boolean isExitsPhoneNumber = accountRepository.existsByPhoneNumber(customerDTO.getPhoneNumber().trim());
-            if (isExitsPhoneNumber) {
-                throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Số điện thoại"));
-            }
-        }
+//        System.out.println("hihiahah" + customerDTO);
+//        Optional<Account> optionalAccount = this.accountRepository.findById(customer.getAccount().getId());
+//        Account account = optionalAccount.get();
+//        if (!account.getEmail().equals(customerDTO.getEmail())) {
+//            boolean isExistEmail = accountRepository.existsByEmail(customerDTO.getEmail().trim());
+//            if (isExistEmail) {
+//                throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Email"));
+//            }
+//        }
+//        if (!account.getPhoneNumber().equals(customerDTO.getPhoneNumber())) {
+//            boolean isExitsPhoneNumber = accountRepository.existsByPhoneNumber(customerDTO.getPhoneNumber().trim());
+//            if (isExitsPhoneNumber) {
+//                throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Số điện thoại"));
+//            }
+//        }
 
-        account.setEmail(customerDTO.getEmail());
-        account.setPhoneNumber(customerDTO.getPhoneNumber());
-        account.setStatus(customer.getStatus());
-        accountRepository.save(account);
+//        account.setEmail(customerDTO.getEmail());
+//        account.setPhoneNumber(customerDTO.getPhoneNumber());
+//        account.setStatus(customer.getStatus());
+//        accountRepository.save(account);
 
         customer.setCustomerName(customerDTO.getCustomerName());
         customer.setEmail(customerDTO.getEmail());
