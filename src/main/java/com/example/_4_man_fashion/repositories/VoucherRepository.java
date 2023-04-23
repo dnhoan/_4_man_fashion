@@ -6,6 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Date;
+import java.util.List;
+
 
 public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
 
@@ -20,6 +23,8 @@ public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
     boolean existsByVoucherCodeAndIdIsNot(Integer id,String voucherCode);
 
     boolean existsByVoucherName(String voucherName);
+    @Query("select voucher from Voucher voucher where now() >= voucher.startDate and now() <= voucher.endDate and voucher.status = 1 order by voucher.id")
+    List<Voucher> getAllByStartDateandEndDate();
 
     boolean existsByVoucherCode(String voucherCode);
 }

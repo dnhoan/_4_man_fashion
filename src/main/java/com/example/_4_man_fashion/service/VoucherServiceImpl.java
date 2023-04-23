@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,16 +59,6 @@ public class VoucherServiceImpl implements VoucherService {
 
         String voucherCode = getAlphaNumericString(10);
 
-
-//        boolean isExistVoucherCode = voucherRepository.existsByVoucherCode(voucherDTO.getVoucherCode().trim());
-//        if(isExistVoucherCode) {
-//            throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Mã voucher"));
-//        }
-//
-//        boolean isExistVoucherName = voucherRepository.existsByVoucherName(voucherDTO.getVoucherName().trim());
-//        if(isExistVoucherName) {
-//            throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Voucher"));
-//        }
         voucherDTO.setVoucherCode(voucherCode);
         voucherDTO.setCtime(LocalDateTime.now());
         voucherDTO.setStatus(Constant.Status.ACTIVE);
@@ -77,8 +68,6 @@ public class VoucherServiceImpl implements VoucherService {
 
     public Voucher update(VoucherDTO voucherDTO) {
         Optional<Voucher> optionalVoucher = this.voucherRepository.findById(voucherDTO.getId());
-//        if(optionalVoucher.isEmpty())
-//            throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Mã voucher"));
 
         if(StringCommon.isNullOrBlank(voucherDTO.getVoucherName()))
             throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID.format("Voucher"));
@@ -102,6 +91,11 @@ public class VoucherServiceImpl implements VoucherService {
         voucher.setMtime(LocalDateTime.now());
         voucher.setStatus(voucherDTO.getStatus());
         return this.voucherRepository.save(voucher);
+    }
+
+    @Override
+    public List<Voucher> getListVoucherByExpDay() {
+        return this.voucherRepository.getAllByStartDateandEndDate();
     }
 
 

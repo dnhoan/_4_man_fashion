@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping(Constant.Api.Path.ADMIN)
@@ -47,6 +48,12 @@ public class VoucherController {
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Integer id) {
         voucherService.delete(id);
         return ResponseEntity.ok(ApiResponse.success());
+    }
+
+    @GetMapping("/getVoucherExp")
+    public ResponseEntity<ApiResponse<List<Voucher>>> getVoucherExp(){
+        List<Voucher> lstVoucher = voucherService.getListVoucherByExpDay();
+        return ResponseEntity.ok(ApiResponse.success(lstVoucher));
     }
 
 
