@@ -68,18 +68,19 @@ public class AuthServiceImpl implements AuthService {
     public void signup(SignupRequest signupRequest) {
         String email = signupRequest.getEmail();
         String phone = signupRequest.getPhoneNumber();
-
+        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                .orElseThrow(() -> new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Error: Role is not found.")));
         Account account = new Account();
 
         if (email.matches(Constant.Regex.EMAIL)) {
-            if (accountRepository.existsByEmail(email)) {
+            if (accountRepository.existsAccountByEmailAndRoles(email, userRole)) {
                 throw new DATNException(ErrorMessage.OBJECT_ALREADY_EXIST.format("Email"));
             } else {
                 account.setEmail(email);
             }
         }
         if (phone.matches(Constant.Regex.PHONE_NUMBER)) {
-            if (accountRepository.existsByPhoneNumber(phone)) {
+            if (accountRepository.existsAccountByPhoneNumberAndRoles(phone, userRole)) {
                 throw new DATNException(ErrorMessage.OBJECT_ALREADY_EXIST.format("Số điện thoại"));
             } else {
                 account.setPhoneNumber(phone);
@@ -89,8 +90,7 @@ public class AuthServiceImpl implements AuthService {
         Set<Role> roles = new HashSet<>();
         String passwordEncrypt = this.passwordEncoder.encode(signupRequest.getPassword());
 
-        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                .orElseThrow(() -> new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Error: Role is not found.")));
+
         roles.add(userRole);
 
         account.setRoles(roles);

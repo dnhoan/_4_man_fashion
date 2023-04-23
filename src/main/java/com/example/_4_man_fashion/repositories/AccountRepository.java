@@ -1,6 +1,8 @@
 package com.example._4_man_fashion.repositories;
 
 import com.example._4_man_fashion.entities.Account;
+import com.example._4_man_fashion.entities.Role;
+import com.example._4_man_fashion.models.ERole;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -42,8 +44,10 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
     Account getAccountById(Integer id);
 
     Boolean existsByEmail(String email);
+    Boolean existsAccountByEmailAndRoles(String email, Role role);
 
     Boolean existsByPhoneNumber(String phoneNumber);
+    Boolean existsAccountByPhoneNumberAndRoles(String phoneNumber, Role role);
 
     boolean existsByEmailAndIdIsNot(String email, Integer id);
 
