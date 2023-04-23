@@ -4,6 +4,7 @@ import com.example._4_man_fashion.dto.LogOrderStatusDTO;
 import com.example._4_man_fashion.dto.OrderDTO;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.entities.Order;
+import com.example._4_man_fashion.models.SearchOrder;
 import com.example._4_man_fashion.models.UpdateOrderStatus;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 public interface OrderService {
 
     PageDTO<OrderDTO> getAll(int offset, int limit, Integer status, String search);
+    PageDTO<OrderDTO> searchOrder(SearchOrder searchOrder);
     PageDTO<OrderDTO> getOrderByCustomerId(int customerId, int offset, int limit, Integer status, String search);
 
     List<Order> getListOrder();
