@@ -3,6 +3,7 @@ package com.example._4_man_fashion.Service;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.*;
 import com.example._4_man_fashion.entities.*;
+import com.example._4_man_fashion.models.SearchOrder;
 import com.example._4_man_fashion.models.UpdateOrderStatus;
 import com.example._4_man_fashion.repositories.*;
 import com.example._4_man_fashion.repositories.CartItemRepository;
@@ -21,13 +22,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import javax.mail.MessagingException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,6 +59,44 @@ public class OrderServiceImpl implements OrderService {
     public PageDTO<OrderDTO> getAll(int offset, int limit, Integer status, String search) {
         Pageable pageable = PageRequest.of(offset, limit);
         Page<Order> page = this.orderRepository.getAllOrder(pageable, status, StringCommon.getLikeCondition(search));
+        List<OrderDTO> orderDTOList = page.stream().map(this::mapOrderToOrderDTO).collect(Collectors.toList());
+        return new PageDTO<OrderDTO>(
+                page.getTotalPages(),
+                page.getTotalElements(),
+                page.getNumber(),
+                page.getSize(),
+                orderDTOList,
+                page.isFirst(),
+                page.isLast(),
+                page.hasNext(),
+                page.hasPrevious());
+    }
+
+    @Override
+    public PageDTO<OrderDTO> searchOrder(SearchOrder searchOrder) {
+        Pageable pageable = PageRequest.of(searchOrder.getOffset(), searchOrder.getLimit());
+//        LocalDateTime s_date;
+//        LocalDateTime e_date;
+//        Date s_date;
+//        Date e_date;
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+//        try {
+//             s_date = new SimpleDateFormat("dd/MM/yyyy").parse(searchOrder.getDate().get(0));
+//             e_date = new SimpleDateFormat("dd/MM/yyyy").parse(searchOrder.getDate().get(1));
+//            s_date = LocalDateTime.parse(searchOrder.getDate().get(0), formatter);
+//            e_date = LocalDateTime.parse(searchOrder.getDate().get(1), formatter);
+//        } catch (Exception e) {
+//            throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
+//        }
+        Page<Order> page = this.orderRepository.searchOrder(
+                pageable,
+                searchOrder.getStatus(),
+                StringCommon.getLikeCondition(searchOrder.getSearchTerm()),
+//                s_date,
+//                e_date,
+                searchOrder.getDelivery(),
+                searchOrder.getPurchaseType()
+        );
         List<OrderDTO> orderDTOList = page.stream().map(this::mapOrderToOrderDTO).collect(Collectors.toList());
         return new PageDTO<OrderDTO>(
                 page.getTotalPages(),

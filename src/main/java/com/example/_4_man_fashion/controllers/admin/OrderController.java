@@ -6,6 +6,7 @@ import com.example._4_man_fashion.dto.LogOrderStatusDTO;
 import com.example._4_man_fashion.dto.OrderDTO;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.entities.Order;
+import com.example._4_man_fashion.models.SearchOrder;
 import com.example._4_man_fashion.models.UpdateOrderStatus;
 import com.example._4_man_fashion.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,12 @@ public class OrderController {
                                                                  @RequestParam(defaultValue = "1") Integer status,
                                                                  @RequestParam(defaultValue = "") String search) {
         PageDTO<OrderDTO> result = orderService.getAll(offset, limit, status, search);
+        return ResponseEntity.ok(ApiResponse.success(result));
+    }
+
+    @PostMapping("order/search")
+    public ResponseEntity<ApiResponse<PageDTO<OrderDTO>>> searchOrder(@RequestBody SearchOrder searchOrder) {
+        PageDTO<OrderDTO> result = orderService.searchOrder(searchOrder);
         return ResponseEntity.ok(ApiResponse.success(result));
     }
 

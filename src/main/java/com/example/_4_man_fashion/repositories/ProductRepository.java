@@ -13,7 +13,12 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
-    @Query("select product from Product product where (:name is null or lower(product.productName) like lower(:name)) and (:status = -1 or product.status = :status) order by product.ctime desc, product.productName")
+    @Query("select product from Product product where " +
+            "((:name is null or lower(product.categoryName) like lower(:name)) or " +
+            "(:name is null or lower(product.materialName) like lower(:name)) or " +
+            "(:name is null or lower(product.modelName) like lower(:name))) or " +
+            "(:name is null or lower(product.productName) like lower(:name)) and " +
+            "(:status = -1 or product.status = :status) order by product.ctime desc, product.productName")
     Page<Product> getProductByName(Pageable pageable, Integer status, String name);
 
     @Query("select distinct product from Product product join fetch product.productDetails pd where" +

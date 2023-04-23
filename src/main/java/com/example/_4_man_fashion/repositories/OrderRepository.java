@@ -12,8 +12,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import java.util.Date;
@@ -29,6 +32,25 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
                         "and (:status = -1 or od.orderStatus = :status) order by od.ctime desc")
         Page<Order> getAllOrder(Pageable pageable, Integer status, String valueSearch);
 
+        @Query(value = "select od from Order od where " +
+                "( (:valueSearch is null or lower(od.orderId) like lower(:valueSearch)) or " +
+                "  (:valueSearch is null or lower(od.recipientName) like lower(:valueSearch)) or " +
+                "  (:valueSearch is null or lower(od.recipientPhone) like lower(:valueSearch)) or " +
+                "  (:valueSearch is null or lower(od.recipientEmail) like lower(:valueSearch)) or " +
+                "  (:valueSearch is null or lower(od.address) like lower(:valueSearch)) ) and " +
+                "  (:delivery = -1 or od.delivery = :delivery) and " +
+                "  (:purchaseType = -1 or od.purchaseType = :purchaseType) and " +
+//                "  (od.ctime between :s_date and :e_date) and " +
+                " (:status = -1 or od.orderStatus = :status) order by od.ctime desc"
+        )
+        Page<Order> searchOrder(Pageable pageable, Integer status, String valueSearch,
+//                                        Date s_date,
+//                                        Date e_date,
+//                                 LocalDateTime s_date,
+//                                 LocalDateTime e_date,
+                                Integer delivery, Integer purchaseType);
+
+//        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         @Query("select od from Order od where od.customerId = :customerId and ( od.orderId = :valueSearch" +
                 " or (lower(od.orderId) like  '%' || lower(:valueSearch) || '%')" +
                 " or (lower(od.recipientName) like  '%' || lower(:valueSearch) || '%')" +
