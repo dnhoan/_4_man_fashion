@@ -19,6 +19,11 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail, In
     @Query("update ProductDetail p set p.status = :status where p.product.id = :product_id and ((p.status = 1 and :status = 0) or (p.status = 0 and :status = 1) ) ")
     void updateProductDetailStatus(@Param("product_id") Integer product_id, @Param("status") Integer status); // Chỉ cập nhật sản phẩm chi tiết có trạng thái 0 và 1
 
+    @Query("select min(p.price) from ProductDetail p where p.status = 1")
+    float getMinPrice();
+
+    @Query("select max(p.price) from ProductDetail p where p.status = 1")
+    float getMaxPrice();
 //    boolean existsByColorAndSizeAndId(String colorName, String sizeName, Integer productId);
 //@Query("select p from Product p join ProductDetail pd on p.id = pd.productId where (:productId is null or pd.productId = :productId) and (:status = -1 or pd.product.status = :status) ")
 //    List<Product> findByProductId(Integer productId);

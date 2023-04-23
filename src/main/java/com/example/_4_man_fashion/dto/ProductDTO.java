@@ -45,6 +45,9 @@ public class ProductDTO {
     private boolean isExpand = false;
     private Size sizeSelected;
     private Color colorSelected;
+
+    private int minPrice;
+    private int maxPrice;
     private int amount = 0;
 
 //    public void setProductImages(List<ProductImage> productImages) {

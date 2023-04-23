@@ -1,8 +1,10 @@
 package com.example._4_man_fashion.Service;
 
+import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.ProductDTO;
 import com.example._4_man_fashion.dto.PageDTO;
 import com.example._4_man_fashion.entities.*;
+import com.example._4_man_fashion.models.SearchProduct;
 import com.example._4_man_fashion.repositories.ColorRepository;
 import com.example._4_man_fashion.repositories.ProductDetailRepository;
 import com.example._4_man_fashion.repositories.ProductRepository;
@@ -19,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -64,6 +68,70 @@ public class ProductServiceImpl implements ProductService {
                 page.hasNext(),
                 page.hasPrevious()
         );
+    }
+    @Transactional
+    public PageDTO<ProductDTO> searchProduct(SearchProduct searchProduct) {
+        List<ProductDTO> productDTOList = this.productRepository.searchProducts(
+                searchProduct.getStatus(),
+                StringCommon.getLikeCondition(searchProduct.getName()),
+                searchProduct.getCategories().size() > 0 ? searchProduct.getCategories() : null,
+                searchProduct.getMaterials().size() > 0 ? searchProduct.getMaterials() : null,
+                searchProduct.getModels().size() > 0 ? searchProduct.getModels() : null,
+                searchProduct.getColors().size() > 0 ? searchProduct.getColors() : null,
+                searchProduct.getSizes().size() > 0 ? searchProduct.getSizes() : null,
+                searchProduct.getPrice().get(0),
+                searchProduct.getPrice().get(1)
+        ).stream().map(product -> {
+            ProductDTO productDTO = this.modelMapper.map(product, ProductDTO.class);
+            productDTO.setMinPrice(product.getProductDetails().stream().mapToInt(p -> Math.round(p.getPrice())).min().getAsInt());
+            productDTO.setMaxPrice(product.getProductDetails().stream().mapToInt(p -> Math.round(p.getPrice())).max().getAsInt());
+            return  productDTO;
+        }).collect(Collectors.toList());
+        Integer sort = searchProduct.getSort();
+        if(Constant.Sort.ASC_ALPHA.equals(sort))
+                productDTOList = productDTOList.stream().sorted((p1, p2) ->
+                     p1.getProductName().compareToIgnoreCase(p2.getProductName())
+                ).collect(Collectors.toList());
+        if(Constant.Sort.DESC_ALPHA.equals(sort))
+                productDTOList = productDTOList.stream().sorted((p1, p2) ->
+                     p2.getProductName().compareToIgnoreCase(p1.getProductName())
+                ).collect(Collectors.toList());
+        if(Constant.Sort.ASC_PRICE.equals(sort))
+                productDTOList = productDTOList.stream().sorted((p1, p2) ->
+                     p1.getMinPrice() - p2.getMaxPrice()
+                ).collect(Collectors.toList());
+        if(Constant.Sort.DESC_PRICE.equals(sort))
+                productDTOList = productDTOList.stream().sorted((p1, p2) ->
+                        p2.getMaxPrice() - p1.getMaxPrice()
+                ).collect(Collectors.toList());
+
+        int totalPages = productDTOList.size() / searchProduct.getLimit();
+        int max = searchProduct.getOffset() >= totalPages ? productDTOList.size() : searchProduct.getLimit() * (searchProduct.getOffset() + 1);
+        int min = searchProduct.getOffset() > totalPages ? max : searchProduct.getLimit() * searchProduct.getOffset();
+
+        PageDTO<ProductDTO> page = new PageDTO<ProductDTO>(
+                totalPages,
+                productDTOList.size(),
+                searchProduct.getLimit(),
+                searchProduct.getOffset(),
+                productDTOList.subList(min, max),
+                searchProduct.getOffset() == 0,
+                searchProduct.getOffset() >= totalPages,
+                searchProduct.getOffset() < totalPages,
+                searchProduct.getOffset() > 1
+        );
+        return page;
+    }
+
+    @Override
+    @Transactional
+    public List<Float> getMinMaxPrice() {
+        float minPrice = this.productDetailRepository.getMinPrice();
+        float maxPrice = this.productDetailRepository.getMaxPrice();
+        List<Float> price = new ArrayList<>();
+        price.add(minPrice);
+        price.add(maxPrice);
+        return price;
     }
 
     @Transactional
