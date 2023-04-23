@@ -3,6 +3,8 @@ package com.example._4_man_fashion.dto;
 import com.example._4_man_fashion.entities.Account;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,7 +17,7 @@ public class CustomerOnlineDTO {
 
     private int gender;
 
-    private String birthday;
+    private LocalDate birthday;
 
     @NonNull
     private String phoneNumber;

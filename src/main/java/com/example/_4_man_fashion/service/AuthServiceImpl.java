@@ -4,9 +4,7 @@ import com.example._4_man_fashion.configs.jwt.JwtUtils;
 import com.example._4_man_fashion.configs.security.UserDetailsImpl;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.AccountDTO;
-import com.example._4_man_fashion.entities.Account;
-import com.example._4_man_fashion.entities.Otp;
-import com.example._4_man_fashion.entities.Role;
+import com.example._4_man_fashion.entities.*;
 import com.example._4_man_fashion.models.ERole;
 import com.example._4_man_fashion.models.JwtResponse;
 import com.example._4_man_fashion.models.LoginRequest;
@@ -27,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -73,14 +72,14 @@ public class AuthServiceImpl implements AuthService {
         Account account = new Account();
 
         if (email.matches(Constant.Regex.EMAIL)) {
-            if (accountRepository.existsAccountByEmailAndRoles(email, userRole)) {
+            if (accountRepository.existsByEmail(email)) {
                 throw new DATNException(ErrorMessage.OBJECT_ALREADY_EXIST.format("Email"));
             } else {
                 account.setEmail(email);
             }
         }
         if (phone.matches(Constant.Regex.PHONE_NUMBER)) {
-            if (accountRepository.existsAccountByPhoneNumberAndRoles(phone, userRole)) {
+            if (accountRepository.existsByPhoneNumber(phone)) {
                 throw new DATNException(ErrorMessage.OBJECT_ALREADY_EXIST.format("Số điện thoại"));
             } else {
                 account.setPhoneNumber(phone);
@@ -96,6 +95,17 @@ public class AuthServiceImpl implements AuthService {
         account.setRoles(roles);
         account.setStatus(Constant.Status.ACTIVE);
         account.setPassword(passwordEncrypt);
+
+        Customer customer = new Customer();
+        customer.setCustomerName(account.getEmail().substring(0, email.indexOf("@")));
+        customer.setAccount(account);
+        customer.setPhoneNumber(account.getPhoneNumber());
+        customer.setBirthday(LocalDate.EPOCH);
+        customer.setEmail(account.getEmail());
+        customer.setStatus(1);
+        customer.setCtime(LocalDate.now());
+
+        account.setCustomer(customer);
 
         try {
             accountRepository.save(account);
@@ -194,7 +204,6 @@ public class AuthServiceImpl implements AuthService {
         }
 
     }
-
 
 
     @Override

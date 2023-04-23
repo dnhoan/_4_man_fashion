@@ -48,7 +48,7 @@ public class Employee {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "cccd", nullable = false)
+    @Column(name = "cccd")
     private String cccd;
 
     @Column(name = "salary")
@@ -81,7 +81,7 @@ public class Employee {
     private Integer workType;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id")
     private Account account;
 

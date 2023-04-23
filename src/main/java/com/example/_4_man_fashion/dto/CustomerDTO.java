@@ -2,6 +2,8 @@ package com.example._4_man_fashion.dto;
 
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,7 +17,7 @@ public class CustomerDTO {
 
     private int gender;
 
-    private String birthday;
+    private LocalDate birthday;
 
     private String phoneNumber;
 
@@ -27,9 +29,9 @@ public class CustomerDTO {
 
     private String note;
 
-    private String ctime;
+    private LocalDate ctime;
 
-    private String mtime;
+    private LocalDate mtime;
 
     private Integer status;
 

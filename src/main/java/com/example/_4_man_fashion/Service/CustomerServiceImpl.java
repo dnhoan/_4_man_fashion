@@ -25,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -142,7 +143,7 @@ public class CustomerServiceImpl implements CustomerService{
         // db"));
         // }
 
-        customerDTO.setCtime(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        customerDTO.setCtime(LocalDate.now());
         customerDTO.setStatus(Constant.Status.ACTIVE);
 
         return this.customerRepository.save(Customer.fromDTO(customerDTO));
@@ -212,7 +213,7 @@ public class CustomerServiceImpl implements CustomerService{
         } catch (Exception e) {
             throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Lỗi lưu vào db"));
         }
-        customerDTO.setCtime(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        customerDTO.setCtime(LocalDate.now());
         customerDTO.setStatus(Constant.Status.ACTIVE);
 
         try {
@@ -283,7 +284,7 @@ public class CustomerServiceImpl implements CustomerService{
         customer.setNote(customerDTO.getNote());
         customer.setPhoneNumber(customerDTO.getPhoneNumber());
         customer.setGender(customerDTO.getGender());
-        customer.setMtime(LocalDateTime.now());
+        customer.setMtime(LocalDate.now());
         customer.setStatus(customerDTO.getStatus());
         return this.customerRepository.save(customer);
 
@@ -323,7 +324,7 @@ public class CustomerServiceImpl implements CustomerService{
         customer.setNote(customerDTO.getNote());
         customer.setPhoneNumber(customerDTO.getPhoneNumber());
         customer.setGender(customerDTO.getGender());
-        customer.setMtime(LocalDateTime.now());
+        customer.setMtime(LocalDate.now());
         customer.setStatus(customerDTO.getStatus());
         this.customerRepository.save(customer);
         Account account = this.customerRepository.getAccountByCustomerId(customerDTO.getId(), customerDTO.getStatus());
@@ -350,7 +351,7 @@ public class CustomerServiceImpl implements CustomerService{
             throw new DATNException(ErrorMessage.OBJECT_NOT_FOUND.format("Customer Id"));
 
         Customer customer = optionalCustomer.get();
-        customer.setMtime(LocalDateTime.now());
+        customer.setMtime(LocalDate.now());
         customer.setStatus(Constant.Status.INACTIVE);
         Optional<Account> optionalAccount = this.accountRepository.findById(customer.getAccount().getId());
         Account account = optionalAccount.get();
@@ -373,9 +374,8 @@ public class CustomerServiceImpl implements CustomerService{
                 .phoneNumber(customer.getPhoneNumber())
                 .email(customer.getEmail())
                 .note(customer.getNote())
-                .ctime(customer.getCtime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-                .mtime((customer.getMtime() == null) ? ""
-                        : customer.getMtime().format(DateTimeFormatter.ISO_DATE_TIME))
+                .ctime(customer.getCtime())
+                .mtime((customer.getMtime()))
                 .status(customer.getStatus())
                 .build();
     }
