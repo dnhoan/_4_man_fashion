@@ -111,9 +111,8 @@ public class UserDetailsImpl implements UserDetails {
                 .id(customer.getId())
                 .gender(customer.getGender())
                 .birthday(customer.getBirthday())
-                .ctime(customer.getCtime().format(DateTimeFormatter.ISO_DATE_TIME))
-                .mtime((customer.getMtime() == null) ? ""
-                        : customer.getMtime().format(DateTimeFormatter.ISO_DATE_TIME))
+                .ctime(customer.getCtime())
+                .mtime((customer.getMtime()))
                 .note(customer.getNote())
                 .email(customer.getEmail())
                 .phoneNumber(customer.getPhoneNumber())

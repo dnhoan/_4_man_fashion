@@ -1,18 +1,14 @@
 package com.example._4_man_fashion.entities;
 
 import com.example._4_man_fashion.dto.CustomerDTO;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-import org.hibernate.annotations.Cascade;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -34,7 +30,7 @@ public class Customer {
     private int gender;
 
     @Column(name = "birthday")
-    private String birthday;
+    private LocalDate birthday;
 
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
@@ -52,16 +48,16 @@ public class Customer {
     private String note;
 
     @Column(name = "ctime")
-    private LocalDateTime ctime;
+    private LocalDate ctime;
 
     @Column(name = "mtime")
-    private LocalDateTime mtime;
+    private LocalDate mtime;
 
     @Column(name = "status")
     private Integer status;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id")
     private Account account;
 

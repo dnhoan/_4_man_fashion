@@ -3,6 +3,7 @@ package com.example._4_man_fashion.Service;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.*;
 import com.example._4_man_fashion.entities.Account;
+import com.example._4_man_fashion.entities.Employee;
 import com.example._4_man_fashion.entities.Order;
 import com.example._4_man_fashion.entities.Role;
 import com.example._4_man_fashion.models.ERole;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -70,28 +72,20 @@ public class AccountServiceImpl implements AccountService {
         if (StringCommon.isNullOrBlank(accountDTO.getPassword())) {
             throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Mật khẩu không được để trông!"));
         }
-        List<Account> a;
         String email = accountDTO.getEmail();
         String phone = accountDTO.getPhoneNumber();
         if (email.matches(Constant.Regex.EMAIL)) {
-            a = this.accountRepository.getAccountByEmail(email);
-            if (a.size() == 2) {
-                throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Email này đã đăng ký tài khoản!"));
-            } else if (a.size() == 1 && a.get(0).getRoles()
-                    .stream()
-                    .anyMatch(r -> r.getName().equals(ERole.ROLE_ADMIN) || r.getName().equals(ERole.ROLE_EMPLOYEE))) {
-                throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Email này đã đăng ký tài khoản!"));
+            if (accountRepository.existsByEmail(email)) {
+                throw new DATNException(ErrorMessage.OBJECT_ALREADY_EXIST.format("Email"));
+            } else {
+                accountDTO.setEmail(email);
             }
         }
-
         if (phone.matches(Constant.Regex.PHONE_NUMBER)) {
-            a = this.accountRepository.getAccountByPhoneNumber(phone);
-            if (a.size() == 2) {
-                throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Số điện thoại này đã đăng ký tài khoản!"));
-            } else if (a.size() == 1 && a.get(0).getRoles()
-                    .stream()
-                    .anyMatch(r -> r.getName().equals(ERole.ROLE_ADMIN) || r.getName().equals(ERole.ROLE_EMPLOYEE))) {
-                throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Số điện thoại này đã đăng ký tài khoản!"));
+            if (accountRepository.existsByPhoneNumber(phone)) {
+                throw new DATNException(ErrorMessage.OBJECT_ALREADY_EXIST.format("Số điện thoại"));
+            } else {
+                accountDTO.setPhoneNumber(phone);
             }
         }
 
@@ -103,22 +97,40 @@ public class AccountServiceImpl implements AccountService {
 
         accountDTO.setStatus(Constant.Status.ACTIVE);
 
+
+
         Account acc = this.mapAccountDTOtoAccount(accountDTO);
         roles.add(accountDTO.getRole());
         acc.setRoles(roles);
-        return this.accountRepository.save(acc);
+        Employee employee = new Employee();
+        employee.setAccount(acc);
+        employee.setEmployeeCode("NV_");
+        employee.setEmployeeName(acc.getEmail().substring(0, email.indexOf("@")));
+        employee.setBirthday(LocalDate.EPOCH);
+        employee.setPhoneNumber(phone);
+        employee.setEmail(email);
+        employee.setAddress("VN");
+        employee.setGender(0);
+        employee.setStatus(1);
+        employee.setTimeOnboard(LocalDate.now());
+
+        acc.setEmployee(employee);
+
+        try {
+           return accountRepository.save(acc);
+        } catch (Exception e) {
+            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Lỗi lưu vào db"));
+        }
     }
 
     @Override
     public Account update(AccountDTO accountDTO) {
         Account account = this.accountRepository.getAccountById(accountDTO.getId());
         if (account != null) {
-            if (accountRepository.existsByEmailAndIdIsNot(accountDTO.getEmail(), account.getId()) == true
-                    && account.getPhoneNumber().equals(accountDTO.getPhoneNumber()) && accountDTO.getRole().equals(ERole.ROLE_USER)) {
+            if (accountRepository.existsByEmailAndIdIsNot(accountDTO.getEmail(), account.getId())) {
                 throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Email này đã đăng ký tài khoản!"));
             }
-            if (accountRepository.existsByPhoneNumberAndIdIsNot(accountDTO.getPhoneNumber(), account.getId()) == true
-                    && account.getPhoneNumber().equals(accountDTO.getPhoneNumber()) && accountDTO.getRole().equals(ERole.ROLE_USER)) {
+            if (accountRepository.existsByPhoneNumberAndIdIsNot(accountDTO.getPhoneNumber(), account.getId())) {
                 throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Số điện thoại này đã đăng ký tài khoản!"));
             }
             Set<Role> roles = new HashSet<>();

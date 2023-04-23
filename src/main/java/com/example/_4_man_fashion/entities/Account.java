@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 import org.springframework.beans.BeanUtils;
 
 import java.util.HashSet;
@@ -46,11 +47,13 @@ public class Account {
     private Set<Role> roles = new HashSet<>();
 
     @JsonIgnore
-    @OneToOne(mappedBy = "account", fetch = FetchType.EAGER)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @OneToOne(mappedBy = "account", fetch = FetchType.LAZY)
     private Customer customer;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "account", fetch = FetchType.EAGER)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @OneToOne(mappedBy = "account", fetch = FetchType.LAZY)
     private Employee employee;
 
     @Column(name = "status")
