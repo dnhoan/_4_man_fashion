@@ -198,21 +198,21 @@ public class CustomerServiceImpl implements CustomerService{
         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                 .orElseThrow(() -> new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Error: Role is not found.")));
         roles.add(userRole);
-        Account account = new Account();
+//        Account account = new Account();
         Cart cart = new Cart();
-        account.setRoles(roles);
-        account.setPhoneNumber(customerDTO.getPhoneNumber());
-        account.setEmail(customerDTO.getEmail());
-        account.setStatus(Constant.Status.ACTIVE);
-        account.setPassword(passwordEncrypt);
-        account.setCustomer(customer);
-
-        System.out.println("id. " + customer.getId());
-        try {
-            accountRepository.save(account);
-        } catch (Exception e) {
-            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Lỗi lưu vào db"));
-        }
+//        account.setRoles(roles);
+//        account.setPhoneNumber(customerDTO.getPhoneNumber());
+//        account.setEmail(customerDTO.getEmail());
+//        account.setStatus(Constant.Status.ACTIVE);
+//        account.setPassword(passwordEncrypt);
+//        account.setCustomer(customer);
+//
+//        System.out.println("id. " + customer.getId());
+//        try {
+//            accountRepository.save(account);
+//        } catch (Exception e) {
+//            throw new DATNException(ErrorMessage.UNHANDLED_ERROR.format("Lỗi lưu vào db"));
+//        }
         customerDTO.setCtime(LocalDate.now());
         customerDTO.setStatus(Constant.Status.ACTIVE);
 
