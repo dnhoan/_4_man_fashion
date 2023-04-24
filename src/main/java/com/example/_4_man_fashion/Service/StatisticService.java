@@ -11,6 +11,7 @@ import java.util.List;
 public interface StatisticService {
 
     List<StatisticFavorite> statisticsByBestFavoriteProducts(Date time1, Date time2);
+    List<StatisticFavorite> statisticsByBestFavoriteProductsOnline();
     List<StatisticIncome> getStatisticByDate(Date time1, Date time2);
     List<StatisticIncome> getStatisticIncomeByYear(Integer year);
     List<Integer> statisticOrderStatus(Date s_date, Date e_date);
