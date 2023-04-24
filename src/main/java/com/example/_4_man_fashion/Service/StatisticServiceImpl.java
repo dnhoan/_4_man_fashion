@@ -33,6 +33,13 @@ public class StatisticServiceImpl implements StatisticService {
 
     }
 
+    @Override
+    public List<StatisticFavorite> statisticsByBestFavoriteProductsOnline() {
+        return this.orderRepository.statisticsByBestFavoriteProductsOnline();
+    }
+
+
+
     public List<StatisticIncome> getStatisticByDate(Date time1, Date time2) {
         return this.orderRepository.statisticByDate( time1, time2);
     }

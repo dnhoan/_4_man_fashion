@@ -1,16 +1,21 @@
 package com.example._4_man_fashion.controllers.user;
 
 import com.example._4_man_fashion.Service.FavoriteProductServiceImpl;
+import com.example._4_man_fashion.Service.StatisticServiceImpl;
 import com.example._4_man_fashion.constants.Constant;
 import com.example._4_man_fashion.dto.*;
 import com.example._4_man_fashion.entities.Color;
 import com.example._4_man_fashion.entities.FavoriteProduct;
 import com.example._4_man_fashion.utils.ApiResponse;
+import com.example._4_man_fashion.utils.DATNException;
+import com.example._4_man_fashion.utils.ErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -18,6 +23,9 @@ import java.util.List;
 public class FavoriteProductController {
     @Autowired
     public FavoriteProductServiceImpl favoriteProductService;
+
+    @Autowired
+    public StatisticServiceImpl statisticService;
 
     @GetMapping("favorite/getList/{customerId}")
     public ResponseEntity<ApiResponse<PageDTO<ProductDTO>>> getAll(@RequestParam(defaultValue = "0") int offset,
@@ -43,5 +51,14 @@ public class FavoriteProductController {
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Integer id) {
         favoriteProductService.delete(id);
         return ResponseEntity.ok(ApiResponse.success());
+    }
+
+    @GetMapping("/favorite/statisticFavoriteProduct")
+    public ResponseEntity<ApiResponse<List<StatisticFavorite>>>statisticFavoriteProducts() {
+
+            List<StatisticFavorite> statisticFavorites = this.statisticService.statisticsByBestFavoriteProductsOnline();
+            return ResponseEntity.ok(ApiResponse.success(statisticFavorites));
+
+
     }
 }
