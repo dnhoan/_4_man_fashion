@@ -208,10 +208,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public void changePassWord(String email, String password, String newPassword, String rePassword) {
-        List<Account> account = accountService.findByEmail(email);
+    public void changePassWord(String phoneOrEmail, String password, String newPassword, String rePassword) {
+        Account account = accountRepository.getListAccountByEmailOrPhone(phoneOrEmail);
         if (account != null) {
-            boolean checkpw = passwordEncoder.matches(password, account.get(0).getPassword());
+            boolean checkpw = passwordEncoder.matches(password, account.getPassword());
             if (checkpw == false) {
                 throw new DATNException(ErrorMessage.PASSWORD_NOT_MATCH.format("Mật khẩu cũ"));
 
@@ -223,7 +223,7 @@ public class AuthServiceImpl implements AuthService {
                 throw new DATNException(ErrorMessage.REPASSWORD_NOT_DUPLICATE.format("Mật khẩu mới", "mật khẩu cũ"));
             }
             if (newPassword.equals(rePassword)) {
-                account.get(0).setPassword(passwordEncoder.encode(newPassword));
+                account.setPassword(passwordEncoder.encode(newPassword));
                 accountService.update(this.modelMapper.map(account, AccountDTO.class));
             }
         } else {
