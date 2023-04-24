@@ -26,6 +26,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
             "and (:status = -1 or customer.status = :status)")
     Account getAccountByCustomerId(Integer customerId, Integer status);
 
-    boolean existsByEmailLike(String email);
-    boolean existsByPhoneNumberLike(String phoneNumber);
+    boolean existsCustomerByEmailAndIdIsNot(String email, Integer customerId);
+    boolean existsCustomerByPhoneNumberAndIdIsNot(String phoneNumber, Integer customerId);
 }

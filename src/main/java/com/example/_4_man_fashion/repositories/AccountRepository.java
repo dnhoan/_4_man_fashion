@@ -36,6 +36,9 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
     @Query("select a from Account a where a.email =:email")
     List<Account> getListAccountByEmail(String email);
 
+    @Query("select a from Account a where a.email =:phoneOrEmail or a.phoneNumber =: phoneOrEmail")
+    Account getListAccountByEmailOrPhone(String phoneOrEmail);
+
     @Query("select a from Account a where a.email =:email")
     List<Account> getAccountByEmail(String email);
     @Query("select a from Account a where a.phoneNumber =:phoneNumber")

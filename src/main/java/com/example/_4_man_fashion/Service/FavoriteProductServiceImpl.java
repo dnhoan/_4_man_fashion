@@ -68,7 +68,7 @@ public class FavoriteProductServiceImpl {
     @Transactional
     public FavoriteProduct create(FavoriteProductDTO favoriteProductDTO) {
 
-        if(favoriteProductRepository.existsFavoriteProductByProductId(favoriteProductDTO.getProduct().getId())){
+        if(favoriteProductRepository.existsFavoriteProductByProductIdAndCustomerId(favoriteProductDTO.getProduct().getId(), favoriteProductDTO.getCustomer().getId())){
             throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Sản phẩm này"));
         }
 

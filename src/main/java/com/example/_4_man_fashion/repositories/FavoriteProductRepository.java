@@ -24,7 +24,7 @@ public interface FavoriteProductRepository extends JpaRepository<FavoriteProduct
     @Query("select f.product from FavoriteProduct f where (:productName is null or f.product.productName like :productName)  order by f.ctime, f.product.productName")
     Page<Product> getFavoriteProductByProductName(Pageable pageable, String productName);
 
-    boolean existsFavoriteProductByProductId(Integer productId);
+    boolean existsFavoriteProductByProductIdAndCustomerId(Integer productId, Integer customerId);
 
     @Query(nativeQuery = true,
             value = "SELECT  o1.name1 as name,o1.time, o2.minPrice as minPrice, o2.maxPrice as maxPrice, o3.image from\n" +
