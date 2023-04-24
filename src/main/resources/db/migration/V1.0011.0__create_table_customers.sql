@@ -8,10 +8,10 @@ CREATE TABLE CUSTOMERS
     address text,
     email varchar(225) not null,
     avatar text,
-    account_id bigint not null,
+    account_id bigint ,
     note text,
     status int,
     ctime timestamp DEFAULT current_timestamp,
     mtime timestamp,
-    constraint fk_accounts FOREIGN KEY (account_id) REFERENCES accounts (id)
+    constraint fk_accounts FOREIGN KEY (account_id) REFERENCES accounts(id)
 );
