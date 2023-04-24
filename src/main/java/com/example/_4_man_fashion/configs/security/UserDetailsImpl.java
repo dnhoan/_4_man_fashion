@@ -1,8 +1,10 @@
 package com.example._4_man_fashion.configs.security;
 
 import com.example._4_man_fashion.dto.CustomerDTO;
+import com.example._4_man_fashion.dto.EmployeeDTO;
 import com.example._4_man_fashion.entities.Account;
 import com.example._4_man_fashion.entities.Customer;
+import com.example._4_man_fashion.entities.Employee;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,19 +29,23 @@ public class UserDetailsImpl implements UserDetails {
     private final String email;
 
     private final CustomerDTO customerDTO;
+    private final EmployeeDTO employeeDTO;
 
     @JsonIgnore
     private final String password;
 
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Integer id, String phoneNumber, String email, String password, CustomerDTO customer,
+    public UserDetailsImpl(Integer id, String phoneNumber, String email, String password,
+                           CustomerDTO customer,
+                           EmployeeDTO employeeDTO,
             Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.password = password;
         this.customerDTO = customer;
+        this.employeeDTO = employeeDTO;
         this.authorities = authorities;
     }
 
@@ -53,7 +59,8 @@ public class UserDetailsImpl implements UserDetails {
                 account.getPhoneNumber(),
                 account.getEmail(),
                 account.getPassword(),
-                UserDetailsImpl.customerMapToCustomerDTO(account.getCustomer()),
+                account.getCustomer() == null ? null : UserDetailsImpl.customerMapToCustomerDTO(account.getCustomer()),
+                account.getEmployee() == null ? null : UserDetailsImpl.employeeMapToEmployeeDto(account.getEmployee()),
                 authorities);
     }
 
@@ -118,6 +125,20 @@ public class UserDetailsImpl implements UserDetails {
                 .email(customer.getEmail())
                 .phoneNumber(customer.getPhoneNumber())
                 .status(customer.getStatus())
+                .build();
+    }
+    private static EmployeeDTO employeeMapToEmployeeDto(Employee employee) {
+        return EmployeeDTO.builder()
+                .address(employee.getAddress())
+                .employeeName(employee.getEmployeeName())
+                .employeeCode(employee.getEmployeeCode())
+                .id(employee.getId())
+//                    .birthday(customer.getBirthday() == null ? LocalDate.now() : customer.getBirthday())
+//                .ctime(customer.getCtime() == null ? LocalDate.now() : customer.getCtime())
+//                .mtime(customer.getMtime() == null ? LocalDate.now() : customer.getMtime())
+                .email(employee.getEmail())
+                .phoneNumber(employee.getPhoneNumber())
+                .status(employee.getStatus())
                 .build();
     }
 }
