@@ -188,7 +188,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
                         "LIMIT 10"
 
         )
-        List<BestSelling> statisticsByBestSellingProducts(Date time1, Date time2);
+        List<BestSelling> statisticsByBestSellingProducts(Date time1,Date time2);
 
         @Query(nativeQuery = true,
                 value = "select count(*) from orders od where (od.ctime between :time1 and :time2) and od.total_money = od.checkout ")
