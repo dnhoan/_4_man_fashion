@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
@@ -110,9 +111,9 @@ public class UserDetailsImpl implements UserDetails {
                 .avatar(customer.getAvatar())
                 .id(customer.getId())
                 .gender(customer.getGender())
-                .birthday(customer.getBirthday())
-                .ctime(customer.getCtime())
-                .mtime((customer.getMtime()))
+//                .birthday(customer.getBirthday() == null ? LocalDate.now() : customer.getBirthday())
+//                .ctime(customer.getCtime() == null ? LocalDate.now() : customer.getCtime())
+//                .mtime(customer.getMtime() == null ? LocalDate.now() : customer.getMtime())
                 .note(customer.getNote())
                 .email(customer.getEmail())
                 .phoneNumber(customer.getPhoneNumber())
