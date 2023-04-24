@@ -27,6 +27,12 @@ public class FavoriteProductController {
         return ResponseEntity.ok(ApiResponse.success(result));
     }
 
+    @GetMapping("favorite/getFavoriteProductByCustomerId/{customerId}")
+    public ResponseEntity<ApiResponse<List<FavoriteProductList>>> getFavoriteProductByCustomerId(@PathVariable() Integer customerId) {
+        List<FavoriteProductList> result = favoriteProductService.getFavoriteProductByCustomer( customerId);
+        return ResponseEntity.ok(ApiResponse.success(result));
+    }
+
     @PostMapping("/favorite/create")
     public ResponseEntity<ApiResponse<FavoriteProduct>> create(@Valid @RequestBody FavoriteProductDTO dto) {
         FavoriteProduct favoriteProduct = favoriteProductService.create(dto);

@@ -64,6 +64,7 @@ public class StatisticController {
             return ResponseEntity.ok(ApiResponse.success(statisticFavorites));
 
         } catch (Exception e) {
+            e.printStackTrace();
             throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
         }
     }
@@ -87,6 +88,7 @@ public class StatisticController {
             List<Integer> statisticOrderStatus = this.statisticService.statisticOrderStatus(sDate, eDate);
             return ResponseEntity.ok(ApiResponse.success(statisticOrderStatus));
         } catch (Exception e) {
+            e.printStackTrace();
             throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
         }
     }

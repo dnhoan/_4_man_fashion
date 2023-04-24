@@ -113,11 +113,19 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
                 List<StatisticIncome> statisticByDate(Date time1, Date time2);
 
         @Query(nativeQuery = true,
-                value = "SELECT count(fp.product_id) as quantity , pds.product_name as name from favorite_product fp \n" +
-                        "join products pds on fp.product_id = pds.id\n" +
-                        "where fp.ctime  between :time1 and :time2\n" +
-                        "group by fp.product_id , product_name \n" +
-                        "order by quantity desc\n" +
+                value = "SELECT o1.quantity as quantity, o1.name1 as name , o2.minPrice as minPrice, o2.maxPrice as maxPrice, o3.image as image from\n" +
+                        "(select count(fp.product_id) as quantity , pds.product_name as name1 from products pds \n" +
+                        "                        join favorite_product fp  on  pds.id = fp.product_id\n" +
+                        "                        where fp.ctime  between :time1 and :time2 \n" +
+                        "                        group by  pds.product_name) as o1\n" +
+                        "join \n" +
+                        "(select pds.product_name as name1, Min(pd.price) as minPrice,  MAX(pd.price) as maxPrice from products pds \n" +
+                        "join product_details pd on pds.id = pd.product_id\n" +
+                        "                        group by  pds.product_name) as o2 on o1.name1 = o2.name1  \n" +
+                        "join \n" +
+                        "(select pds.product_name as name1, pd.image as image, pd.price as price    from products pds\n" +
+                        "join product_details pd on pds.id = pd.product_id) as o3\n" +
+                        "on o1.name1 = o3.name1 where o3.price = o2.minPrice  order by quantity desc\n" +
                         "LIMIT 10")
         List<StatisticFavorite> statisticsByBestFavoriteProducts(Date time1, Date time2);
 
