@@ -68,12 +68,12 @@ public class AuthController {
     }
 
     @GetMapping("changepass")
-    public ResponseEntity<ApiResponse<String>> changePass(@RequestParam(value = "email") String email,
+    public ResponseEntity<ApiResponse<String>> changePass(@RequestParam(value = "phoneOrEmail") String phoneOrEmail,
                                                           @RequestParam(value = "password") String password,
                                                           @RequestParam(value = "newPassword") String newPassword,
                                                           @RequestParam(value = "repassword") String repassword
     ) {
-        this.authService.changePassWord(email, password, newPassword, repassword);
+        this.authService.changePassWord(phoneOrEmail, password, newPassword, repassword);
         return ResponseEntity.ok(ApiResponse.success("Thay đổi mật khẩu thành công!"));
     }
 
