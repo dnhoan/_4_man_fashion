@@ -52,7 +52,7 @@ public class StatisticServiceImpl implements StatisticService {
         return this.orderRepository.statisticOrderStatus(s_date, e_date);
     }
 
-    public List<StatisticFavorite> statisticsByBestSellingProducts(Date time1, Date time2){
+    public List<BestSelling> statisticsByBestSellingProducts(Date time1, Date time2){
         return this.orderRepository.statisticsByBestSellingProducts(time1, time2);
 
 

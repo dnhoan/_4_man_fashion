@@ -1,9 +1,6 @@
 package com.example._4_man_fashion.repositories;
 
-import com.example._4_man_fashion.dto.SendEmailStatus;
-import com.example._4_man_fashion.dto.StatisticFavorite;
-import com.example._4_man_fashion.dto.StatisticIncome;
-import com.example._4_man_fashion.dto.StatisticRevenue;
+import com.example._4_man_fashion.dto.*;
 import com.example._4_man_fashion.entities.Order;
 import com.example._4_man_fashion.models.UpdateOrderStatus;
 import org.springframework.data.domain.Page;
@@ -191,7 +188,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
                         "LIMIT 10"
 
         )
-        List<StatisticFavorite> statisticsByBestSellingProducts(Date time1, Date time2);
+        List<BestSelling> statisticsByBestSellingProducts(Date time1, Date time2);
 
         @Query(nativeQuery = true,
                 value = "select count(*) from orders od where (od.ctime between :time1 and :time2) and od.total_money = od.checkout ")
