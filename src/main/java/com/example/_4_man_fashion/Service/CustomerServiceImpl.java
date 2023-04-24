@@ -32,7 +32,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class CustomerServiceImpl implements CustomerService{
+public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -96,11 +96,11 @@ public class CustomerServiceImpl implements CustomerService{
             throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
         }
 
-        boolean existsByPhoneNumber = customerRepository.existsByPhoneNumberLike(customerDTO.getPhoneNumber().trim());
+        boolean existsByPhoneNumber = customerRepository.existsCustomerByPhoneNumberAndIdIsNot(customerDTO.getPhoneNumber().trim(), customerDTO.getId());
         if (existsByPhoneNumber) {
             throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Số điện thoại"));
         }
-        boolean existsByEmail = customerRepository.existsByEmailLike(customerDTO.getEmail().trim());
+        boolean existsByEmail = customerRepository.existsCustomerByEmailAndIdIsNot(customerDTO.getEmail().trim(), customerDTO.getId());
         if (existsByEmail) {
             throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Email"));
         }
@@ -152,11 +152,11 @@ public class CustomerServiceImpl implements CustomerService{
 
     @Override
     public CustomerDTO getCustomerById(Integer id) {
-         Optional<Customer> customer = this.customerRepository.findById(id);
-         if(customer.isPresent()) {
-             return this.modelMapper.map(customer.get(), CustomerDTO.class);
-         }
-         return new CustomerDTO();
+        Optional<Customer> customer = this.customerRepository.findById(id);
+        if (customer.isPresent()) {
+            return this.modelMapper.map(customer.get(), CustomerDTO.class);
+        }
+        return new CustomerDTO();
     }
 
     @Transactional
@@ -173,11 +173,11 @@ public class CustomerServiceImpl implements CustomerService{
             throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID);
         }
 
-        boolean existsByPhoneNumber = customerRepository.existsByPhoneNumberLike(customerDTO.getPhoneNumber().trim());
+        boolean existsByPhoneNumber = customerRepository.existsCustomerByPhoneNumberAndIdIsNot(customerDTO.getPhoneNumber().trim(), customerDTO.getId());
         if (existsByPhoneNumber) {
             throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Số điện thoại"));
         }
-        boolean existsByEmail = customerRepository.existsByEmailLike(customerDTO.getEmail().trim());
+        boolean existsByEmail = customerRepository.existsCustomerByEmailAndIdIsNot(customerDTO.getEmail().trim(), customerDTO.getId());
         if (existsByEmail) {
             throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Email"));
         }
@@ -226,7 +226,8 @@ public class CustomerServiceImpl implements CustomerService{
         }
 
     }
-@Transactional
+
+    @Transactional
     public Customer update(CustomerDTO customerDTO) {
         Optional<Customer> optionalCustomer = this.customerRepository.findById(customerDTO.getId());
         if (optionalCustomer.isEmpty())
@@ -243,14 +244,14 @@ public class CustomerServiceImpl implements CustomerService{
 
         Customer customer = optionalCustomer.get();
         if (!customer.getEmail().equals(customerDTO.getEmail())) {
-            boolean isExistEmail = customerRepository.existsByEmailLike(customerDTO.getEmail().trim());
+            boolean isExistEmail = customerRepository.existsCustomerByEmailAndIdIsNot(customerDTO.getEmail().trim(), customer.getId());
             if (isExistEmail) {
                 throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Email"));
             }
         }
         if (!customer.getPhoneNumber().equals(customerDTO.getPhoneNumber())) {
             boolean isExitsPhoneNumber = customerRepository
-                    .existsByPhoneNumberLike(customerDTO.getPhoneNumber().trim());
+                    .existsCustomerByPhoneNumberAndIdIsNot(customerDTO.getPhoneNumber().trim(), customer.getId());
             if (isExitsPhoneNumber) {
                 throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Số điện thoại"));
             }
@@ -303,18 +304,22 @@ public class CustomerServiceImpl implements CustomerService{
             throw new DATNException(ErrorMessage.ARGUMENT_NOT_VALID.format("Số điện thoại khách hàng"));
 
         Customer customer = optionalCustomer.get();
+
+        if (!customer.getPhoneNumber().equals(customerDTO.getPhoneNumber())) {
+            boolean isExitsPhoneNumber = customerRepository
+                    .existsCustomerByPhoneNumberAndIdIsNot(customerDTO.getPhoneNumber().trim(), customerDTO.getId());
+            if (isExitsPhoneNumber) {
+                throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Số điện thoại"));
+            }
+        }
+
         if (!customer.getEmail().equals(customerDTO.getEmail())) {
-            boolean isExistEmail = customerRepository.existsByEmailLike(customerDTO.getEmail().trim());
+            boolean isExistEmail = customerRepository.existsCustomerByEmailAndIdIsNot(customerDTO.getEmail().trim(), customerDTO.getId());
             if (isExistEmail) {
                 throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Email"));
             }
         }
-        if (!customer.getPhoneNumber().equals(customerDTO.getPhoneNumber())) {
-            boolean isExitsPhoneNumber = customerRepository
-                    .existsByPhoneNumberLike(customerDTO.getPhoneNumber().trim());
-            if (isExitsPhoneNumber) {
-                throw new DATNException(ErrorMessage.DUPLICATE_PARAMS.format("Số điện thoại"));
-            }}
+
 
         customer.setCustomerName(customerDTO.getCustomerName());
         customer.setEmail(customerDTO.getEmail());
