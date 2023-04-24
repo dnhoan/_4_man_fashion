@@ -3,10 +3,7 @@ package com.example._4_man_fashion.controllers.admin;
 import com.example._4_man_fashion.Service.StatisticService;
 import com.example._4_man_fashion.Service.StatisticServiceImpl;
 import com.example._4_man_fashion.constants.Constant;
-import com.example._4_man_fashion.dto.ResponseDTO;
-import com.example._4_man_fashion.dto.StatisticFavorite;
-import com.example._4_man_fashion.dto.StatisticIncome;
-import com.example._4_man_fashion.dto.StatisticRevenue;
+import com.example._4_man_fashion.dto.*;
 import com.example._4_man_fashion.entities.Customer;
 import com.example._4_man_fashion.utils.ApiResponse;
 import com.example._4_man_fashion.utils.DATNException;
@@ -95,14 +92,14 @@ public class StatisticController {
     }
 
     @GetMapping("statisticBestSellingProduct")
-    public ResponseEntity<ApiResponse<List<StatisticFavorite>>>statisticBestSellingProducts(
+    public ResponseEntity<ApiResponse<List<BestSelling>>>statisticBestSellingProducts(
             @RequestParam("time1") String time1,
             @RequestParam("time2") String time2
     ) {
         try {
             Date time_1 = new SimpleDateFormat("dd/MM/yyyy").parse(time1);
             Date time_2 = new SimpleDateFormat("dd/MM/yyyy").parse(time2);
-            List<StatisticFavorite> statisticFavorites = this.statisticService.statisticsByBestSellingProducts(time_1, time_2);
+            List<BestSelling> statisticFavorites = this.statisticService.statisticsByBestSellingProducts(time_1, time_2);
             return ResponseEntity.ok(ApiResponse.success(statisticFavorites));
 
         } catch (Exception e) {
