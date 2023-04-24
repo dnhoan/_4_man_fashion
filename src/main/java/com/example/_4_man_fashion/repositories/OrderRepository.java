@@ -139,7 +139,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
                         "(select pds.product_name as name1, pd.image as image, pd.price as price    from products pds\n" +
                         "join product_details pd on pds.id = pd.product_id) as o3\n" +
                         "on o1.name1 = o3.name1 where o3.price = o2.minPrice  order by quantity desc\n" +
-                        "LIMIT 5")
+                        "LIMIT 10")
         List<StatisticFavorite> statisticsByBestFavoriteProductsOnline();
 
 
