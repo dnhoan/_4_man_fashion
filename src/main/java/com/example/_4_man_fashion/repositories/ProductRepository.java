@@ -16,8 +16,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("select product from Product product where " +
             "((:name is null or lower(product.categoryName) like lower(:name)) or " +
             "(:name is null or lower(product.materialName) like lower(:name)) or " +
-            "(:name is null or lower(product.modelName) like lower(:name))) or " +
-            "(:name is null or lower(product.productName) like lower(:name)) and " +
+            "(:name is null or lower(product.modelName) like lower(:name)) or " +
+            "(:name is null or lower(product.productName) like lower(:name))) and " +
             "(:status = -1 or product.status = :status) order by product.ctime desc, product.productName")
     Page<Product> getProductByName(Pageable pageable, Integer status, String name);
 
@@ -28,7 +28,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "(COALESCE(:categories) is null or product.category.id IN (:categories)) and " +
             "(product.id in " +
                 "(select pd2.product.id from product.productDetails pd2 where " +
-                    "(:name is null or lower(pd2.productDetailName) like lower(:name)) and " +
+                    "(:name is null or lower(pd2.prod   uctDetailName) like lower(:name)) and " +
                     "(COALESCE(:colors) is null or pd2.color.id IN (:colors)) and " +
                     "(COALESCE(:sizes)  is null or pd2.size.id IN (:sizes)) and " +
                     "pd2.price >= :priceMin and pd2.price <= :priceMax and pd2.status = 1" +
